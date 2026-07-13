@@ -1,0 +1,41 @@
+---
+description: Route files must lazy-load page/layout components — no static page imports
+globs: src/**/routes/**/*.{ts,tsx},src/routes/**/*.{ts,tsx},src/**/layouts/_panel.tsx
+alwaysApply: false
+---
+
+# Route lazy imports
+
+Route definition files (`createFileRoute`, `createRootRoute`, layout routes like `_panel.tsx`) must **not** statically import page components.
+
+## Required
+
+- Pass `lazy(() => import('…'))` **inline** on `component`, `errorComponent`, and `notFoundComponent`.
+- Do not assign `const SomePage = lazy(…)` — keep the import inside the route config.
+- Read route params in **pages** (`useParams`), not in route wrapper components.
+- Default-export pages and layouts: `component: lazy(() => import('@/modules/…/pages/…Page'))` or `lazy(() => import('@/modules/…/layouts/CtPanelLayout'))`.
+
+```tsx
+import { lazy } from 'react'
+import { createFileRoute } from '@tanstack/react-router'
+
+export const Route = createFileRoute('/_panel/books/upsert/')({
+  component: lazy(() => import('@/modules/book/pages/BookUpsertPage')),
+})
+```
+
+```tsx
+// Page reads params — route stays one line
+export default function BookDetailPage() {
+  const { bookId } = useParams({ from: '/_panel/books/$bookId/' })
+  …
+}
+```
+
+`CtPanelLayout` / `RootDocument` wrap routed output in `<Suspense fallback={<CtLoading />}>`.
+
+## Do not
+
+- `import SomePage from '@/modules/…/pages/SomePage'` in route files.
+- `const SomePage = lazy(…)` then `component: SomePage`.
+- Route wrappers whose only job is passing `useParams()` into a page.

@@ -1,0 +1,85 @@
+---
+description: react-hook-form with FormProvider and shared Ct* field components
+globs: src/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Forms — react-hook-form + FormProvider
+
+Every form UI must use **react-hook-form**. Wrap the form tree in **`FormProvider`** and use shared **`Ct*`** field components from `@/modules/app/components/forms` (Ant Design + `Controller` + `useFormContext`).
+
+## Required
+
+- `useForm<FormValues>()` in the page, hook, or `Ct{Name}Form` — typed `FormValues` in `types/`
+- `<FormProvider {...form}>` around all fields (spread the full `UseFormReturn`)
+- Field components: `CtTextInput`, `CtTextArea`, `CtSelect`, `CtRadio` — **never** pass `control` into individual fields
+- Custom or one-off inputs: `useFormContext()` + `Controller` in the same file (same pattern as `Ct*` fields)
+- Submit via `form.handleSubmit(onSubmit)` on a native `<form>`
+
+## Example
+
+```tsx
+import { FormProvider, useForm } from 'react-hook-form'
+import { Button } from 'antd'
+import { CtTextInput, CtTextArea, CtSelect } from '@/modules/app/components/forms'
+import type { BookFormValues } from '@/modules/book/types/book.types'
+
+export function CtBookForm({ onSubmit }: { onSubmit: (values: BookFormValues) => void }) {
+  const form = useForm<BookFormValues>({ defaultValues: { title: '', author: '' } })
+
+  return (
+    <FormProvider {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex max-w-lg flex-col gap-4">
+        <CtTextInput<BookFormValues>
+          name="title"
+          label="Title"
+          rules={{ required: true }}
+        />
+        <CtTextArea<BookFormValues> name="description" label="Description" rows={4} />
+        <CtSelect<BookFormValues>
+          name="status"
+          label="Status"
+          options={[
+            { value: 'draft', label: 'Draft' },
+            { value: 'published', label: 'Published' },
+          ]}
+        />
+        <Button type="primary" htmlType="submit">
+          Save
+        </Button>
+      </form>
+    </FormProvider>
+  )
+}
+```
+
+Hook-owned form (upsert pattern): return `form` from the hook; the page or `Ct{Name}Form` wraps children in `<FormProvider {...form}>`.
+
+```tsx
+const { form, onSubmit, isPending } = useBookUpsertForm(bookId)
+
+return (
+  <FormProvider {...form}>
+    <form onSubmit={onSubmit}>…</form>
+  </FormProvider>
+)
+```
+
+## Field components (`modules/app/components/forms/`)
+
+| Component | Ant Design | Props |
+|-----------|------------|-------|
+| `CtTextInput` | `Input` | `name`, `label?`, `rules?`, + `InputProps` |
+| `CtTextArea` | `Input.TextArea` | `name`, `label?`, `rules?`, + `TextAreaProps` |
+| `CtSelect` | `Select` | `name`, `label?`, `rules?`, + `SelectProps` |
+| `CtRadio` | `Radio.Group` | `name`, `label?`, `rules?`, + `RadioGroupProps` |
+
+Pass the form generic for typed `name`: `CtTextInput<BookFormValues> name="title"`.
+
+## Do not
+
+- Use raw `useState` for multi-field form state
+- Pass `control` prop into field components — use `FormProvider` context
+- Inline `Controller` + Ant Design in feature forms when a `Ct*` component fits
+- Use Formik, Final Form, or Ant Design `Form` alone without `react-hook-form`
+- Use Ant Design `Form.Item` for validation (RHF `rules` on `Ct*` / `Controller` instead)

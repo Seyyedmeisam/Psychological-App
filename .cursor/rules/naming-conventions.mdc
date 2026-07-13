@@ -1,0 +1,80 @@
+---
+description: Ct-prefixed components/providers; Page-suffixed page components
+alwaysApply: true
+---
+
+# Naming conventions
+
+## Components and providers — `Ct` prefix
+
+Applies to all files under `**/components/**` and `**/providers/**`.
+
+- Shell / shared app UI: `modules/app/components/`, `modules/app/providers/`
+- Feature UI: `modules/{feature}/components/`, `modules/{feature}/providers/`
+
+| Item | Rule | Example |
+|------|------|---------|
+| File name | Start with `Ct` | `CtHeader.tsx`, `CtQueryProvider.tsx` |
+| Component name | Match file | `export function CtHeader()` |
+| Export | **Named export only** — no `export default` | `export function CtHeader()` |
+
+```tsx
+// modules/app/components/CtHeader.tsx
+export function CtHeader() { … }
+
+// modules/app/providers/CtQueryProvider.tsx
+export function CtQueryProvider({ children }: { children: React.ReactNode }) {
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+}
+```
+
+## Layouts — `Ct` prefix, default export
+
+Applies to layout components under `**/layouts/**` (e.g. `CtPanelLayout.tsx`). Route files in the same folder (e.g. `_panel.tsx`) stay thin and lazy-load the layout.
+
+| Item | Rule | Example |
+|------|------|---------|
+| File name | Start with `Ct` | `CtPanelLayout.tsx` |
+| Component name | Match file | `export default function CtPanelLayout()` |
+| Export | **Default export only** | `export default function CtPanelLayout()` |
+
+```tsx
+// modules/app/layouts/CtPanelLayout.tsx
+export default function CtPanelLayout({ children }: { children?: React.ReactNode }) {
+  return ( … )
+}
+
+// modules/app/layouts/_panel.tsx
+export const Route = createFileRoute('/_panel')({
+  component: lazy(() => import('@/modules/app/layouts/CtPanelLayout')),
+})
+```
+
+## Pages — `Page` suffix
+
+Applies to all files under `**/pages/**` (including `pages/errors/` for HTTP/error screens).
+
+| Item | Rule | Example |
+|------|------|---------|
+| File name | End with `Page` | `HomePage.tsx`, `LoginPage.tsx` |
+| Component name | Match file (default export name) | `export default function HomePage()` |
+| Export | **Default export only** — no named page export | `export default function HomePage()` |
+
+```tsx
+// modules/app/pages/HomePage.tsx
+export default function HomePage() {
+  return ( … )
+}
+```
+
+Route files stay thin:
+
+```tsx
+import HomePage from '@/modules/app/pages/HomePage'
+```
+
+Do **not** use names without `Ct` (components/providers) or `Page` (pages) in those folders.
+
+Do **not** use `export default` in `components/` or `providers/` — use named exports only.
+
+Do **not** use named exports for layout components in `layouts/` — use default export only.

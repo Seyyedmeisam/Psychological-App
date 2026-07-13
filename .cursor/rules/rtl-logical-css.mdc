@@ -1,0 +1,59 @@
+---
+description: RTL-safe styling — logical start/end only; no direction checks or physical left/right
+alwaysApply: true
+---
+
+# RTL & logical CSS
+
+The app supports RTL locales (`ar`, `fa`). Layout must flip via `dir` on `<html>` and **logical** properties — never via direction checks or physical `left`/`right`.
+
+## Do not
+
+- Compare direction for styling or layout (`dir === 'rtl'`, `getTextDirection()`, `document.dir`, etc.).
+- Use physical **left/right** in CSS, Tailwind, or inline styles.
+- Use Tailwind physical utilities: `ml`, `mr`, `pl`, `pr`, `left`, `right`, `text-left`, `text-right`, `border-l`, `border-r`, `rounded-l`, `rounded-r`, etc.
+
+## Do
+
+Use **inline / logical** equivalents so LTR and RTL both work:
+
+| Avoid | Use |
+|-------|-----|
+| `ml-*` | `ms-*` |
+| `mr-*` | `me-*` |
+| `pl-*` | `ps-*` |
+| `pr-*` | `pe-*` |
+| `left-*` / `right-*` | `start-*` / `end-*` |
+| `text-left` / `text-right` | `text-start` / `text-end` |
+| `border-l` / `border-r` | `border-s` / `border-e` |
+| `margin-left` / `padding-right` (CSS) | `margin-inline-start` / `padding-inline-end` |
+| `left` / `right` (CSS) | `inset-inline-start` / `inset-inline-end` |
+
+```tsx
+// ❌ BAD
+<div className="ml-4 text-left" />
+<div style={{ marginLeft: 8 }} />
+{dir === 'rtl' ? 'mr-4' : 'ml-4'}
+
+// ✅ GOOD
+<div className="ms-4 text-start" />
+<div style={{ marginInlineStart: 8 }} />
+<div className="ms-4" />
+```
+
+```css
+/* ❌ BAD */
+.nav-link::after { left: 0; }
+[dir='rtl'] .item { margin-right: 1rem; }
+
+/* ✅ GOOD */
+.nav-link::after { inset-inline-start: 0; }
+.item { margin-inline-end: 1rem; }
+```
+
+## Notes
+
+- `mx-*`, `px-*`, `inset-x-*`, `text-center`, and symmetric spacing are fine.
+- Ant Design `direction` comes from `CtAntdProvider`; do not mirror RTL in custom CSS with direction branches.
+- Prefer `localizeHref()` for links; path locale is separate from layout properties.
+- **CtTable** (`ct-table.mdc`): toolbar, row actions, and `ct-table.css` must use start/end — see that rule for widget-specific patterns and Ant Design API exceptions.

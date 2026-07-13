@@ -1,0 +1,113 @@
+---
+description: Feature module scaffold — mirror book module (services → hooks → routes → pages)
+globs: src/modules/**/*
+alwaysApply: false
+---
+
+# Feature module patterns (`book` is the reference)
+
+Use `src/modules/book/` as the **complete, canonical example**. New feature modules must match its **folder layout**, **data flow**, **types**, and **export style**.
+
+Scaffold: `bun run create:module <name>` (copies `book`, wires `routeTree.config.ts`, `queryKeys`, header).
+
+## Folder layout (required)
+
+```
+modules/{name}/
+  services/
+    {name}.service.ts  # axios calls via requestHandler
+    index.ts           # re-export services
+  types/
+    {name}.types.ts    # Entity, FormValues, ListParams
+    index.ts           # export type *
+  utils/
+    to{Name}FormData.ts
+    normalize{Name}.ts  # normalize*, flatten*Pages, *ToFormValues, pagination meta
+    index.ts
+  hooks/
+    use{Name}.hooks.ts # all query/mutation/form hooks
+    index.ts           # named re-exports + UpsertResult type
+  components/
+    Ct{Name}Form.tsx    # RHF + Ant Design form (named export)
+  pages/
+    {Plural}ListPage.tsx      # default export
+    {Name}DetailPage.tsx
+    {Name}UpsertPage.tsx
+  routes/
+    index.tsx                 # list → /{plural}
+    ${name}Id/index.tsx       # detail
+    upsert/index.tsx          # create
+    upsert/${name}Id.tsx      # edit
+```
+
+Register in `src/routeTree.config.ts`: `physical('/{plural}', '../modules/{name}/routes')` under `_panel`.
+
+Add query keys in `src/core/constants/queryKeys.ts`: `{plural}`, `{plural}List`, `{plural}Infinite`, `{name}(id)`.
+
+## Data flow (strict)
+
+```
+services/*.service.ts  →  hooks/use{Name}.hooks.ts  →  pages/*Page.tsx
+                      ↑
+              routes/*.tsx (thin: params + render page only)
+```
+
+- **services/** — HTTP only. Top-level functions: `get{Plural}`, `get{Name}ById`, `create{Name}`, `update{Name}`, `delete{Name}`. Use `requestHandler` from `@/core/api/requestHandler`. FormData uploads: no manual `Content-Type`.
+- **hooks/** — React Query + RHF. No JSX. Pass-through `UseQueryOptions` / `UseMutationOptions` / `UseInfiniteQueryOptions`. Invalidate via `queryKeys` from `@/core/constants/queryKeys`. Pagination: `pagination.defaultPerPage` from `@/core/constants/pagination`.
+- **pages/** — UI only. Import hooks from `@/modules/{name}/hooks`. Use `CtAsyncContent`, `CtLoading`, `CtError` from app module for loading/error.
+- **routes/** — `createFileRoute('/_panel/{plural}/…')`, parse numeric ids, render page. **Lazy-import** pages via `React.lazy()` (see `route-lazy-imports.mdc`). **No** data fetching in routes.
+
+## Hooks to implement (match `useBook.hooks.ts`)
+
+| Hook | Purpose |
+|------|---------|
+| `use{Plural}` | list query |
+| `useInfinite{Plural}` | infinite list + `getNextPageParam` |
+| `use{Name}` | detail by id (`enabled: id > 0`) |
+| `useCreate{Name}` / `useUpdate{Name}` / `useDelete{Name}` | mutations + cache invalidation |
+| `useCreate{Name}Form` / `useUpdate{Name}Form` | RHF + mutation (optional shortcuts) |
+| `use{Name}UpsertForm` | create + edit on one form |
+
+Mutations invalidate `{plural}` list; update/delete also invalidate `{name}(id)`.
+
+## Types (`{name}.types.ts`)
+
+```ts
+export type {Name} = { id: number; title: string; … }
+export type {Name}FormValues = { title: string; …; cover?: FileList | null }
+export type {Plural}ListParams = { page?: number; per_page?: number; search?: string; [key: string]: unknown }
+```
+
+Normalize API payloads in `utils/normalize{Name}.ts` (array, `{ data: [] }`, single entity).
+
+## Exports (same as book)
+
+| Location | Export style |
+|----------|----------------|
+| `pages/` | `export default function …Page()` only |
+| `layouts/` | `export default` for layout components (e.g. `CtPanelLayout`); route file `_panel.tsx` uses `export const Route` |
+| `components/`, `hooks/`, `services/`, `types/`, `utils/`, `providers/`, `config/`, … | **Named exports only** (enforced by ESLint) |
+| `hooks/index.ts` | named re-exports from `use{Name}.hooks.ts` + `export type {Name}UpsertResult` |
+| `services/index.ts` | `export * from './{name}.service'` |
+| `types/index.ts` | `export type * from './{name}.types'` |
+
+## Routes (same URLs as book)
+
+| Path | Page |
+|------|------|
+| `/{plural}` | `{Plural}ListPage` |
+| `/{plural}/upsert` | `{Name}UpsertPage` (no id) |
+| `/{plural}/upsert/{name}Id` | `{Name}UpsertPage` |
+| `/{plural}/{name}Id` | `{Name}DetailPage` |
+
+`createFileRoute` paths use `/_panel/{plural}/…`. Links use typed `to` + `params` (e.g. `bookId` → `{name}Id`).
+
+## Do not
+
+- Fetch in route files or call `requestHandler` from pages (go through hooks).
+- Put feature types/hooks in `core/` (only shared `queryKeys`, `pagination`, `requestHandler`).
+- Invent a different CRUD route layout unless the product explicitly requires it.
+- Use `export default` outside `pages/` and `layouts/`.
+- Statically import pages in route files — use `lazy(() => import('…/pages/…Page'))` (see `route-lazy-imports.mdc`).
+
+When unsure, **copy `book` and rename** — do not improvise a slimmer module.

@@ -1,0 +1,51 @@
+---
+description: Module services layer — URL maps vs axios functions
+globs: src/**/services/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Service patterns
+
+Split **URL builders** and **request functions** in each module’s `services/` folder.
+
+## 1. `*Service.ts` — plain URL strings only
+
+Objects/functions return path strings. No axios, no side effects.
+
+```ts
+// modules/grades/services/gradeService.ts
+const BASE = '/grades'
+
+export const gradeService = {
+  getGrades: () => BASE,
+  getGradeById: (id: string) => `${BASE}/${id}`,
+  createGrade: () => BASE,
+  updateGrade: (id: string) => `${BASE}/${id}`,
+  deleteGrade: (id: string) => `${BASE}/${id}`,
+}
+```
+
+## 2. `*.service.ts` — named async functions
+
+Use `requestHandler` from core (`@/core/api/requestHandler`). Call `gradeService.*()` only for the URL argument when using URL maps.
+
+```ts
+import { requestHandler } from '@/core/api/requestHandler'
+import { gradeService } from './gradeService'
+
+export const getGrades = async (params?: Record<string, unknown>) => {
+  const response = await requestHandler.get(gradeService.getGrades(), { params })
+  return response.data
+}
+
+export const createGrade = async (formData: FormData) => {
+  const response = await requestHandler.post(gradeService.createGrade(), formData)
+  return response.data
+}
+```
+
+## Rules
+
+- Export request functions as **top-level names** (`getGrades`, `createGrade`), not `gradeService.createGrade()` wrappers.
+- URL map files: paths only. `*.service.ts` files: axios + typing + return shape.
+- Re-export from `services/index.ts` when useful; keep one module per feature folder.
