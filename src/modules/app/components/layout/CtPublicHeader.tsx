@@ -2,30 +2,35 @@ import { Link } from '@tanstack/react-router'
 import { m } from '@/core/i18n/paraglide/messages.js'
 import { CtAppLogo } from '@/modules/app/components/layout/CtAppLogo'
 import { CtLocaleSwitcher } from '@/modules/app/components/locale/CtLocaleSwitcher'
-import { useMe } from '@/modules/app/hooks'
-import { Button } from '@/modules/app/components/ui/button'
+import { useMe } from '@/modules/auth/hooks'
+import { CtButton } from '@/modules/app/components/CtButton'
 
 export function CtPublicHeader() {
   const { data: user } = useMe()
 
   return (
-    <header className="border-b border-border bg-card">
+    <header className="sticky top-0 z-40 border-b border-border/80 bg-card/85 shadow-ios-sm backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
         <CtAppLogo />
         <div className="flex flex-wrap items-center gap-3">
           <CtLocaleSwitcher />
           {user ? (
-            <Button asChild size="sm">
-              <Link to="/books">{m.nav_books()}</Link>
-            </Button>
+            <>
+              <CtButton asChild variant="ghost" size="sm">
+                <Link to="/profile">{m.nav_profile()}</Link>
+              </CtButton>
+              <CtButton asChild size="sm">
+                <Link to="/books">{m.nav_books()}</Link>
+              </CtButton>
+            </>
           ) : (
             <>
-              <Button asChild variant="ghost" size="sm">
+              <CtButton asChild variant="ghost" size="sm">
                 <Link to="/login">{m.auth_login()}</Link>
-              </Button>
-              <Button asChild size="sm">
+              </CtButton>
+              <CtButton asChild size="sm">
                 <Link to="/register">{m.auth_register()}</Link>
-              </Button>
+              </CtButton>
             </>
           )}
         </div>

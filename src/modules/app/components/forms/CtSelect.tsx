@@ -1,13 +1,14 @@
+import type { ComponentProps } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import type { FieldPath, FieldValues, RegisterOptions } from 'react-hook-form'
-import { Label } from '@/modules/app/components/ui/label'
+import { CtLabel } from '@/modules/app/components/CtLabel'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/modules/app/components/ui/select'
+  CtSelectContent,
+  CtSelectItem,
+  CtSelectRoot,
+  CtSelectTrigger,
+  CtSelectValue,
+} from '@/modules/app/components/CtSelectParts'
 import { cn } from '@/lib/utils'
 
 type SelectOption = {
@@ -41,19 +42,19 @@ export function CtSelect<T extends FieldValues>({
       rules={rules}
       render={({ field, fieldState }) => (
         <div className={cn('flex flex-col gap-2', className)}>
-          {label ? <Label>{label}</Label> : null}
-          <Select value={field.value ?? ''} onValueChange={field.onChange}>
-            <SelectTrigger className="w-full" aria-invalid={Boolean(fieldState.error)}>
-              <SelectValue placeholder={placeholder ?? label} />
-            </SelectTrigger>
-            <SelectContent>
+          {label ? <CtLabel>{label}</CtLabel> : null}
+          <CtSelectRoot value={field.value ?? ''} onValueChange={field.onChange}>
+            <CtSelectTrigger className="w-full" aria-invalid={Boolean(fieldState.error)}>
+              <CtSelectValue placeholder={placeholder ?? label} />
+            </CtSelectTrigger>
+            <CtSelectContent>
               {options.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
+                <CtSelectItem key={option.value} value={option.value}>
                   {option.label}
-                </SelectItem>
+                </CtSelectItem>
               ))}
-            </SelectContent>
-          </Select>
+            </CtSelectContent>
+          </CtSelectRoot>
           {fieldState.error ? (
             <p className="text-xs text-destructive">{fieldState.error.message}</p>
           ) : null}

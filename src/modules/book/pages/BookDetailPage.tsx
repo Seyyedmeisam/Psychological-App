@@ -1,14 +1,14 @@
 import { Link, useParams } from '@tanstack/react-router'
 import { m } from '@/core/i18n/paraglide/messages.js'
 import { CtAsyncContent } from '@/modules/app/components/feedback/CtAsyncContent'
-import { Button } from '@/modules/app/components/ui/button'
+import { CtButton } from '@/modules/app/components/CtButton'
 import {
-  Card,
-  CardAction,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/modules/app/components/ui/card'
+  CtCard,
+  CtCardAction,
+  CtCardContent,
+  CtCardHeader,
+  CtCardTitle,
+} from '@/modules/app/components/CtCard'
 import { useBook } from '@/modules/book/hooks'
 
 export default function BookDetailPage() {
@@ -24,23 +24,23 @@ export default function BookDetailPage() {
         errorMessage={error?.message}
       >
         {data ? (
-          <Card>
-            <CardHeader>
-              <CardTitle>{data.title}</CardTitle>
-              <CardAction>
+          <CtCard>
+            <CtCardHeader>
+              <CtCardTitle>{data.title}</CtCardTitle>
+              <CtCardAction>
                 <div className="flex gap-2">
-                  <Button asChild variant="outline" size="sm">
+                  <CtButton asChild variant="outline" size="sm">
                     <Link to="/books/upsert/$bookId" params={{ bookId: String(id) }}>
                       {m.book_edit()}
                     </Link>
-                  </Button>
-                  <Button asChild variant="ghost" size="sm">
+                  </CtButton>
+                  <CtButton asChild variant="ghost" size="sm">
                     <Link to="/books">{m.nav_books()}</Link>
-                  </Button>
+                  </CtButton>
                 </div>
-              </CardAction>
-            </CardHeader>
-            <CardContent>
+              </CtCardAction>
+            </CtCardHeader>
+            <CtCardContent>
               <dl className="grid gap-4 text-sm">
                 <div className="grid gap-1 border-b border-border pb-3">
                   <dt className="font-medium text-muted-foreground">{m.book_author_label()}</dt>
@@ -61,8 +61,8 @@ export default function BookDetailPage() {
                   <dd>{data.description || '—'}</dd>
                 </div>
               </dl>
-            </CardContent>
-          </Card>
+            </CtCardContent>
+          </CtCard>
         ) : null}
       </CtAsyncContent>
     </section>

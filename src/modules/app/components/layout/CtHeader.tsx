@@ -2,12 +2,14 @@ import { Link } from '@tanstack/react-router'
 import { m } from '@/core/i18n/paraglide/messages.js'
 import { CtAppLogo } from '@/modules/app/components/layout/CtAppLogo'
 import { CtLocaleSwitcher } from '@/modules/app/components/locale/CtLocaleSwitcher'
-import { useLogout, useMe } from '@/modules/app/hooks'
-import { Button } from '@/modules/app/components/ui/button'
+import { CtButton } from '@/modules/app/components/CtButton'
+import { useLogout, useMe } from '@/modules/auth/hooks'
 
 const navItems = [
+  { to: '/users' as const, label: () => m.nav_users() },
   { to: '/books' as const, label: () => m.nav_books() },
   { to: '/about' as const, label: () => m.nav_about() },
+  { to: '/profile' as const, label: () => m.nav_profile() },
 ]
 
 export function CtHeader() {
@@ -15,7 +17,7 @@ export function CtHeader() {
   const logout = useLogout()
 
   return (
-    <header className="border-b border-border bg-card">
+    <header className="sticky top-0 z-40 border-b border-border/80 bg-card/85 shadow-ios-sm backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
         <CtAppLogo />
         <div className="flex flex-wrap items-center gap-4">
@@ -34,7 +36,7 @@ export function CtHeader() {
           {user ? (
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">{user.name}</span>
-              <Button
+              <CtButton
                 type="button"
                 variant="outline"
                 size="sm"
@@ -42,12 +44,12 @@ export function CtHeader() {
                 disabled={logout.isPending}
               >
                 {m.auth_logout()}
-              </Button>
+              </CtButton>
             </div>
           ) : (
-            <Button asChild size="sm" variant="outline">
+            <CtButton asChild size="sm" variant="outline">
               <Link to="/login">{m.auth_login()}</Link>
-            </Button>
+            </CtButton>
           )}
         </div>
       </div>

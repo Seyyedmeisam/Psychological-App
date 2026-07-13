@@ -2,8 +2,8 @@ import { FormProvider } from 'react-hook-form'
 import { Link, useParams } from '@tanstack/react-router'
 import { m } from '@/core/i18n/paraglide/messages.js'
 import { CtSelect, CtTextArea, CtTextInput } from '@/modules/app/components/forms'
-import { Button } from '@/modules/app/components/ui/button'
-import { Spinner } from '@/modules/app/components/ui/spinner'
+import { CtButton } from '@/modules/app/components/CtButton'
+import { CtSpinner } from '@/modules/app/components/CtSpinner'
 import { useBookUpsertForm } from '@/modules/book/hooks'
 
 export default function BookUpsertPage() {
@@ -17,9 +17,9 @@ export default function BookUpsertPage() {
         <h1 className="text-2xl font-bold text-foreground">
           {bookId ? m.book_edit() : m.book_create()}
         </h1>
-        <Button asChild variant="outline">
+        <CtButton asChild variant="outline">
           <Link to="/books">{m.book_cancel()}</Link>
-        </Button>
+        </CtButton>
       </div>
       <FormProvider {...form}>
         <form onSubmit={onSubmit} className="flex max-w-lg flex-col gap-4">
@@ -42,10 +42,10 @@ export default function BookUpsertPage() {
               { value: 'published', label: m.book_status_published() },
             ]}
           />
-          <Button type="submit" disabled={isPending}>
-            {isPending ? <Spinner className="size-4" /> : null}
+          <CtButton type="submit" disabled={isPending}>
+            {isPending ? <CtSpinner className="size-4" /> : null}
             {m.book_save()}
-          </Button>
+          </CtButton>
         </form>
       </FormProvider>
     </section>

@@ -1,15 +1,15 @@
 import type { ComponentProps } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import type { FieldPath, FieldValues, RegisterOptions } from 'react-hook-form'
-import { Label } from '@/modules/app/components/ui/label'
-import { Textarea } from '@/modules/app/components/ui/textarea'
+import { CtLabel } from '@/modules/app/components/CtLabel'
+import { CtTextarea } from '@/modules/app/components/CtTextarea'
 import { cn } from '@/lib/utils'
 
 type CtTextAreaProps<T extends FieldValues> = {
   name: FieldPath<T>
   label?: string
   rules?: RegisterOptions<T, FieldPath<T>>
-} & Omit<ComponentProps<typeof Textarea>, 'name' | 'value' | 'onChange' | 'onBlur' | 'ref'>
+} & Omit<ComponentProps<typeof CtTextarea>, 'name' | 'value' | 'onChange' | 'onBlur' | 'ref'>
 
 export function CtTextArea<T extends FieldValues>({
   name,
@@ -29,8 +29,8 @@ export function CtTextArea<T extends FieldValues>({
       rules={rules}
       render={({ field, fieldState }) => (
         <div className="flex flex-col gap-2">
-          {label ? <Label htmlFor={inputId}>{label}</Label> : null}
-          <Textarea
+          {label ? <CtLabel htmlFor={inputId}>{label}</CtLabel> : null}
+          <CtTextarea
             {...field}
             {...textAreaProps}
             id={inputId}

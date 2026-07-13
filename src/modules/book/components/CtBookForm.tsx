@@ -1,7 +1,7 @@
 import { FormProvider, useForm } from 'react-hook-form'
 import { CtSelect, CtTextArea, CtTextInput } from '@/modules/app/components/forms'
-import { Button } from '@/modules/app/components/ui/button'
-import { Spinner } from '@/modules/app/components/ui/spinner'
+import { CtButton } from '@/modules/app/components/CtButton'
+import { CtSpinner } from '@/modules/app/components/CtSpinner'
 import type { BookFormValues } from '@/modules/book/types'
 
 type CtBookFormProps = {
@@ -50,10 +50,10 @@ export function CtBookForm({
             { value: 'published', label: 'Published' },
           ]}
         />
-        <Button type="submit" disabled={isPending}>
-          {isPending ? <Spinner className="size-4" /> : null}
+        <CtButton type="submit" disabled={isPending}>
+          {isPending ? <CtSpinner className="size-4" /> : null}
           Save
-        </Button>
+        </CtButton>
       </form>
     </FormProvider>
   )

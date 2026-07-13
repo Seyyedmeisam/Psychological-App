@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BookController;
 use App\Http\Controllers\Api\HealthController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/health', HealthController::class);
@@ -18,3 +19,5 @@ Route::prefix('auth')->group(function () {
 });
 
 Route::apiResource('books', BookController::class);
+
+Route::middleware(['auth:sanctum', 'admin'])->apiResource('users', UserController::class);

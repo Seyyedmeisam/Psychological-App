@@ -1,15 +1,15 @@
 import type { ComponentProps } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import type { FieldPath, FieldValues, RegisterOptions } from 'react-hook-form'
-import { Input } from '@/modules/app/components/ui/input'
-import { Label } from '@/modules/app/components/ui/label'
+import { CtInput } from '@/modules/app/components/CtInput'
+import { CtLabel } from '@/modules/app/components/CtLabel'
 import { cn } from '@/lib/utils'
 
 type CtTextInputProps<T extends FieldValues> = {
   name: FieldPath<T>
   label?: string
   rules?: RegisterOptions<T, FieldPath<T>>
-} & Omit<ComponentProps<typeof Input>, 'name' | 'value' | 'onChange' | 'onBlur' | 'ref'>
+} & Omit<ComponentProps<typeof CtInput>, 'name' | 'value' | 'onChange' | 'onBlur' | 'ref'>
 
 export function CtTextInput<T extends FieldValues>({
   name,
@@ -29,8 +29,8 @@ export function CtTextInput<T extends FieldValues>({
       rules={rules}
       render={({ field, fieldState }) => (
         <div className="flex flex-col gap-2">
-          {label ? <Label htmlFor={inputId}>{label}</Label> : null}
-          <Input
+          {label ? <CtLabel htmlFor={inputId}>{label}</CtLabel> : null}
+          <CtInput
             {...field}
             {...inputProps}
             id={inputId}

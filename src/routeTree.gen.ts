@@ -12,8 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as DotDotModulesAppLayoutsPublicRouteImport } from './modules/app/layouts/_public'
 import { Route as DotDotModulesAppLayoutsPanelRouteImport } from './modules/app/layouts/_panel'
 import { Route as IndexRouteImport } from './modules/app/routes/public/index'
-import { Route as RegisterRouteImport } from './modules/app/routes/public/register'
-import { Route as LoginRouteImport } from './modules/app/routes/public/login'
 import { Route as AboutRouteImport } from './modules/app/routes/panel/about'
 import { Route as BooksIndexRouteImport } from './modules/book/routes/index'
 import { Route as BooksUpsertIndexRouteImport } from './modules/book/routes/upsert/index'
@@ -33,16 +31,6 @@ const DotDotModulesAppLayoutsPanelRoute =
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => DotDotModulesAppLayoutsPublicRoute,
-} as any)
-const RegisterRoute = RegisterRouteImport.update({
-  id: '/register',
-  path: '/register',
-  getParentRoute: () => DotDotModulesAppLayoutsPublicRoute,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
   getParentRoute: () => DotDotModulesAppLayoutsPublicRoute,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -74,8 +62,6 @@ const BooksUpsertBookIdRoute = BooksUpsertBookIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/login': typeof LoginRoute
-  '/register': typeof RegisterRoute
   '/books/': typeof BooksIndexRoute
   '/books/upsert/bookId': typeof BooksUpsertBookIdRoute
   '/books/bookId/': typeof BooksBookIdIndexRoute
@@ -84,8 +70,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/login': typeof LoginRoute
-  '/register': typeof RegisterRoute
   '/books': typeof BooksIndexRoute
   '/books/upsert/bookId': typeof BooksUpsertBookIdRoute
   '/books/bookId': typeof BooksBookIdIndexRoute
@@ -96,8 +80,6 @@ export interface FileRoutesById {
   '/_panel': typeof DotDotModulesAppLayoutsPanelRouteWithChildren
   '/_public': typeof DotDotModulesAppLayoutsPublicRouteWithChildren
   '/_panel/about': typeof AboutRoute
-  '/_public/login': typeof LoginRoute
-  '/_public/register': typeof RegisterRoute
   '/_public/': typeof IndexRoute
   '/_panel/books/': typeof BooksIndexRoute
   '/_panel/books/upsert/bookId': typeof BooksUpsertBookIdRoute
@@ -109,8 +91,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
-    | '/login'
-    | '/register'
     | '/books/'
     | '/books/upsert/bookId'
     | '/books/bookId/'
@@ -119,8 +99,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
-    | '/login'
-    | '/register'
     | '/books'
     | '/books/upsert/bookId'
     | '/books/bookId'
@@ -130,8 +108,6 @@ export interface FileRouteTypes {
     | '/_panel'
     | '/_public'
     | '/_panel/about'
-    | '/_public/login'
-    | '/_public/register'
     | '/_public/'
     | '/_panel/books/'
     | '/_panel/books/upsert/bookId'
@@ -165,20 +141,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof DotDotModulesAppLayoutsPublicRoute
-    }
-    '/_public/register': {
-      id: '/_public/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof RegisterRouteImport
-      parentRoute: typeof DotDotModulesAppLayoutsPublicRoute
-    }
-    '/_public/login': {
-      id: '/_public/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof DotDotModulesAppLayoutsPublicRoute
     }
     '/_panel/about': {
@@ -242,15 +204,11 @@ const DotDotModulesAppLayoutsPanelRouteWithChildren =
   )
 
 interface DotDotModulesAppLayoutsPublicRouteChildren {
-  LoginRoute: typeof LoginRoute
-  RegisterRoute: typeof RegisterRoute
   IndexRoute: typeof IndexRoute
 }
 
 const DotDotModulesAppLayoutsPublicRouteChildren: DotDotModulesAppLayoutsPublicRouteChildren =
   {
-    LoginRoute: LoginRoute,
-    RegisterRoute: RegisterRoute,
     IndexRoute: IndexRoute,
   }
 
