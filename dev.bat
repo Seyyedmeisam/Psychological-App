@@ -64,6 +64,11 @@ echo Compiling i18n...
 call bun run i18n:compile
 if errorlevel 1 goto error
 
+echo.
+echo Generating routes...
+call bun run generate-routes
+if errorlevel 1 goto error
+
 if /I "%~1"=="setup" goto done
 
 echo.
