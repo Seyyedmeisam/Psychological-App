@@ -12,11 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as DotDotModulesAppLayoutsPublicRouteImport } from './modules/app/layouts/_public'
 import { Route as DotDotModulesAppLayoutsPanelRouteImport } from './modules/app/layouts/_panel'
 import { Route as IndexRouteImport } from './modules/app/routes/public/index'
+import { Route as RegisterRouteImport } from './modules/auth/routes/public/register'
+import { Route as LoginRouteImport } from './modules/auth/routes/public/login'
 import { Route as AboutRouteImport } from './modules/app/routes/panel/about'
-import { Route as BooksIndexRouteImport } from './modules/book/routes/index'
-import { Route as BooksUpsertIndexRouteImport } from './modules/book/routes/upsert/index'
-import { Route as BooksBookIdIndexRouteImport } from './modules/book/routes/bookId/index'
-import { Route as BooksUpsertBookIdRouteImport } from './modules/book/routes/upsert/bookId'
+import { Route as UsersIndexRouteImport } from './modules/user/routes/index'
+import { Route as ProfileIndexRouteImport } from './modules/auth/routes/profile/index'
+import { Route as UsersUserIdIndexRouteImport } from './modules/user/routes/userId/index'
+import { Route as UsersUpsertIndexRouteImport } from './modules/user/routes/upsert/index'
+import { Route as UsersUpsertUserIdRouteImport } from './modules/user/routes/upsert/userId'
 
 const DotDotModulesAppLayoutsPublicRoute =
   DotDotModulesAppLayoutsPublicRouteImport.update({
@@ -33,86 +36,119 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => DotDotModulesAppLayoutsPublicRoute,
 } as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => DotDotModulesAppLayoutsPublicRoute,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => DotDotModulesAppLayoutsPublicRoute,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
   getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
 } as any)
-const BooksIndexRoute = BooksIndexRouteImport.update({
-  id: '/books/',
-  path: '/books/',
+const UsersIndexRoute = UsersIndexRouteImport.update({
+  id: '/users/',
+  path: '/users/',
   getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
 } as any)
-const BooksUpsertIndexRoute = BooksUpsertIndexRouteImport.update({
-  id: '/books/upsert/',
-  path: '/books/upsert/',
+const ProfileIndexRoute = ProfileIndexRouteImport.update({
+  id: '/profile/',
+  path: '/profile/',
   getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
 } as any)
-const BooksBookIdIndexRoute = BooksBookIdIndexRouteImport.update({
-  id: '/books/bookId/',
-  path: '/books/bookId/',
+const UsersUserIdIndexRoute = UsersUserIdIndexRouteImport.update({
+  id: '/users/userId/',
+  path: '/users/userId/',
   getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
 } as any)
-const BooksUpsertBookIdRoute = BooksUpsertBookIdRouteImport.update({
-  id: '/books/upsert/bookId',
-  path: '/books/upsert/bookId',
+const UsersUpsertIndexRoute = UsersUpsertIndexRouteImport.update({
+  id: '/users/upsert/',
+  path: '/users/upsert/',
+  getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
+} as any)
+const UsersUpsertUserIdRoute = UsersUpsertUserIdRouteImport.update({
+  id: '/users/upsert/userId',
+  path: '/users/upsert/userId',
   getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/books/': typeof BooksIndexRoute
-  '/books/upsert/bookId': typeof BooksUpsertBookIdRoute
-  '/books/bookId/': typeof BooksBookIdIndexRoute
-  '/books/upsert/': typeof BooksUpsertIndexRoute
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
+  '/profile/': typeof ProfileIndexRoute
+  '/users/': typeof UsersIndexRoute
+  '/users/upsert/userId': typeof UsersUpsertUserIdRoute
+  '/users/upsert/': typeof UsersUpsertIndexRoute
+  '/users/userId/': typeof UsersUserIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/books': typeof BooksIndexRoute
-  '/books/upsert/bookId': typeof BooksUpsertBookIdRoute
-  '/books/bookId': typeof BooksBookIdIndexRoute
-  '/books/upsert': typeof BooksUpsertIndexRoute
+  '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
+  '/profile': typeof ProfileIndexRoute
+  '/users': typeof UsersIndexRoute
+  '/users/upsert/userId': typeof UsersUpsertUserIdRoute
+  '/users/upsert': typeof UsersUpsertIndexRoute
+  '/users/userId': typeof UsersUserIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_panel': typeof DotDotModulesAppLayoutsPanelRouteWithChildren
   '/_public': typeof DotDotModulesAppLayoutsPublicRouteWithChildren
   '/_panel/about': typeof AboutRoute
+  '/_public/login': typeof LoginRoute
+  '/_public/register': typeof RegisterRoute
   '/_public/': typeof IndexRoute
-  '/_panel/books/': typeof BooksIndexRoute
-  '/_panel/books/upsert/bookId': typeof BooksUpsertBookIdRoute
-  '/_panel/books/bookId/': typeof BooksBookIdIndexRoute
-  '/_panel/books/upsert/': typeof BooksUpsertIndexRoute
+  '/_panel/profile/': typeof ProfileIndexRoute
+  '/_panel/users/': typeof UsersIndexRoute
+  '/_panel/users/upsert/userId': typeof UsersUpsertUserIdRoute
+  '/_panel/users/upsert/': typeof UsersUpsertIndexRoute
+  '/_panel/users/userId/': typeof UsersUserIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
-    | '/books/'
-    | '/books/upsert/bookId'
-    | '/books/bookId/'
-    | '/books/upsert/'
+    | '/login'
+    | '/register'
+    | '/profile/'
+    | '/users/'
+    | '/users/upsert/userId'
+    | '/users/upsert/'
+    | '/users/userId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
-    | '/books'
-    | '/books/upsert/bookId'
-    | '/books/bookId'
-    | '/books/upsert'
+    | '/login'
+    | '/register'
+    | '/profile'
+    | '/users'
+    | '/users/upsert/userId'
+    | '/users/upsert'
+    | '/users/userId'
   id:
     | '__root__'
     | '/_panel'
     | '/_public'
     | '/_panel/about'
+    | '/_public/login'
+    | '/_public/register'
     | '/_public/'
-    | '/_panel/books/'
-    | '/_panel/books/upsert/bookId'
-    | '/_panel/books/bookId/'
-    | '/_panel/books/upsert/'
+    | '/_panel/profile/'
+    | '/_panel/users/'
+    | '/_panel/users/upsert/userId'
+    | '/_panel/users/upsert/'
+    | '/_panel/users/userId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -143,6 +179,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof DotDotModulesAppLayoutsPublicRoute
     }
+    '/_public/register': {
+      id: '/_public/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof DotDotModulesAppLayoutsPublicRoute
+    }
+    '/_public/login': {
+      id: '/_public/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof DotDotModulesAppLayoutsPublicRoute
+    }
     '/_panel/about': {
       id: '/_panel/about'
       path: '/about'
@@ -150,32 +200,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
     }
-    '/_panel/books/': {
-      id: '/_panel/books/'
-      path: '/books'
-      fullPath: '/books/'
-      preLoaderRoute: typeof BooksIndexRouteImport
+    '/_panel/users/': {
+      id: '/_panel/users/'
+      path: '/users'
+      fullPath: '/users/'
+      preLoaderRoute: typeof UsersIndexRouteImport
       parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
     }
-    '/_panel/books/upsert/': {
-      id: '/_panel/books/upsert/'
-      path: '/books/upsert'
-      fullPath: '/books/upsert/'
-      preLoaderRoute: typeof BooksUpsertIndexRouteImport
+    '/_panel/profile/': {
+      id: '/_panel/profile/'
+      path: '/profile'
+      fullPath: '/profile/'
+      preLoaderRoute: typeof ProfileIndexRouteImport
       parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
     }
-    '/_panel/books/bookId/': {
-      id: '/_panel/books/bookId/'
-      path: '/books/bookId'
-      fullPath: '/books/bookId/'
-      preLoaderRoute: typeof BooksBookIdIndexRouteImport
+    '/_panel/users/userId/': {
+      id: '/_panel/users/userId/'
+      path: '/users/userId'
+      fullPath: '/users/userId/'
+      preLoaderRoute: typeof UsersUserIdIndexRouteImport
       parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
     }
-    '/_panel/books/upsert/bookId': {
-      id: '/_panel/books/upsert/bookId'
-      path: '/books/upsert/bookId'
-      fullPath: '/books/upsert/bookId'
-      preLoaderRoute: typeof BooksUpsertBookIdRouteImport
+    '/_panel/users/upsert/': {
+      id: '/_panel/users/upsert/'
+      path: '/users/upsert'
+      fullPath: '/users/upsert/'
+      preLoaderRoute: typeof UsersUpsertIndexRouteImport
+      parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
+    }
+    '/_panel/users/upsert/userId': {
+      id: '/_panel/users/upsert/userId'
+      path: '/users/upsert/userId'
+      fullPath: '/users/upsert/userId'
+      preLoaderRoute: typeof UsersUpsertUserIdRouteImport
       parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
     }
   }
@@ -183,19 +240,21 @@ declare module '@tanstack/react-router' {
 
 interface DotDotModulesAppLayoutsPanelRouteChildren {
   AboutRoute: typeof AboutRoute
-  BooksIndexRoute: typeof BooksIndexRoute
-  BooksUpsertBookIdRoute: typeof BooksUpsertBookIdRoute
-  BooksBookIdIndexRoute: typeof BooksBookIdIndexRoute
-  BooksUpsertIndexRoute: typeof BooksUpsertIndexRoute
+  ProfileIndexRoute: typeof ProfileIndexRoute
+  UsersIndexRoute: typeof UsersIndexRoute
+  UsersUpsertUserIdRoute: typeof UsersUpsertUserIdRoute
+  UsersUpsertIndexRoute: typeof UsersUpsertIndexRoute
+  UsersUserIdIndexRoute: typeof UsersUserIdIndexRoute
 }
 
 const DotDotModulesAppLayoutsPanelRouteChildren: DotDotModulesAppLayoutsPanelRouteChildren =
   {
     AboutRoute: AboutRoute,
-    BooksIndexRoute: BooksIndexRoute,
-    BooksUpsertBookIdRoute: BooksUpsertBookIdRoute,
-    BooksBookIdIndexRoute: BooksBookIdIndexRoute,
-    BooksUpsertIndexRoute: BooksUpsertIndexRoute,
+    ProfileIndexRoute: ProfileIndexRoute,
+    UsersIndexRoute: UsersIndexRoute,
+    UsersUpsertUserIdRoute: UsersUpsertUserIdRoute,
+    UsersUpsertIndexRoute: UsersUpsertIndexRoute,
+    UsersUserIdIndexRoute: UsersUserIdIndexRoute,
   }
 
 const DotDotModulesAppLayoutsPanelRouteWithChildren =
@@ -204,11 +263,15 @@ const DotDotModulesAppLayoutsPanelRouteWithChildren =
   )
 
 interface DotDotModulesAppLayoutsPublicRouteChildren {
+  LoginRoute: typeof LoginRoute
+  RegisterRoute: typeof RegisterRoute
   IndexRoute: typeof IndexRoute
 }
 
 const DotDotModulesAppLayoutsPublicRouteChildren: DotDotModulesAppLayoutsPublicRouteChildren =
   {
+    LoginRoute: LoginRoute,
+    RegisterRoute: RegisterRoute,
     IndexRoute: IndexRoute,
   }
 

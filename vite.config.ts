@@ -25,7 +25,7 @@ const config = defineConfig({
       project: './project.inlang',
       outdir: './src/core/i18n/paraglide',
       emitTsDeclarations: true,
-      strategy: ['localStorage', 'cookie', 'preferredLanguage', 'baseLocale'],
+      strategy: ['localStorage', 'cookie', 'baseLocale'],
     }),
     nitro({ rollupConfig: { external: [/^@sentry\//] } }),
     tailwindcss(),

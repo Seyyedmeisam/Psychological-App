@@ -23,7 +23,7 @@ export default function UsersListPage() {
   const { data, isLoading, isError, error } = useUsers()
 
   return (
-    <section className="mx-auto max-w-4xl px-4 py-8 ios-slide-up">
+    <section className="mx-auto w-full max-w-7xl px-4 py-8 ios-slide-up">
       <div className="mb-6 flex items-center justify-between gap-4">
         <h1 className="text-2xl font-bold tracking-tight text-foreground">{m.users_title()}</h1>
         <CtButton asChild>

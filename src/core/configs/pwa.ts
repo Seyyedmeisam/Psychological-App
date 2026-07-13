@@ -47,5 +47,13 @@ export const pwaOptions = {
   devOptions: {
     enabled: true,
     type: 'module',
+    suppressWarnings: true,
+  },
+  workbox: {
+    // Production precache is generated post-build in scripts/pwa-build.ts (.output/public).
+    // Use a file that always exists so intermediate Vite env builds do not warn on empty outDir.
+    globDirectory: 'public',
+    globPatterns: ['favicon.svg'],
+    navigateFallback: undefined,
   },
 } satisfies Partial<VitePWAOptions>

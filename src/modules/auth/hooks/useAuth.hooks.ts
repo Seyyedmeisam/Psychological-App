@@ -2,7 +2,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from '@tanstack/react-router'
 import type { UseMutationOptions, UseQueryOptions } from '@tanstack/react-query'
+import { toast } from 'sonner'
 import { queryKeys } from '@/core/constants/queryKeys'
+import { getApiErrorMessage } from '@/modules/app/utils/apiErrorMessage'
 import { getAuthToken, setAuthToken } from '@/modules/auth/constants/auth'
 import { getMe, login, logout, register } from '@/modules/auth/services'
 import type {
@@ -35,8 +37,13 @@ export const useLogin = (
     onSuccess: async (data, variables, context) => {
       setAuthToken(data.token)
       queryClient.setQueryData(queryKeys.me, data.user)
+      toast.success('با موفقیت وارد شدید')
       await options?.onSuccess?.(data, variables, context)
       await navigate({ to: '/profile' })
+    },
+    onError: async (error, variables, context) => {
+      toast.error(getApiErrorMessage(error))
+      await options?.onError?.(error, variables, context)
     },
   })
 }
@@ -53,8 +60,13 @@ export const useRegister = (
     onSuccess: async (data, variables, context) => {
       setAuthToken(data.token)
       queryClient.setQueryData(queryKeys.me, data.user)
+      toast.success('ثبت‌نام با موفقیت انجام شد')
       await options?.onSuccess?.(data, variables, context)
       await navigate({ to: '/profile' })
+    },
+    onError: async (error, variables, context) => {
+      toast.error(getApiErrorMessage(error))
+      await options?.onError?.(error, variables, context)
     },
   })
 }
@@ -71,12 +83,14 @@ export const useLogout = (
     onSuccess: async (data, variables, context) => {
       setAuthToken(null)
       queryClient.removeQueries({ queryKey: queryKeys.me })
+      toast.success('خارج شدید')
       await options?.onSuccess?.(data, variables, context)
       await navigate({ to: '/login' })
     },
     onError: async (error, variables, context) => {
       setAuthToken(null)
       queryClient.removeQueries({ queryKey: queryKeys.me })
+      toast.error(getApiErrorMessage(error))
       await options?.onError?.(error, variables, context)
       await navigate({ to: '/login' })
     },

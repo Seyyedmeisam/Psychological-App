@@ -17,7 +17,7 @@ class EnsureUserIsAdmin
         $user = $request->user();
 
         if (! $user || $user->role !== UserRole::Admin) {
-            abort(403, 'This action is unauthorized.');
+            abort(403, __('auth.unauthorized'));
         }
 
         return $next($request);

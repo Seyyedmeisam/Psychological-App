@@ -10,19 +10,14 @@ export function CtPublicHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/80 bg-card/85 shadow-ios-sm backdrop-blur-xl">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4">
         <CtAppLogo />
         <div className="flex flex-wrap items-center gap-3">
           <CtLocaleSwitcher />
           {user ? (
-            <>
-              <CtButton asChild variant="ghost" size="sm">
-                <Link to="/profile">{m.nav_profile()}</Link>
-              </CtButton>
-              <CtButton asChild size="sm">
-                <Link to="/books">{m.nav_books()}</Link>
-              </CtButton>
-            </>
+            <CtButton asChild variant="ghost" size="sm">
+              <Link to="/profile">{m.nav_profile()}</Link>
+            </CtButton>
           ) : (
             <>
               <CtButton asChild variant="ghost" size="sm">

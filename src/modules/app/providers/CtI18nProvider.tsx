@@ -1,7 +1,8 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import type { ReactNode } from 'react'
 import type { AppLocale } from '@/core/i18n/localeLabels'
 import { getDocumentDirection, getHtmlLang } from '@/core/i18n/locale'
-import { getLocale, setLocale } from '@/core/i18n/paraglide/runtime.js'
+import { getLocale, setLocale as setParaglideLocale } from '@/core/i18n/paraglide/runtime.js'
 
 type I18nContextValue = {
   locale: AppLocale
@@ -10,8 +11,8 @@ type I18nContextValue = {
 
 const I18nContext = createContext<I18nContextValue | null>(null)
 
-export function CtI18nProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<AppLocale>(() => getLocale() as AppLocale)
+export function CtI18nProvider({ children }: Readonly<{ children: ReactNode }>) {
+  const [locale, setLocale] = useState<AppLocale>(() => getLocale())
 
   useEffect(() => {
     const direction = getDocumentDirection(locale)
@@ -23,8 +24,8 @@ export function CtI18nProvider({ children }: { children: ReactNode }) {
     () => ({
       locale,
       setAppLocale: (nextLocale) => {
-        setLocale(nextLocale, { reload: false })
-        setLocaleState(nextLocale)
+        setParaglideLocale(nextLocale, { reload: false })
+        setLocale(nextLocale)
       },
     }),
     [locale],

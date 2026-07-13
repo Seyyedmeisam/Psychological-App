@@ -44,7 +44,7 @@ class AuthController extends Controller
 
         if (! $user || ! Hash::check($validated['password'], $user->password)) {
             throw ValidationException::withMessages([
-                'mobile' => ['The provided credentials are incorrect.'],
+                'mobile' => [__('auth.failed')],
             ]);
         }
 

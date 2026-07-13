@@ -24,14 +24,14 @@ export default function HomePage() {
         </CtCardHeader>
       </CtCard>
 
-      <CtSurface title={user ? m.nav_books() : m.auth_get_started()}>
+      <CtSurface title={user ? m.nav_profile() : m.auth_get_started()}>
         <CtGroup>
           <CtCard variant="grouped" className="border-0 shadow-none">
             <CtCardContent className="flex flex-wrap gap-3 py-4">
               {user ? (
                 <>
                   <CtButton asChild>
-                    <Link to="/books">{m.home_browse_books()}</Link>
+                    <Link to="/profile">{m.nav_profile()}</Link>
                   </CtButton>
                   <CtButton asChild variant="secondary">
                     <Link to="/about">{m.home_about()}</Link>

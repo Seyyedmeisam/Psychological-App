@@ -8,7 +8,6 @@ export const apiClient = axios.create({
     Accept: 'application/json',
     'Content-Type': 'application/json',
   },
-  withCredentials: true,
 })
 
 apiClient.interceptors.request.use((config) => {

@@ -60,9 +60,6 @@ export function CtProfileSummary({ user }: { user: AuthUser }) {
       </CtSurface>
 
       <div className="flex flex-wrap gap-3">
-        <CtButton asChild variant="secondary">
-          <Link to="/books">{m.nav_books()}</Link>
-        </CtButton>
         <CtButton
           type="button"
           variant="destructive"
