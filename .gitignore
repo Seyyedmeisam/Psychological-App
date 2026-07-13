@@ -11,3 +11,9 @@ dist-ssr
 .vinxi
 __unconfig*
 todos.json
+backend/vendor
+backend/.env
+backend/storage/*.key
+backend/database/database.sqlite
+frontend
+
