@@ -39,5 +39,10 @@ class DatabaseSeeder extends Seeder
                 'role' => UserRole::User,
             ],
         );
+
+        $this->call([
+            AreaOfExpertiseSeeder::class,
+            MentorAvailabilitySeeder::class,
+        ]);
     }
 }

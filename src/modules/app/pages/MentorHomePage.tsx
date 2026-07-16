@@ -34,6 +34,12 @@ export default function MentorHomePage() {
                 <Link to="/schedule">{m.nav_schedule()}</Link>
               </CtButton>
               <CtButton asChild variant="secondary">
+                <Link to="/appointments/expertise">{m.nav_expertise()}</Link>
+              </CtButton>
+              <CtButton asChild variant="secondary">
+                <Link to="/appointments">{m.nav_my_appointments()}</Link>
+              </CtButton>
+              <CtButton asChild variant="secondary">
                 <Link to="/profile">{m.nav_profile()}</Link>
               </CtButton>
             </CtCardContent>

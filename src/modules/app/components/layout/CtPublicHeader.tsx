@@ -2,11 +2,11 @@ import { Link } from '@tanstack/react-router'
 import { m } from '@/core/i18n/paraglide/messages.js'
 import { CtAppLogo } from '@/modules/app/components/layout/CtAppLogo'
 import { CtLocaleSwitcher } from '@/modules/app/components/locale/CtLocaleSwitcher'
-import { useMe } from '@/modules/auth/hooks'
 import { CtButton } from '@/modules/app/components/CtButton'
+import { useAuthSession } from '@/modules/auth/hooks'
 
 export function CtPublicHeader() {
-  const { data: user } = useMe()
+  const { hasToken } = useAuthSession()
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/80 bg-card/85 shadow-ios-sm backdrop-blur-xl">
@@ -14,7 +14,7 @@ export function CtPublicHeader() {
         <CtAppLogo />
         <div className="flex flex-wrap items-center gap-3">
           <CtLocaleSwitcher />
-          {user ? (
+          {hasToken ? (
             <CtButton asChild variant="ghost" size="sm">
               <Link to="/profile">{m.nav_profile()}</Link>
             </CtButton>

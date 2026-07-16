@@ -26,6 +26,22 @@ export const useMe = (
     ...options,
   })
 
+/** Session view for UI: trust token immediately to avoid guest/auth flicker. */
+export const useAuthSession = (
+  options?: Omit<UseQueryOptions<AuthUser>, 'queryKey' | 'queryFn'>,
+) => {
+  const hasToken = Boolean(getAuthToken())
+  const query = useMe(options)
+
+  return {
+    hasToken,
+    user: query.data,
+    /** Token present but /me has not resolved yet */
+    isResolving: hasToken && query.isLoading,
+    ...query,
+  }
+}
+
 export const useLogin = (
   options?: UseMutationOptions<AuthResponse, Error, LoginFormValues>,
 ) => {

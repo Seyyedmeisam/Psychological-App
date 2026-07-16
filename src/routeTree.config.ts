@@ -10,5 +10,6 @@ export const routes = rootRoute('__root.tsx', [
     physical('/users', '../modules/user/routes'),
     physical('/profile', '../modules/auth/routes/profile'),
     physical('/schedule', '../modules/schedule/routes'),
+    physical('/appointments', '../modules/appointment/routes'),
   ]),
 ])

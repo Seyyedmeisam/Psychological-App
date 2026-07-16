@@ -26,8 +26,8 @@ function formatMemberSince(value?: string) {
 
 export default function UserDetailPage() {
   const navigate = useNavigate()
-  const { userId } = useParams({ from: '/_panel/users/$userId/' })
-  const id = Number(userId)
+  const params = useParams({ strict: false })
+  const id = Number(params.userId)
   const { data, isLoading, isError, error } = useUser(id)
   const deleteUser = useDeleteUser({
     onSuccess: async () => {

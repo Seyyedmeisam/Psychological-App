@@ -31,10 +31,13 @@ export default function ClientHomePage() {
           <CtCard variant="grouped" className="border-0 shadow-none">
             <CtCardContent className="flex flex-wrap gap-3 py-4">
               <CtButton asChild>
-                <Link to="/profile">{m.nav_profile()}</Link>
+                <Link to="/appointments/book">{m.nav_book_appointment()}</Link>
               </CtButton>
               <CtButton asChild variant="secondary">
-                <Link to="/about">{m.home_about()}</Link>
+                <Link to="/appointments">{m.nav_my_appointments()}</Link>
+              </CtButton>
+              <CtButton asChild variant="secondary">
+                <Link to="/profile">{m.nav_profile()}</Link>
               </CtButton>
             </CtCardContent>
           </CtCard>

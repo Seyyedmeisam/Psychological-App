@@ -4,17 +4,67 @@ import { m } from '@/core/i18n/paraglide/messages.js'
 import { CtAppLogo } from '@/modules/app/components/layout/CtAppLogo'
 import { CtLocaleSwitcher } from '@/modules/app/components/locale/CtLocaleSwitcher'
 import { CtButton } from '@/modules/app/components/CtButton'
-import { useLogout, useMe } from '@/modules/auth/hooks'
+import { useAuthSession, useLogout } from '@/modules/auth/hooks'
 import { useSidebar } from '@/modules/app/providers/CtSidebarProvider'
 
+function HeaderAuthActions({
+  hasToken,
+  isResolving,
+  userName,
+  logoutPending,
+  onLogout,
+}: Readonly<{
+  hasToken: boolean
+  isResolving: boolean
+  userName?: string
+  logoutPending: boolean
+  onLogout: () => void
+}>) {
+  if (isResolving) {
+    return (
+      <div className="flex items-center gap-2">
+        <span className="inline-block h-4 w-24 animate-pulse rounded bg-muted" aria-hidden />
+        <span className="inline-block h-9 w-20 animate-pulse rounded-xl bg-muted" aria-hidden />
+      </div>
+    )
+  }
+
+  if (hasToken) {
+    return (
+      <div className="flex items-center gap-2">
+        {userName ? (
+          <span className="text-sm text-muted-foreground">{userName}</span>
+        ) : (
+          <span className="inline-block h-4 w-24 animate-pulse rounded bg-muted" aria-hidden />
+        )}
+        <CtButton
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={onLogout}
+          disabled={logoutPending}
+        >
+          {m.auth_logout()}
+        </CtButton>
+      </div>
+    )
+  }
+
+  return (
+    <CtButton asChild size="sm" variant="outline">
+      <Link to="/login">{m.auth_login()}</Link>
+    </CtButton>
+  )
+}
+
 export function CtHeader() {
-  const { data: user } = useMe()
+  const { hasToken, user, isResolving } = useAuthSession()
   const logout = useLogout()
   const { setMobileOpen, toggleCollapsed } = useSidebar()
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/80 bg-card/85 shadow-ios-sm backdrop-blur-xl">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4">
+    <header className="sticky top-0 z-40 w-full border-b border-border/80 bg-card/85 shadow-ios-sm backdrop-blur-xl">
+      <div className="flex w-full items-center justify-between gap-4 px-4 py-4">
         <div className="flex items-center gap-2">
           <CtButton
             type="button"
@@ -40,24 +90,13 @@ export function CtHeader() {
         </div>
         <div className="flex flex-wrap items-center gap-4">
           <CtLocaleSwitcher />
-          {user ? (
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">{user.name}</span>
-              <CtButton
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => logout.mutate()}
-                disabled={logout.isPending}
-              >
-                {m.auth_logout()}
-              </CtButton>
-            </div>
-          ) : (
-            <CtButton asChild size="sm" variant="outline">
-              <Link to="/login">{m.auth_login()}</Link>
-            </CtButton>
-          )}
+          <HeaderAuthActions
+            hasToken={hasToken}
+            isResolving={isResolving}
+            userName={user?.name}
+            logoutPending={logout.isPending}
+            onLogout={() => logout.mutate()}
+          />
         </div>
       </div>
     </header>

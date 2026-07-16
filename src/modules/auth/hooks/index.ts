@@ -1,4 +1,5 @@
 export {
+  useAuthSession,
   useLogin,
   useLoginForm,
   useLogout,

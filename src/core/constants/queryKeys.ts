@@ -9,4 +9,11 @@ export const queryKeys = {
   availability: ['availability'] as const,
   availabilityMine: ['availability', 'mine'] as const,
   availabilityTemplate: ['availability', 'template'] as const,
+  areasOfExpertise: ['areas-of-expertise'] as const,
+  mentorsForArea: (areaId: number) =>
+    ['areas-of-expertise', areaId, 'mentors'] as const,
+  mentorExpertise: ['mentor', 'expertise'] as const,
+  appointments: ['appointments'] as const,
+  appointmentSlots: (filters: Record<string, unknown>) =>
+    ['appointments', 'slots', filters] as const,
 } as const
