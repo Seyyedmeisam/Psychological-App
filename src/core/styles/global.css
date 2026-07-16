@@ -104,10 +104,26 @@
   animation: slide-up var(--motion-duration-slow) var(--motion-ease-spring);
 }
 
+@utility ios-sidebar-item {
+  animation: sidebar-item-in var(--motion-duration-normal) var(--motion-ease-out) both;
+}
+
 @keyframes slide-up {
   from {
     opacity: 0;
     transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sidebar-item-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
   }
 
   to {

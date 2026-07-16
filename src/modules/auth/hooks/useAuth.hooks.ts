@@ -13,6 +13,7 @@ import type {
   LoginFormValues,
   RegisterFormValues,
 } from '@/modules/auth/types'
+import { getHomePathByRole } from '@/modules/auth/utils/homePath'
 
 export const useMe = (
   options?: Omit<UseQueryOptions<AuthUser>, 'queryKey' | 'queryFn'>,
@@ -39,7 +40,7 @@ export const useLogin = (
       queryClient.setQueryData(queryKeys.me, data.user)
       toast.success('با موفقیت وارد شدید')
       await options?.onSuccess?.(data, variables, context)
-      await navigate({ to: '/profile' })
+      await navigate({ to: getHomePathByRole(data.user.role) })
     },
     onError: async (error, variables, context) => {
       toast.error(getApiErrorMessage(error))
@@ -62,7 +63,7 @@ export const useRegister = (
       queryClient.setQueryData(queryKeys.me, data.user)
       toast.success('ثبت‌نام با موفقیت انجام شد')
       await options?.onSuccess?.(data, variables, context)
-      await navigate({ to: '/profile' })
+      await navigate({ to: getHomePathByRole(data.user.role) })
     },
     onError: async (error, variables, context) => {
       toast.error(getApiErrorMessage(error))

@@ -14,12 +14,16 @@ import { Route as DotDotModulesAppLayoutsPanelRouteImport } from './modules/app/
 import { Route as IndexRouteImport } from './modules/app/routes/public/index'
 import { Route as RegisterRouteImport } from './modules/auth/routes/public/register'
 import { Route as LoginRouteImport } from './modules/auth/routes/public/login'
+import { Route as MentorRouteImport } from './modules/app/routes/panel/mentor'
+import { Route as HomeRouteImport } from './modules/app/routes/panel/home'
+import { Route as DashboardRouteImport } from './modules/app/routes/panel/dashboard'
 import { Route as AboutRouteImport } from './modules/app/routes/panel/about'
 import { Route as UsersIndexRouteImport } from './modules/user/routes/index'
+import { Route as ScheduleIndexRouteImport } from './modules/schedule/routes/index'
 import { Route as ProfileIndexRouteImport } from './modules/auth/routes/profile/index'
-import { Route as UsersUserIdIndexRouteImport } from './modules/user/routes/userId/index'
 import { Route as UsersUpsertIndexRouteImport } from './modules/user/routes/upsert/index'
-import { Route as UsersUpsertUserIdRouteImport } from './modules/user/routes/upsert/userId'
+import { Route as UsersUserIdIndexRouteImport } from './modules/user/routes/$userId/index'
+import { Route as UsersUpsertUserIdRouteImport } from './modules/user/routes/upsert/$userId'
 
 const DotDotModulesAppLayoutsPublicRoute =
   DotDotModulesAppLayoutsPublicRouteImport.update({
@@ -46,6 +50,21 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => DotDotModulesAppLayoutsPublicRoute,
 } as any)
+const MentorRoute = MentorRouteImport.update({
+  id: '/mentor',
+  path: '/mentor',
+  getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
+} as any)
+const HomeRoute = HomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -56,14 +75,14 @@ const UsersIndexRoute = UsersIndexRouteImport.update({
   path: '/users/',
   getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
 } as any)
+const ScheduleIndexRoute = ScheduleIndexRouteImport.update({
+  id: '/schedule/',
+  path: '/schedule/',
+  getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
+} as any)
 const ProfileIndexRoute = ProfileIndexRouteImport.update({
   id: '/profile/',
   path: '/profile/',
-  getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
-} as any)
-const UsersUserIdIndexRoute = UsersUserIdIndexRouteImport.update({
-  id: '/users/userId/',
-  path: '/users/userId/',
   getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
 } as any)
 const UsersUpsertIndexRoute = UsersUpsertIndexRouteImport.update({
@@ -71,84 +90,113 @@ const UsersUpsertIndexRoute = UsersUpsertIndexRouteImport.update({
   path: '/users/upsert/',
   getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
 } as any)
+const UsersUserIdIndexRoute = UsersUserIdIndexRouteImport.update({
+  id: '/users/$userId/',
+  path: '/users/$userId/',
+  getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
+} as any)
 const UsersUpsertUserIdRoute = UsersUpsertUserIdRouteImport.update({
-  id: '/users/upsert/userId',
-  path: '/users/upsert/userId',
+  id: '/users/upsert/$userId',
+  path: '/users/upsert/$userId',
   getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/dashboard': typeof DashboardRoute
+  '/home': typeof HomeRoute
+  '/mentor': typeof MentorRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/profile/': typeof ProfileIndexRoute
+  '/schedule/': typeof ScheduleIndexRoute
   '/users/': typeof UsersIndexRoute
-  '/users/upsert/userId': typeof UsersUpsertUserIdRoute
+  '/users/upsert/$userId': typeof UsersUpsertUserIdRoute
+  '/users/$userId/': typeof UsersUserIdIndexRoute
   '/users/upsert/': typeof UsersUpsertIndexRoute
-  '/users/userId/': typeof UsersUserIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/dashboard': typeof DashboardRoute
+  '/home': typeof HomeRoute
+  '/mentor': typeof MentorRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
   '/profile': typeof ProfileIndexRoute
+  '/schedule': typeof ScheduleIndexRoute
   '/users': typeof UsersIndexRoute
-  '/users/upsert/userId': typeof UsersUpsertUserIdRoute
+  '/users/upsert/$userId': typeof UsersUpsertUserIdRoute
+  '/users/$userId': typeof UsersUserIdIndexRoute
   '/users/upsert': typeof UsersUpsertIndexRoute
-  '/users/userId': typeof UsersUserIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_panel': typeof DotDotModulesAppLayoutsPanelRouteWithChildren
   '/_public': typeof DotDotModulesAppLayoutsPublicRouteWithChildren
   '/_panel/about': typeof AboutRoute
+  '/_panel/dashboard': typeof DashboardRoute
+  '/_panel/home': typeof HomeRoute
+  '/_panel/mentor': typeof MentorRoute
   '/_public/login': typeof LoginRoute
   '/_public/register': typeof RegisterRoute
   '/_public/': typeof IndexRoute
   '/_panel/profile/': typeof ProfileIndexRoute
+  '/_panel/schedule/': typeof ScheduleIndexRoute
   '/_panel/users/': typeof UsersIndexRoute
-  '/_panel/users/upsert/userId': typeof UsersUpsertUserIdRoute
+  '/_panel/users/upsert/$userId': typeof UsersUpsertUserIdRoute
+  '/_panel/users/$userId/': typeof UsersUserIdIndexRoute
   '/_panel/users/upsert/': typeof UsersUpsertIndexRoute
-  '/_panel/users/userId/': typeof UsersUserIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
+    | '/dashboard'
+    | '/home'
+    | '/mentor'
     | '/login'
     | '/register'
     | '/profile/'
+    | '/schedule/'
     | '/users/'
-    | '/users/upsert/userId'
+    | '/users/upsert/$userId'
+    | '/users/$userId/'
     | '/users/upsert/'
-    | '/users/userId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/dashboard'
+    | '/home'
+    | '/mentor'
     | '/login'
     | '/register'
     | '/profile'
+    | '/schedule'
     | '/users'
-    | '/users/upsert/userId'
+    | '/users/upsert/$userId'
+    | '/users/$userId'
     | '/users/upsert'
-    | '/users/userId'
   id:
     | '__root__'
     | '/_panel'
     | '/_public'
     | '/_panel/about'
+    | '/_panel/dashboard'
+    | '/_panel/home'
+    | '/_panel/mentor'
     | '/_public/login'
     | '/_public/register'
     | '/_public/'
     | '/_panel/profile/'
+    | '/_panel/schedule/'
     | '/_panel/users/'
-    | '/_panel/users/upsert/userId'
+    | '/_panel/users/upsert/$userId'
+    | '/_panel/users/$userId/'
     | '/_panel/users/upsert/'
-    | '/_panel/users/userId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -193,6 +241,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof DotDotModulesAppLayoutsPublicRoute
     }
+    '/_panel/mentor': {
+      id: '/_panel/mentor'
+      path: '/mentor'
+      fullPath: '/mentor'
+      preLoaderRoute: typeof MentorRouteImport
+      parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
+    }
+    '/_panel/home': {
+      id: '/_panel/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeRouteImport
+      parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
+    }
+    '/_panel/dashboard': {
+      id: '/_panel/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
+    }
     '/_panel/about': {
       id: '/_panel/about'
       path: '/about'
@@ -207,18 +276,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UsersIndexRouteImport
       parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
     }
+    '/_panel/schedule/': {
+      id: '/_panel/schedule/'
+      path: '/schedule'
+      fullPath: '/schedule/'
+      preLoaderRoute: typeof ScheduleIndexRouteImport
+      parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
+    }
     '/_panel/profile/': {
       id: '/_panel/profile/'
       path: '/profile'
       fullPath: '/profile/'
       preLoaderRoute: typeof ProfileIndexRouteImport
-      parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
-    }
-    '/_panel/users/userId/': {
-      id: '/_panel/users/userId/'
-      path: '/users/userId'
-      fullPath: '/users/userId/'
-      preLoaderRoute: typeof UsersUserIdIndexRouteImport
       parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
     }
     '/_panel/users/upsert/': {
@@ -228,10 +297,17 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UsersUpsertIndexRouteImport
       parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
     }
-    '/_panel/users/upsert/userId': {
-      id: '/_panel/users/upsert/userId'
-      path: '/users/upsert/userId'
-      fullPath: '/users/upsert/userId'
+    '/_panel/users/$userId/': {
+      id: '/_panel/users/$userId/'
+      path: '/users/$userId'
+      fullPath: '/users/$userId/'
+      preLoaderRoute: typeof UsersUserIdIndexRouteImport
+      parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
+    }
+    '/_panel/users/upsert/$userId': {
+      id: '/_panel/users/upsert/$userId'
+      path: '/users/upsert/$userId'
+      fullPath: '/users/upsert/$userId'
       preLoaderRoute: typeof UsersUpsertUserIdRouteImport
       parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
     }
@@ -240,21 +316,29 @@ declare module '@tanstack/react-router' {
 
 interface DotDotModulesAppLayoutsPanelRouteChildren {
   AboutRoute: typeof AboutRoute
+  DashboardRoute: typeof DashboardRoute
+  HomeRoute: typeof HomeRoute
+  MentorRoute: typeof MentorRoute
   ProfileIndexRoute: typeof ProfileIndexRoute
+  ScheduleIndexRoute: typeof ScheduleIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
   UsersUpsertUserIdRoute: typeof UsersUpsertUserIdRoute
-  UsersUpsertIndexRoute: typeof UsersUpsertIndexRoute
   UsersUserIdIndexRoute: typeof UsersUserIdIndexRoute
+  UsersUpsertIndexRoute: typeof UsersUpsertIndexRoute
 }
 
 const DotDotModulesAppLayoutsPanelRouteChildren: DotDotModulesAppLayoutsPanelRouteChildren =
   {
     AboutRoute: AboutRoute,
+    DashboardRoute: DashboardRoute,
+    HomeRoute: HomeRoute,
+    MentorRoute: MentorRoute,
     ProfileIndexRoute: ProfileIndexRoute,
+    ScheduleIndexRoute: ScheduleIndexRoute,
     UsersIndexRoute: UsersIndexRoute,
     UsersUpsertUserIdRoute: UsersUpsertUserIdRoute,
-    UsersUpsertIndexRoute: UsersUpsertIndexRoute,
     UsersUserIdIndexRoute: UsersUserIdIndexRoute,
+    UsersUpsertIndexRoute: UsersUpsertIndexRoute,
   }
 
 const DotDotModulesAppLayoutsPanelRouteWithChildren =

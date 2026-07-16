@@ -10,8 +10,10 @@ import type {
   UseMutationOptions,
   UseQueryOptions,
 } from '@tanstack/react-query'
+import { toast } from 'sonner'
 import { queryKeys } from '@/core/constants/queryKeys'
 import { pagination } from '@/core/constants/pagination'
+import { getApiErrorMessage } from '@/modules/app/utils/apiErrorMessage'
 import {
   createUser,
   deleteUser,
@@ -83,13 +85,18 @@ export const useCreateUser = (
 ) => {
   const queryClient = useQueryClient()
   return useMutation({
+    ...options,
     mutationFn: async (values: UserFormValues) =>
       normalizeUser(await createUser(values)) as User,
     onSuccess: async (...args) => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.users })
+      toast.success('کاربر ایجاد شد')
       await options?.onSuccess?.(...args)
     },
-    ...options,
+    onError: async (error, ...rest) => {
+      toast.error(getApiErrorMessage(error))
+      await options?.onError?.(error, ...rest)
+    },
   })
 }
 
@@ -99,14 +106,19 @@ export const useUpdateUser = (
 ) => {
   const queryClient = useQueryClient()
   return useMutation({
+    ...options,
     mutationFn: async (values: UserFormValues) =>
       normalizeUser(await updateUser(id, values)) as User,
     onSuccess: async (...args) => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.users })
       await queryClient.invalidateQueries({ queryKey: queryKeys.user(id) })
+      toast.success('کاربر به‌روزرسانی شد')
       await options?.onSuccess?.(...args)
     },
-    ...options,
+    onError: async (error, ...rest) => {
+      toast.error(getApiErrorMessage(error))
+      await options?.onError?.(error, ...rest)
+    },
   })
 }
 
@@ -115,13 +127,18 @@ export const useDeleteUser = (
 ) => {
   const queryClient = useQueryClient()
   return useMutation({
+    ...options,
     mutationFn: deleteUser,
     onSuccess: async (data, id, ...rest) => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.users })
       await queryClient.invalidateQueries({ queryKey: queryKeys.user(id) })
+      toast.success('کاربر حذف شد')
       await options?.onSuccess?.(data, id, ...rest)
     },
-    ...options,
+    onError: async (error, ...rest) => {
+      toast.error(getApiErrorMessage(error))
+      await options?.onError?.(error, ...rest)
+    },
   })
 }
 

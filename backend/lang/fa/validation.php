@@ -157,8 +157,10 @@ return [
     'uuid' => 'فیلد :attribute باید یک UUID معتبر باشد.',
 
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
+        'mobile' => [
+            'unique' => 'این شماره موبایل قبلاً ثبت شده است. هر شماره فقط یک‌بار می‌تواند ثبت‌نام کند.',
+            'required' => 'شماره موبایل الزامی است.',
+            'regex' => 'شماره موبایل معتبر نیست.',
         ],
     ],
 
@@ -169,6 +171,9 @@ return [
         'password' => 'رمز عبور',
         'password_confirmation' => 'تکرار رمز عبور',
         'role' => 'نقش',
+        'day_of_week' => 'روز هفته',
+        'start_time' => 'ساعت شروع',
+        'slots' => 'زمان‌های جلسه',
     ],
 
 ];

@@ -179,8 +179,10 @@ return [
     */
 
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
+        'mobile' => [
+            'unique' => 'This mobile number is already registered. Each mobile can only register once.',
+            'required' => 'The mobile number is required.',
+            'regex' => 'The mobile number format is invalid.',
         ],
     ],
 
