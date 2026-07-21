@@ -2,50 +2,39 @@ import { Link } from '@tanstack/react-router'
 import { Menu } from 'lucide-react'
 import { m } from '@/core/i18n/paraglide/messages.js'
 import { CtAppLogo } from '@/modules/app/components/layout/CtAppLogo'
+import { CtUserMenu } from '@/modules/app/components/layout/CtUserMenu'
 import { CtLocaleSwitcher } from '@/modules/app/components/locale/CtLocaleSwitcher'
 import { CtButton } from '@/modules/app/components/CtButton'
-import { useAuthSession, useLogout } from '@/modules/auth/hooks'
+import { useAuthSession } from '@/modules/auth/hooks'
 import { useSidebar } from '@/modules/app/providers/CtSidebarProvider'
 
 function HeaderAuthActions({
   hasToken,
   isResolving,
-  userName,
-  logoutPending,
-  onLogout,
+  user,
 }: Readonly<{
   hasToken: boolean
   isResolving: boolean
-  userName?: string
-  logoutPending: boolean
-  onLogout: () => void
+  user?: NonNullable<ReturnType<typeof useAuthSession>['user']>
 }>) {
   if (isResolving) {
     return (
       <div className="flex items-center gap-2">
+        <span className="inline-block size-7 animate-pulse rounded-lg bg-muted" aria-hidden />
         <span className="inline-block h-4 w-24 animate-pulse rounded bg-muted" aria-hidden />
-        <span className="inline-block h-9 w-20 animate-pulse rounded-xl bg-muted" aria-hidden />
       </div>
     )
+  }
+
+  if (hasToken && user) {
+    return <CtUserMenu user={user} />
   }
 
   if (hasToken) {
     return (
       <div className="flex items-center gap-2">
-        {userName ? (
-          <span className="text-sm text-muted-foreground">{userName}</span>
-        ) : (
-          <span className="inline-block h-4 w-24 animate-pulse rounded bg-muted" aria-hidden />
-        )}
-        <CtButton
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={onLogout}
-          disabled={logoutPending}
-        >
-          {m.auth_logout()}
-        </CtButton>
+        <span className="inline-block size-7 animate-pulse rounded-lg bg-muted" aria-hidden />
+        <span className="inline-block h-4 w-24 animate-pulse rounded bg-muted" aria-hidden />
       </div>
     )
   }
@@ -59,7 +48,6 @@ function HeaderAuthActions({
 
 export function CtHeader() {
   const { hasToken, user, isResolving } = useAuthSession()
-  const logout = useLogout()
   const { setMobileOpen, toggleCollapsed } = useSidebar()
 
   return (
@@ -93,9 +81,7 @@ export function CtHeader() {
           <HeaderAuthActions
             hasToken={hasToken}
             isResolving={isResolving}
-            userName={user?.name}
-            logoutPending={logout.isPending}
-            onLogout={() => logout.mutate()}
+            user={user}
           />
         </div>
       </div>
