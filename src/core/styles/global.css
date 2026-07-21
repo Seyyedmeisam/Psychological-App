@@ -108,6 +108,34 @@
   animation: sidebar-item-in var(--motion-duration-normal) var(--motion-ease-out) both;
 }
 
+@utility home-reveal {
+  opacity: 0;
+  animation: login-fade-up 560ms var(--motion-ease-spring) both;
+}
+
+@utility home-card-lift {
+  transition:
+    transform var(--motion-duration-normal) var(--motion-ease-out),
+    box-shadow var(--motion-duration-normal) var(--motion-ease-out);
+}
+
+@utility home-card-lift-hover {
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-ios-md);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
 @keyframes slide-up {
   from {
     opacity: 0;

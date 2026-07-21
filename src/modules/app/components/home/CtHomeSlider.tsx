@@ -4,8 +4,8 @@ import {
   useEffect,
   useRef,
   useState,
-  type ReactNode,
 } from 'react'
+import type { ReactNode } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { CtButton } from '@/modules/app/components/CtButton'
@@ -45,10 +45,22 @@ export function CtHomeSlider({
   useEffect(() => {
     if (paused || slides.length <= 1) return
     const id = window.setInterval(() => {
-      goTo(index + 1)
+      setIndex((current) => {
+        const next = (current + 1) % slides.length
+        const track = trackRef.current
+        const target = track?.querySelector<HTMLElement>(
+          `[data-slide-index="${next}"]`,
+        )
+        target?.scrollIntoView({
+          behavior: 'smooth',
+          inline: 'start',
+          block: 'nearest',
+        })
+        return next
+      })
     }, intervalMs)
     return () => window.clearInterval(id)
-  }, [goTo, index, intervalMs, paused, slides.length])
+  }, [intervalMs, paused, slides.length])
 
   useEffect(() => {
     const track = trackRef.current
@@ -56,12 +68,16 @@ export function CtHomeSlider({
 
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
-        if (!visible) return
+        let best: IntersectionObserverEntry | undefined
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue
+          if (!best || entry.intersectionRatio > best.intersectionRatio) {
+            best = entry
+          }
+        }
+        if (!best) return
         const nextIndex = Number(
-          (visible.target as HTMLElement).dataset.slideIndex ?? 0,
+          (best.target as HTMLElement).dataset.slideIndex ?? 0,
         )
         setIndex(nextIndex)
       },
@@ -80,14 +96,14 @@ export function CtHomeSlider({
       onMouseLeave={() => setPaused(false)}
       onFocusCapture={() => setPaused(true)}
       onBlurCapture={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+        if (!event.currentTarget.contains(event.relatedTarget)) {
           setPaused(false)
         }
       }}
     >
       <div
         ref={trackRef}
-        className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2 scrollbar-none"
       >
         {slides.map((slide, i) => (
           <div

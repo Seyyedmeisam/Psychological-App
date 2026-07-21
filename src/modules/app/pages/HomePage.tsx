@@ -3,10 +3,25 @@ import { BookOpen, HeartHandshake, ShieldCheck, Sparkles } from 'lucide-react'
 import { m } from '@/core/i18n/paraglide/messages.js'
 import { useAuthSession } from '@/modules/auth/hooks'
 import { CtButton } from '@/modules/app/components/CtButton'
+import {
+  CtCard,
+  CtCardContent,
+  CtCardDescription,
+  CtCardHeader,
+  CtCardTitle,
+} from '@/modules/app/components/CtCard'
+import { CtHomeSlider } from '@/modules/app/components/home/CtHomeSlider'
 import { getHomePathByRole } from '@/modules/auth/utils/homePath'
+import { cn } from '@/lib/utils'
 
 const HERO_IMAGE =
   'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=1600&q=80'
+
+const articleImages = [
+  'https://images.unsplash.com/photo-1573497620053-ea5300f94f21?auto=format&fit=crop&w=900&q=80',
+  'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&w=900&q=80',
+  'https://images.unsplash.com/photo-1516302752623-603f376f5ace?auto=format&fit=crop&w=900&q=80',
+] as const
 
 const values = [
   {
@@ -31,16 +46,37 @@ const articles = [
     tag: () => m.home_article_1_tag(),
     title: () => m.home_article_1_title(),
     excerpt: () => m.home_article_1_excerpt(),
+    image: articleImages[0],
   },
   {
     tag: () => m.home_article_2_tag(),
     title: () => m.home_article_2_title(),
     excerpt: () => m.home_article_2_excerpt(),
+    image: articleImages[1],
   },
   {
     tag: () => m.home_article_3_tag(),
     title: () => m.home_article_3_title(),
     excerpt: () => m.home_article_3_excerpt(),
+    image: articleImages[2],
+  },
+] as const
+
+const steps = [
+  {
+    n: '1',
+    title: () => m.home_step_1_title(),
+    body: () => m.home_step_1_body(),
+  },
+  {
+    n: '2',
+    title: () => m.home_step_2_title(),
+    body: () => m.home_step_2_body(),
+  },
+  {
+    n: '3',
+    title: () => m.home_step_3_title(),
+    body: () => m.home_step_3_body(),
   },
 ] as const
 
@@ -66,24 +102,41 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      {/* Hero */}
       <section className="relative isolate min-h-[min(92vh,40rem)] overflow-hidden border-b border-border sm:min-h-[min(88vh,44rem)]">
         <img
           src={HERO_IMAGE}
           alt=""
-          className="absolute inset-0 -z-20 size-full object-cover object-[center_30%]"
+          className="absolute inset-0 -z-20 size-full object-cover object-[center_30%] motion-safe:animate-[login-kenburns_24s_ease-out_forwards]"
         />
         <div className="absolute inset-0 -z-10 bg-card/78 sm:bg-card/72" />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -inset-s-20 top-10 -z-10 size-64 rounded-full bg-primary/15 blur-3xl motion-safe:animate-[login-breathe_9s_ease-in-out_infinite]"
+        />
         <div className="mx-auto flex min-h-[min(92vh,40rem)] w-full max-w-6xl items-end px-4 py-14 sm:min-h-[min(88vh,44rem)] sm:items-center sm:px-6 sm:py-20">
-          <div className="ios-slide-up max-w-xl">
-            <p className="mb-4 text-sm font-semibold tracking-wide text-primary">{m.app_name()}</p>
-            <h1 className="text-balance text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+          <div className="max-w-xl">
+            <p
+              className="home-reveal mb-4 text-sm font-semibold tracking-wide text-primary"
+              style={{ animationDelay: '80ms' }}
+            >
+              {m.app_name()}
+            </p>
+            <h1
+              className="home-reveal text-balance text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-5xl"
+              style={{ animationDelay: '160ms' }}
+            >
               {m.home_hero_title()}
             </h1>
-            <p className="mt-5 max-w-lg text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
+            <p
+              className="home-reveal mt-5 max-w-lg text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg"
+              style={{ animationDelay: '260ms' }}
+            >
               {m.home_hero_subtitle()}
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div
+              className="home-reveal mt-8 flex flex-wrap gap-3"
+              style={{ animationDelay: '360ms' }}
+            >
               {isResolving ? (
                 <>
                   <span className="inline-block h-12 w-36 animate-pulse rounded-xl bg-muted" aria-hidden />
@@ -91,10 +144,19 @@ export default function HomePage() {
                 </>
               ) : (
                 <>
-                  <CtButton asChild size="lg">
+                  <CtButton
+                    asChild
+                    size="lg"
+                    className="transition-transform duration-(--motion-duration-fast) hover:scale-[1.02] active:scale-[0.98]"
+                  >
                     <Link to={primaryTo}>{primaryLabel}</Link>
                   </CtButton>
-                  <CtButton asChild size="lg" variant="secondary">
+                  <CtButton
+                    asChild
+                    size="lg"
+                    variant="secondary"
+                    className="transition-transform duration-(--motion-duration-fast) hover:scale-[1.02] active:scale-[0.98]"
+                  >
                     <Link to={secondaryTo}>{secondaryLabel}</Link>
                   </CtButton>
                 </>
@@ -104,26 +166,44 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Values */}
       <section className="border-b border-border bg-background px-4 py-14 sm:px-6 sm:py-16">
         <div className="mx-auto max-w-6xl">
           <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            <h2 className="home-reveal text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
               {m.home_values_title()}
             </h2>
-            <p className="mt-3 text-pretty text-muted-foreground">{m.home_values_subtitle()}</p>
+            <p
+              className="home-reveal mt-3 text-pretty text-muted-foreground"
+              style={{ animationDelay: '100ms' }}
+            >
+              {m.home_values_subtitle()}
+            </p>
           </div>
 
-          <ul className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-10">
-            {values.map((item) => {
+          <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5">
+            {values.map((item, i) => {
               const Icon = item.icon
               return (
-                <li key={item.title()} className="ios-fade-in text-start">
-                  <div className="mb-4 inline-flex size-11 items-center justify-center rounded-xl bg-accent text-accent-foreground">
-                    <Icon className="size-5" aria-hidden />
-                  </div>
-                  <h3 className="text-lg font-semibold text-foreground">{item.title()}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.body()}</p>
+                <li
+                  key={item.title()}
+                  className="home-reveal"
+                  style={{ animationDelay: `${160 + i * 100}ms` }}
+                >
+                  <CtCard
+                    className={cn(
+                      'home-card-lift home-card-lift-hover h-full border border-border/70',
+                    )}
+                  >
+                    <CtCardHeader>
+                      <div className="mb-2 inline-flex size-11 items-center justify-center rounded-xl bg-accent text-accent-foreground transition-transform duration-(--motion-duration-normal) group-hover:scale-105">
+                        <Icon className="size-5" aria-hidden />
+                      </div>
+                      <CtCardTitle className="text-lg">{item.title()}</CtCardTitle>
+                      <CtCardDescription className="text-sm leading-relaxed">
+                        {item.body()}
+                      </CtCardDescription>
+                    </CtCardHeader>
+                  </CtCard>
                 </li>
               )
             })}
@@ -131,100 +211,133 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Articles */}
       <section className="border-b border-border bg-card px-4 py-14 sm:px-6 sm:py-16">
         <div className="mx-auto max-w-6xl">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div className="max-w-2xl">
-              <div className="mb-3 inline-flex items-center gap-2 text-primary">
-                <BookOpen className="size-4" aria-hidden />
-                <span className="text-sm font-semibold">{m.home_articles_kicker()}</span>
-              </div>
-              <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                {m.home_articles_title()}
-              </h2>
-              <p className="mt-3 text-pretty text-muted-foreground">{m.home_articles_subtitle()}</p>
+          <div className="mb-8 max-w-2xl">
+            <div
+              className="home-reveal mb-3 inline-flex items-center gap-2 text-primary"
+              style={{ animationDelay: '60ms' }}
+            >
+              <BookOpen className="size-4" aria-hidden />
+              <span className="text-sm font-semibold">{m.home_articles_kicker()}</span>
             </div>
+            <h2
+              className="home-reveal text-2xl font-bold tracking-tight text-foreground sm:text-3xl"
+              style={{ animationDelay: '120ms' }}
+            >
+              {m.home_articles_title()}
+            </h2>
+            <p
+              className="home-reveal mt-3 text-pretty text-muted-foreground"
+              style={{ animationDelay: '180ms' }}
+            >
+              {m.home_articles_subtitle()}
+            </p>
           </div>
 
-          <div className="mt-10 divide-y divide-border border-y border-border">
-            {articles.map((article) => (
-              <article key={article.title()} className="grid gap-3 py-8 sm:grid-cols-[8rem_1fr] sm:gap-8">
-                <p className="text-xs font-semibold uppercase tracking-wide text-primary sm:pt-1">
-                  {article.tag()}
-                </p>
-                <div>
-                  <h3 className="text-xl font-semibold tracking-tight text-foreground">
-                    {article.title()}
-                  </h3>
-                  <p className="mt-3 max-w-3xl text-pretty text-sm leading-relaxed text-muted-foreground sm:text-base">
-                    {article.excerpt()}
-                  </p>
-                </div>
-              </article>
-            ))}
+          <div className="home-reveal" style={{ animationDelay: '240ms' }}>
+            <CtHomeSlider
+              previousLabel={m.home_slider_previous()}
+              nextLabel={m.home_slider_next()}
+            >
+              {articles.map((article) => (
+                <CtCard
+                  key={article.title()}
+                  className="home-card-lift home-card-lift-hover h-full overflow-hidden border border-border/70 py-0"
+                >
+                  <div className="relative h-40 overflow-hidden">
+                    <img
+                      src={article.image}
+                      alt=""
+                      className="size-full object-cover transition-transform duration-700 ease-(--motion-ease-out) hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-linear-to-t from-card/80 to-transparent" />
+                  </div>
+                  <CtCardHeader className="pt-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-primary">
+                      {article.tag()}
+                    </p>
+                    <CtCardTitle className="text-lg leading-snug">
+                      {article.title()}
+                    </CtCardTitle>
+                  </CtCardHeader>
+                  <CtCardContent className="pb-5">
+                    <p className="line-clamp-4 text-sm leading-relaxed text-muted-foreground">
+                      {article.excerpt()}
+                    </p>
+                  </CtCardContent>
+                </CtCard>
+              ))}
+            </CtHomeSlider>
           </div>
         </div>
       </section>
 
-      {/* Approach */}
       <section className="border-b border-border bg-background px-4 py-14 sm:px-6 sm:py-16">
-        <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-2 lg:items-start lg:gap-16">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+        <div className="mx-auto max-w-6xl">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="home-reveal text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
               {m.home_approach_title()}
             </h2>
-            <p className="mt-4 text-pretty leading-relaxed text-muted-foreground">
+            <p
+              className="home-reveal mt-4 text-pretty leading-relaxed text-muted-foreground"
+              style={{ animationDelay: '100ms' }}
+            >
               {m.home_approach_body()}
             </p>
           </div>
-          <ol className="space-y-6">
-            <li className="flex gap-4">
-              <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent text-sm font-semibold text-accent-foreground">
-                1
-              </span>
-              <div>
-                <p className="font-semibold text-foreground">{m.home_step_1_title()}</p>
-                <p className="mt-1 text-sm text-muted-foreground">{m.home_step_1_body()}</p>
-              </div>
-            </li>
-            <li className="flex gap-4">
-              <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent text-sm font-semibold text-accent-foreground">
-                2
-              </span>
-              <div>
-                <p className="font-semibold text-foreground">{m.home_step_2_title()}</p>
-                <p className="mt-1 text-sm text-muted-foreground">{m.home_step_2_body()}</p>
-              </div>
-            </li>
-            <li className="flex gap-4">
-              <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-accent text-sm font-semibold text-accent-foreground">
-                3
-              </span>
-              <div>
-                <p className="font-semibold text-foreground">{m.home_step_3_title()}</p>
-                <p className="mt-1 text-sm text-muted-foreground">{m.home_step_3_body()}</p>
-              </div>
-            </li>
+
+          <ol className="mt-10 grid gap-4 sm:grid-cols-3">
+            {steps.map((step, i) => (
+              <li
+                key={step.n}
+                className="home-reveal"
+                style={{ animationDelay: `${160 + i * 110}ms` }}
+              >
+                <CtCard className="home-card-lift home-card-lift-hover h-full border border-border/70">
+                  <CtCardHeader>
+                    <span className="mb-2 flex size-9 items-center justify-center rounded-lg bg-accent text-sm font-semibold text-accent-foreground">
+                      {step.n}
+                    </span>
+                    <CtCardTitle className="text-base">{step.title()}</CtCardTitle>
+                    <CtCardDescription>{step.body()}</CtCardDescription>
+                  </CtCardHeader>
+                </CtCard>
+              </li>
+            ))}
           </ol>
         </div>
       </section>
 
-      {/* Closing CTA */}
       <section className="bg-card px-4 py-14 sm:px-6 sm:py-16">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            {m.home_cta_title()}
-          </h2>
-          <p className="mx-auto mt-3 max-w-xl text-pretty text-muted-foreground">{m.home_cta_body()}</p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <CtButton asChild size="lg">
-              <Link to={primaryTo}>{primaryLabel}</Link>
-            </CtButton>
-            <CtButton asChild size="lg" variant="outline">
-              <Link to="/about">{m.home_about()}</Link>
-            </CtButton>
-          </div>
+        <div className="home-reveal mx-auto max-w-3xl">
+          <CtCard className="home-card-lift border border-border/70 text-center shadow-ios-md">
+            <CtCardHeader className="items-center">
+              <CtCardTitle className="text-2xl sm:text-3xl">
+                {m.home_cta_title()}
+              </CtCardTitle>
+              <CtCardDescription className="mx-auto max-w-xl text-base">
+                {m.home_cta_body()}
+              </CtCardDescription>
+            </CtCardHeader>
+            <CtCardContent className="flex flex-wrap justify-center gap-3 pb-6">
+              <CtButton
+                asChild
+                size="lg"
+                className="transition-transform duration-(--motion-duration-fast) hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <Link to={primaryTo}>{primaryLabel}</Link>
+              </CtButton>
+              <CtButton
+                asChild
+                size="lg"
+                variant="outline"
+                className="transition-transform duration-(--motion-duration-fast) hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <Link to="/about">{m.home_about()}</Link>
+              </CtButton>
+            </CtCardContent>
+          </CtCard>
         </div>
       </section>
     </div>

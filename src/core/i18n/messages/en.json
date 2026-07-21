@@ -47,6 +47,8 @@
   "home_step_3_body": "Show up ready to talk. Progress builds through consistency, not perfection.",
   "home_cta_title": "Ready when you are",
   "home_cta_body": "Taking the first step is often the hardest part. Start today—quietly, securely, and on your terms.",
+  "home_slider_previous": "Previous slide",
+  "home_slider_next": "Next slide",
   "about_title": "About",
   "about_description": "This application uses a Laravel API backend and a TanStack Start SPA frontend with modular architecture and multi-language support.",
   "not_found_title": "Page not found",

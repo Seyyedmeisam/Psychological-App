@@ -40,6 +40,8 @@
   "home_step_3_body": "准备好倾诉即可到来。进步来自持续，而非完美。",
   "home_cta_title": "你准备好时，我们都在",
   "home_cta_body": "迈出第一步往往最难。今天就开始——安静、安全，并且按你自己的节奏。",
+  "home_slider_previous": "上一张",
+  "home_slider_next": "下一张",
   "about_title": "关于",
   "about_description": "本应用后端使用 Laravel API，前端使用 TanStack Start SPA，采用模块化架构并支持多语言。",
   "not_found_title": "页面未找到",

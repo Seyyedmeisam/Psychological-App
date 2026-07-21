@@ -137,7 +137,7 @@ export default function MentorHomePage() {
                 </button>
                 {profileQuery.data.expertise.map((area) => {
                   const count =
-                    profileQuery.data?.meetings_by_expertise.find(
+                    profileQuery.data.meetings_by_expertise.find(
                       (item) => item.area_of_expertise_id === area.id,
                     )?.meetings_done ?? 0
                   return (

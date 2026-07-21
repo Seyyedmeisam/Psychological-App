@@ -40,6 +40,8 @@
   "home_step_3_body": "Konuşmaya hazır gelin. İlerleme mükemmellikten değil, süreklilikten gelir.",
   "home_cta_title": "Siz hazır olduğunuzda",
   "home_cta_body": "İlk adımı atmak çoğu zaman en zor kısımdır. Bugün başlayın—sessizce, güvenli ve kendi koşullarınıza göre.",
+  "home_slider_previous": "Önceki slayt",
+  "home_slider_next": "Sonraki slayt",
   "about_title": "Hakkında",
   "about_description": "Bu uygulama Laravel API arka ucu ve modüler mimari ile çok dilli destek sunan TanStack Start SPA ön ucu kullanır.",
   "not_found_title": "Sayfa bulunamadı",
