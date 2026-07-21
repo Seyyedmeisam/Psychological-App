@@ -56,7 +56,7 @@ class AreaOfExpertiseController extends Controller
     public function mentorsForArea(AreaOfExpertise $areaOfExpertise): JsonResponse
     {
         $mentors = User::query()
-            ->where('role', UserRole::Mentor)
+            ->approvedMentors()
             ->whereHas('areasOfExpertise', static function ($query) use ($areaOfExpertise): void {
                 $query->where('areas_of_expertise.id', $areaOfExpertise->id);
             })

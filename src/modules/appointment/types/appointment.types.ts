@@ -166,8 +166,6 @@ export type MentorProfile = {
     meetings_done: number
     meetings_upcoming: number
     meetings_cancelled: number
-    rating_average: number | null
-    rating_count: number
   }
   expertise: Array<{
     id: number
@@ -204,6 +202,5 @@ export type MentorProfile = {
       name: string
       name_en: string | null
     } | null
-    rating: AppointmentRating | null
   }>
 }

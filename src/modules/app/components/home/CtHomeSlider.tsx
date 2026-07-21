@@ -18,6 +18,15 @@ type CtHomeSliderProps = Readonly<{
   nextLabel: string
 }>
 
+function scrollSlideIntoTrack(track: HTMLElement, slide: HTMLElement) {
+  const trackRect = track.getBoundingClientRect()
+  const slideRect = slide.getBoundingClientRect()
+  track.scrollBy({
+    left: slideRect.left - trackRect.left,
+    behavior: 'smooth',
+  })
+}
+
 export function CtHomeSlider({
   children,
   intervalMs = 5500,
@@ -36,7 +45,7 @@ export function CtHomeSlider({
       if (!track || slides.length === 0) return
       const clamped = ((next % slides.length) + slides.length) % slides.length
       const target = track.querySelector<HTMLElement>(`[data-slide-index="${clamped}"]`)
-      target?.scrollIntoView({ behavior: 'smooth', inline: 'start', block: 'nearest' })
+      if (target) scrollSlideIntoTrack(track, target)
       setIndex(clamped)
     },
     [slides.length],
@@ -51,11 +60,7 @@ export function CtHomeSlider({
         const target = track?.querySelector<HTMLElement>(
           `[data-slide-index="${next}"]`,
         )
-        target?.scrollIntoView({
-          behavior: 'smooth',
-          inline: 'start',
-          block: 'nearest',
-        })
+        if (track && target) scrollSlideIntoTrack(track, target)
         return next
       })
     }, intervalMs)
@@ -109,7 +114,7 @@ export function CtHomeSlider({
           <div
             key={i}
             data-slide-index={i}
-            className="w-[min(100%,22rem)] shrink-0 snap-start sm:w-[min(100%,26rem)]"
+            className="w-[min(100%,18.5rem)] shrink-0 snap-start sm:w-[min(100%,20.5rem)]"
           >
             {slide}
           </div>
@@ -143,7 +148,7 @@ export function CtHomeSlider({
             aria-label={previousLabel}
             onClick={() => goTo(index - 1)}
           >
-            <ChevronLeft className="size-4" aria-hidden />
+            <ChevronLeft className="size-4 rtl:rotate-180" aria-hidden />
           </CtButton>
           <CtButton
             type="button"
@@ -152,7 +157,7 @@ export function CtHomeSlider({
             aria-label={nextLabel}
             onClick={() => goTo(index + 1)}
           >
-            <ChevronRight className="size-4" aria-hidden />
+            <ChevronRight className="size-4 rtl:rotate-180" aria-hidden />
           </CtButton>
         </div>
       </div>

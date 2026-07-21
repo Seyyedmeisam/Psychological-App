@@ -18,6 +18,9 @@ export const queryKeys = {
     ['appointments', 'slots', filters] as const,
   adminStats: ['admin', 'stats'] as const,
   mentorProfile: ['mentor', 'profile'] as const,
+  mentorVerification: ['mentor', 'verification'] as const,
+  adminMentorVerifications: (status?: string) =>
+    ['admin', 'mentor-verifications', status ?? 'pending'] as const,
   chats: ['chats'] as const,
   chatPeople: (search?: string) => ['chats', 'people', search ?? ''] as const,
   chatMessages: (id: number) => ['chats', id, 'messages'] as const,

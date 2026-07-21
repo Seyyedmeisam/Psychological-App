@@ -5,9 +5,9 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * Cancelled appointments used to keep the unique (mentor, date, start) row,
- * which blocked rebooking the same slot. Occupancy is enforced in app code
- * for confirmed appointments only.
+ * Cancelled appointments kept the unique (mentor, date, start) slot occupied,
+ * so clients could not rebook a freed slot. Occupancy is enforced in app code
+ * for status=confirmed only.
  */
 return new class extends Migration
 {
@@ -16,18 +16,10 @@ return new class extends Migration
         Schema::table('appointments', function (Blueprint $table): void {
             $table->dropUnique(['mentor_id', 'date', 'start_time']);
         });
-
-        Schema::table('appointments', function (Blueprint $table): void {
-            $table->index(['mentor_id', 'date', 'start_time', 'status'], 'appointments_mentor_slot_status_index');
-        });
     }
 
     public function down(): void
     {
-        Schema::table('appointments', function (Blueprint $table): void {
-            $table->dropIndex('appointments_mentor_slot_status_index');
-        });
-
         Schema::table('appointments', function (Blueprint $table): void {
             $table->unique(['mentor_id', 'date', 'start_time']);
         });

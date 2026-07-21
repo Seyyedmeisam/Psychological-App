@@ -49,7 +49,9 @@ class AppointmentController extends Controller
             $query->where('client_id', $user->id);
         }
 
-        $appointments = $query->get()->map(fn (Appointment $appointment) => $this->formatAppointment($appointment));
+        $appointments = $query->get()->map(
+            fn (Appointment $appointment) => $this->formatAppointment($appointment, $user),
+        );
 
         return response()->json(['data' => $appointments]);
     }
@@ -69,7 +71,7 @@ class AppointmentController extends Controller
         $mentorId = isset($validated['mentor_id']) ? (int) $validated['mentor_id'] : null;
 
         $mentors = User::query()
-            ->where('role', UserRole::Mentor)
+            ->approvedMentors()
             ->whereHas('areasOfExpertise', static function ($query) use ($areaId): void {
                 $query->where('areas_of_expertise.id', $areaId);
             })
@@ -174,8 +176,15 @@ class AppointmentController extends Controller
         $area = AreaOfExpertise::query()->findOrFail($data['area_of_expertise_id']);
         $mentor = User::query()
             ->where('role', UserRole::Mentor)
+            ->approvedMentors()
             ->whereKey($data['mentor_id'])
-            ->firstOrFail();
+            ->first();
+
+        if (! $mentor) {
+            throw ValidationException::withMessages([
+                'mentor_id' => ['Selected mentor is not available for booking.'],
+            ]);
+        }
 
         if (! $mentor->areasOfExpertise()->where('areas_of_expertise.id', $area->id)->exists()) {
             throw ValidationException::withMessages([
@@ -248,7 +257,7 @@ class AppointmentController extends Controller
         ]);
 
         return response()->json([
-            'data' => $this->formatAppointment($appointment),
+            'data' => $this->formatAppointment($appointment, $request->user()),
         ], 201);
     }
 
@@ -293,7 +302,7 @@ class AppointmentController extends Controller
         ]);
 
         return response()->json([
-            'data' => $this->formatAppointment($appointment),
+            'data' => $this->formatAppointment($appointment, $user),
         ]);
     }
 
@@ -322,7 +331,7 @@ class AppointmentController extends Controller
         ]);
 
         return response()->json([
-            'data' => $this->formatAppointment($appointment),
+            'data' => $this->formatAppointment($appointment, $request->user()),
         ]);
     }
 
@@ -371,18 +380,24 @@ class AppointmentController extends Controller
         ]);
 
         return response()->json([
-            'data' => $this->formatAppointment($appointment),
+            'data' => $this->formatAppointment($appointment, $user),
         ], 201);
     }
 
     /**
+     * Ratings / mentor rank are admin-only (plus the client who submitted their own score).
+     *
      * @return array<string, mixed>
      */
-    private function formatAppointment(Appointment $appointment): array
+    private function formatAppointment(Appointment $appointment, ?User $viewer = null): array
     {
         $date = $appointment->date instanceof Carbon
             ? $appointment->date->toDateString()
             : (string) $appointment->date;
+
+        $isAdmin = $viewer?->role === UserRole::Admin;
+        $isClientOwner = $viewer !== null && $appointment->client_id === $viewer->id;
+        $canSeeRating = $isAdmin || $isClientOwner;
 
         return [
             'id' => $appointment->id,
@@ -392,7 +407,7 @@ class AppointmentController extends Controller
             'status' => $appointment->status,
             'notes' => $appointment->notes,
             'is_completed' => $appointment->isCompleted(),
-            'can_rate' => $appointment->isCompleted() && ! $appointment->rating,
+            'can_rate' => $isClientOwner && $appointment->isCompleted() && ! $appointment->rating,
             'is_in_session' => $appointment->isInSessionWindow(),
             'can_join_meeting' => $appointment->canJoinMeeting(),
             'meeting_url' => $appointment->meeting_url,
@@ -418,7 +433,7 @@ class AppointmentController extends Controller
                     'name_en' => $appointment->areaOfExpertise->name_en,
                 ]
                 : null,
-            'rating' => $appointment->rating
+            'rating' => $canSeeRating && $appointment->rating
                 ? [
                     'score' => (int) $appointment->rating->score,
                     'comment' => $appointment->rating->comment,

@@ -5,14 +5,13 @@ import {
   Scripts,
   createRootRoute,
 } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
 import appCss from '@/core/styles/global.css?url'
 import { getDocumentDirection, getHtmlLang } from '@/core/i18n/locale'
 import { getLocale } from '@/core/i18n/paraglide/runtime.js'
 import { m } from '@/core/i18n/paraglide/messages.js'
 import { CtAppProviders } from '@/modules/app/providers/CtAppProviders'
 import { CtLoading } from '@/modules/app/components/feedback/CtLoading'
+import { CtTanStackDevtools } from '@/modules/app/components/feedback/CtTanStackDevtools'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -53,15 +52,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body dir={dir}>
         {children}
-        <TanStackDevtools
-          config={{ position: 'bottom-right' }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
+        <CtTanStackDevtools />
         <Scripts />
       </body>
     </html>

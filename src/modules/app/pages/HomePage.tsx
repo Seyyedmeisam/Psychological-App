@@ -21,6 +21,9 @@ const articleImages = [
   'https://images.unsplash.com/photo-1573497620053-ea5300f94f21?auto=format&fit=crop&w=900&q=80',
   'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&w=900&q=80',
   'https://images.unsplash.com/photo-1516302752623-603f376f5ace?auto=format&fit=crop&w=900&q=80',
+  'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=900&q=80',
+  'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=900&q=80',
+  'https://images.unsplash.com/photo-1499209974431-9dddcece7f88?auto=format&fit=crop&w=900&q=80',
 ] as const
 
 const values = [
@@ -59,6 +62,24 @@ const articles = [
     title: () => m.home_article_3_title(),
     excerpt: () => m.home_article_3_excerpt(),
     image: articleImages[2],
+  },
+  {
+    tag: () => m.home_article_4_tag(),
+    title: () => m.home_article_4_title(),
+    excerpt: () => m.home_article_4_excerpt(),
+    image: articleImages[3],
+  },
+  {
+    tag: () => m.home_article_5_tag(),
+    title: () => m.home_article_5_title(),
+    excerpt: () => m.home_article_5_excerpt(),
+    image: articleImages[4],
+  },
+  {
+    tag: () => m.home_article_6_tag(),
+    title: () => m.home_article_6_title(),
+    excerpt: () => m.home_article_6_excerpt(),
+    image: articleImages[5],
   },
 ] as const
 

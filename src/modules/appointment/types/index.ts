@@ -17,3 +17,10 @@ export type {
   RateAppointmentInput,
   SlotFilters,
 } from '@/modules/appointment/types/appointment.types'
+
+export type {
+  AdminMentorVerificationItem,
+  MentorVerificationEvidence,
+  MentorVerificationMine,
+  MentorVerificationUploadResult,
+} from '@/modules/appointment/types/verification.types'

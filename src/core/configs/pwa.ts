@@ -59,7 +59,8 @@ export const pwaOptions = {
     ],
   },
   devOptions: {
-    enabled: true,
+    // Keep SW generation out of everyday `bun run dev` (big Windows slowdown).
+    enabled: false,
     type: 'module',
     navigateFallback: 'index.html',
     suppressWarnings: true,

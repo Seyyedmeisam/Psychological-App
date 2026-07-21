@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\EnsureUserIsAdmin::class,
             'mentor' => \App\Http\Middleware\EnsureUserIsMentor::class,
+            'mentor.approved' => \App\Http\Middleware\EnsureMentorIsApproved::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -1,5 +1,7 @@
 export type UserRole = 'admin' | 'user' | 'mentor'
 
+export type MentorVerificationStatus = 'pending' | 'approved' | 'rejected'
+
 export type User = {
   id: number
   name: string
@@ -8,6 +10,9 @@ export type User = {
   role: UserRole
   avatar_url?: string | null
   bio?: string | null
+  mentor_verification_status?: MentorVerificationStatus | null
+  mentor_verification_note?: string | null
+  mentor_verified_at?: string | null
   created_at?: string
 }
 

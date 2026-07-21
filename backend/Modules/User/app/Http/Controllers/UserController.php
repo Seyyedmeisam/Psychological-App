@@ -38,6 +38,10 @@ class UserController extends Controller
     {
         $validated = $request->validated();
 
+        if (($validated['role'] ?? null) === \App\Enums\UserRole::Mentor->value) {
+            $validated['mentor_verification_status'] = \App\Enums\MentorVerificationStatus::Pending->value;
+        }
+
         $user = User::query()->create($validated);
 
         return response()->json(['data' => new UserResource($user)], 201);

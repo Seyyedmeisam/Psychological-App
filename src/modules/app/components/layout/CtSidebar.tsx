@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   LogOut,
   MessageCircle,
+  ShieldCheck,
   Sparkles,
   User,
   Users,
@@ -16,6 +17,7 @@ import { cn } from '@/lib/utils'
 import { useSidebar } from '@/modules/app/providers/CtSidebarProvider'
 import { useLogout, useMe } from '@/modules/auth/hooks'
 import type { UserRole } from '@/modules/auth/types'
+import { isApprovedMentor } from '@/modules/auth/utils/routeGuards'
 
 type NavItem = {
   to:
@@ -23,6 +25,7 @@ type NavItem = {
     | '/home'
     | '/mentor'
     | '/users'
+    | '/mentor-verifications'
     | '/schedule'
     | '/appointments'
     | '/appointments/book'
@@ -32,6 +35,8 @@ type NavItem = {
   label: () => string
   icon: typeof Home
   roles?: UserRole[]
+  /** Extra visibility gate beyond role */
+  when?: (ctx: { role: UserRole | undefined; approvedMentor: boolean }) => boolean
 }
 
 type NavGroup = {
@@ -67,10 +72,17 @@ const topNavItems: NavItem[] = [
     roles: ['admin'],
   },
   {
+    to: '/mentor-verifications',
+    label: () => m.nav_mentor_verifications(),
+    icon: ShieldCheck,
+    roles: ['admin'],
+  },
+  {
     to: '/schedule',
     label: () => m.nav_schedule(),
     icon: CalendarDays,
     roles: ['mentor'],
+    when: ({ approvedMentor }) => approvedMentor,
   },
   {
     to: '/appointments/expertise',
@@ -112,10 +124,17 @@ const profileItem: NavItem = {
   icon: User,
 }
 
-function isVisible(item: { roles?: UserRole[] }, role?: UserRole) {
-  if (!item.roles) return true
-  if (!role) return false
-  return item.roles.includes(role)
+function isVisible(
+  item: { roles?: UserRole[]; when?: NavItem['when'] },
+  role: UserRole | undefined,
+  approvedMentor: boolean,
+) {
+  if (item.roles) {
+    if (!role) return false
+    if (!item.roles.includes(role)) return false
+  }
+  if (item.when && !item.when({ role, approvedMentor })) return false
+  return true
 }
 
 function NavLink({
@@ -163,13 +182,17 @@ export function CtSidebar({ variant }: Readonly<{ variant: 'desktop' | 'mobile' 
   const logout = useLogout()
   const collapsed = variant === 'desktop' && isCollapsed
   const role = user?.role
+  const approvedMentor = isApprovedMentor(user)
 
-  const visibleTop = topNavItems.filter((item) => isVisible(item, role))
+  const visibleTop = topNavItems.filter((item) =>
+    isVisible(item, role, approvedMentor),
+  )
   const visibleGroupItems = appointmentGroup.items.filter((item) =>
-    isVisible(item, role),
+    isVisible(item, role, approvedMentor),
   )
   const showGroup =
-    isVisible(appointmentGroup, role) && visibleGroupItems.length > 0
+    isVisible(appointmentGroup, role, approvedMentor) &&
+    visibleGroupItems.length > 0
 
   const onNavigate = () => {
     if (variant === 'mobile') setMobileOpen(false)

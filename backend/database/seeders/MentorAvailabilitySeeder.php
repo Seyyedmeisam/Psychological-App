@@ -2,11 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Enums\MentorVerificationStatus;
 use App\Enums\UserRole;
-use Modules\Appointment\Models\MentorAvailability;
-use Modules\User\Models\User;
 use App\Support\SessionSlots;
 use Illuminate\Database\Seeder;
+use Modules\Appointment\Models\MentorAvailability;
+use Modules\User\Models\User;
 
 class MentorAvailabilitySeeder extends Seeder
 {
@@ -14,38 +15,34 @@ class MentorAvailabilitySeeder extends Seeder
     {
         $mentors = User::query()
             ->where('role', UserRole::Mentor)
-            ->whereIn('mobile', ['09121111111', '09123333333'])
-            ->get()
-            ->keyBy('mobile');
+            ->where('mentor_verification_status', MentorVerificationStatus::Approved)
+            ->orderBy('id')
+            ->get();
 
         if ($mentors->isEmpty()) {
             return;
         }
 
         $allStarts = SessionSlots::startTimes();
+        MentorAvailability::query()
+            ->whereIn('user_id', $mentors->pluck('id'))
+            ->delete();
 
-        $plans = [
-            '09121111111' => [
-                'days' => [0, 1, 2, 3, 4],
-                'starts' => $allStarts,
-            ],
-            '09123333333' => [
-                'days' => [1, 2, 3, 4, 5],
-                'starts' => array_slice($allStarts, 2),
-            ],
-        ];
+        $rows = [];
+        foreach ($mentors as $index => $mentor) {
+            $dayOffset = $index % 2;
+            $days = $dayOffset === 0
+                ? [0, 1, 2, 3, 4]
+                : [1, 2, 3, 4, 5];
 
-        foreach ($plans as $mobile => $plan) {
-            $mentor = $mentors->get($mobile);
-            if (! $mentor) {
-                continue;
-            }
+            $starts = match ($index % 3) {
+                0 => $allStarts,
+                1 => array_slice($allStarts, 1),
+                default => array_slice($allStarts, 0, 5),
+            };
 
-            MentorAvailability::query()->where('user_id', $mentor->id)->delete();
-
-            $rows = [];
-            foreach ($plan['days'] as $day) {
-                foreach ($plan['starts'] as $start) {
+            foreach ($days as $day) {
+                foreach ($starts as $start) {
                     $end = SessionSlots::endTimeFor($start);
                     if ($end === null) {
                         continue;
@@ -61,10 +58,10 @@ class MentorAvailabilitySeeder extends Seeder
                     ];
                 }
             }
+        }
 
-            if ($rows !== []) {
-                MentorAvailability::query()->insert($rows);
-            }
+        foreach (array_chunk($rows, 500) as $chunk) {
+            MentorAvailability::query()->insert($chunk);
         }
     }
 }

@@ -10,7 +10,10 @@ import {
 } from '@/modules/appointment/components/CtAppointmentCardParts'
 import { CtAppointmentChatButton } from '@/modules/appointment/components/CtAppointmentChatButton'
 import { CtAppointmentJoinMeeting } from '@/modules/appointment/components/CtAppointmentJoinMeeting'
-import { useMentorProfile } from '@/modules/appointment/hooks'
+import { CtMentorVerificationCard } from '@/modules/appointment/components/CtMentorVerificationCard'
+import { useMentorProfile, useMyMentorVerification } from '@/modules/appointment/hooks'
+import { useMe } from '@/modules/auth/hooks'
+import { isApprovedMentor } from '@/modules/auth/utils/routeGuards'
 import { cn } from '@/lib/utils'
 
 const WEEKDAY_LABELS = [
@@ -54,8 +57,12 @@ function meetingStatusTone(meeting: {
 }
 
 export default function MentorHomePage() {
+  const { data: me } = useMe()
   const profileQuery = useMentorProfile({ refetchInterval: 60_000 })
+  const verificationQuery = useMyMentorVerification()
   const [expertiseFilter, setExpertiseFilter] = useState<'all' | number>('all')
+  const approved = isApprovedMentor(me)
+  const hasEvidence = (verificationQuery.data?.evidences.length ?? 0) > 0
 
   const filteredMeetings = useMemo(() => {
     const meetings = profileQuery.data?.recent_meetings ?? []
@@ -89,9 +96,11 @@ export default function MentorHomePage() {
                   <CtButton asChild variant="secondary" size="sm">
                     <Link to="/appointments">{m.nav_my_appointments()}</Link>
                   </CtButton>
-                  <CtButton asChild variant="secondary" size="sm">
-                    <Link to="/schedule">{m.nav_schedule()}</Link>
-                  </CtButton>
+                  {approved ? (
+                    <CtButton asChild variant="secondary" size="sm">
+                      <Link to="/schedule">{m.nav_schedule()}</Link>
+                    </CtButton>
+                  ) : null}
                   <CtButton asChild variant="secondary" size="sm">
                     <Link to="/appointments/expertise">{m.nav_expertise()}</Link>
                   </CtButton>
@@ -102,8 +111,12 @@ export default function MentorHomePage() {
               }
             />
 
+            <CtMentorVerificationCard />
+
             {(!profileQuery.data.expertise.length ||
-              !profileQuery.data.availability.length) && (
+              !approved ||
+              !hasEvidence ||
+              (approved && !profileQuery.data.availability.length)) && (
               <div className="mb-6 rounded-2xl border border-primary/25 bg-primary/5 px-4 py-4">
                 <p className="text-sm font-semibold text-foreground">
                   {m.mentor_setup_title()}
@@ -112,6 +125,13 @@ export default function MentorHomePage() {
                   {m.mentor_setup_hint()}
                 </p>
                 <ul className="mt-3 space-y-2 text-sm">
+                  <li className="flex flex-wrap items-center justify-between gap-2">
+                    <span>
+                      {hasEvidence
+                        ? m.mentor_setup_verification_done()
+                        : m.mentor_setup_verification_todo()}
+                    </span>
+                  </li>
                   <li className="flex flex-wrap items-center justify-between gap-2">
                     <span>
                       {profileQuery.data.expertise.length
@@ -126,11 +146,13 @@ export default function MentorHomePage() {
                   </li>
                   <li className="flex flex-wrap items-center justify-between gap-2">
                     <span>
-                      {profileQuery.data.availability.length
-                        ? m.mentor_setup_schedule_done()
-                        : m.mentor_setup_schedule_todo()}
+                      {!approved
+                        ? m.mentor_setup_schedule_locked()
+                        : profileQuery.data.availability.length
+                          ? m.mentor_setup_schedule_done()
+                          : m.mentor_setup_schedule_todo()}
                     </span>
-                    {!profileQuery.data.availability.length ? (
+                    {approved && !profileQuery.data.availability.length ? (
                       <CtButton asChild size="sm" variant="secondary">
                         <Link to="/schedule">{m.nav_schedule()}</Link>
                       </CtButton>
@@ -140,7 +162,7 @@ export default function MentorHomePage() {
               </div>
             )}
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <StatCard
                 label={m.mentor_stat_meetings_done()}
                 value={profileQuery.data.stats.meetings_done}
@@ -152,14 +174,6 @@ export default function MentorHomePage() {
               <StatCard
                 label={m.mentor_stat_meetings_cancelled()}
                 value={profileQuery.data.stats.meetings_cancelled}
-              />
-              <StatCard
-                label={m.mentor_stat_rating()}
-                value={
-                  profileQuery.data.stats.rating_average !== null
-                    ? `${profileQuery.data.stats.rating_average} / 5`
-                    : '—'
-                }
               />
             </div>
 
@@ -250,11 +264,6 @@ export default function MentorHomePage() {
                                   {m.appointment_notes_label()}:{' '}
                                 </span>
                                 {meeting.notes}
-                              </p>
-                            ) : null}
-                            {meeting.rating ? (
-                              <p className="text-xs font-medium text-muted-foreground">
-                                {meeting.rating.score}/5
                               </p>
                             ) : null}
                           </div>

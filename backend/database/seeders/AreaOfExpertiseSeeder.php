@@ -3,9 +3,9 @@
 namespace Database\Seeders;
 
 use App\Enums\UserRole;
+use Illuminate\Database\Seeder;
 use Modules\Appointment\Models\AreaOfExpertise;
 use Modules\User\Models\User;
-use Illuminate\Database\Seeder;
 
 class AreaOfExpertiseSeeder extends Seeder
 {
@@ -36,40 +36,45 @@ class AreaOfExpertiseSeeder extends Seeder
             );
         }
 
-        $mentor = User::query()
-            ->where('mobile', '09121111111')
-            ->where('role', UserRole::Mentor)
-            ->first();
+        $allIds = AreaOfExpertise::query()->orderBy('sort_order')->pluck('id')->all();
+        if ($allIds === []) {
+            return;
+        }
 
-        $sara = User::query()
-            ->where('mobile', '09123333333')
-            ->where('role', UserRole::Mentor)
-            ->first();
-
-        $rezaAreas = [
-            'child-psychology',
-            'adolescent-psychology',
-            'anxiety-stress',
-            'depression',
-            'self-esteem',
+        $mentorPlans = [
+            '09121111111' => ['child-psychology', 'adolescent-psychology', 'anxiety-stress', 'depression', 'self-esteem'],
+            '09123333333' => ['couples-therapy', 'family-therapy', 'anxiety-stress', 'self-esteem', 'trauma-ptsd'],
+            '09125555555' => ['child-psychology', 'learning-disorders', 'adolescent-psychology', 'self-esteem'],
+            '09126666666' => ['trauma-ptsd', 'addiction', 'depression', 'anxiety-stress'],
+            '09127777777' => ['anxiety-stress', 'depression'],
+            '09128888888' => ['family-therapy', 'couples-therapy'],
         ];
 
-        $saraAreas = [
-            'couples-therapy',
-            'family-therapy',
-            'anxiety-stress',
-            'self-esteem',
-            'trauma-ptsd',
-        ];
-
-        if ($mentor) {
-            $ids = AreaOfExpertise::query()->whereIn('slug', $rezaAreas)->pluck('id');
+        foreach ($mentorPlans as $mobile => $slugs) {
+            $mentor = User::query()
+                ->where('mobile', $mobile)
+                ->where('role', UserRole::Mentor)
+                ->first();
+            if (! $mentor) {
+                continue;
+            }
+            $ids = AreaOfExpertise::query()->whereIn('slug', $slugs)->pluck('id');
             $mentor->areasOfExpertise()->sync($ids);
         }
 
-        if ($sara) {
-            $ids = AreaOfExpertise::query()->whereIn('slug', $saraAreas)->pluck('id');
-            $sara->areasOfExpertise()->sync($ids);
+        $bulkMentors = User::query()
+            ->where('role', UserRole::Mentor)
+            ->where('mobile', 'like', '0913%')
+            ->orderBy('id')
+            ->get();
+
+        foreach ($bulkMentors as $index => $mentor) {
+            $chunk = collect($allIds)
+                ->sortBy(fn (int $id) => crc32($mentor->id.'|'.$id))
+                ->take(3 + ($index % 3))
+                ->values()
+                ->all();
+            $mentor->areasOfExpertise()->sync($chunk);
         }
     }
 }

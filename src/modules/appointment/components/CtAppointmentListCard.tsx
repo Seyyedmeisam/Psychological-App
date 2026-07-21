@@ -34,6 +34,7 @@ export function CtAppointmentListCard({
   appointment,
   isMentor,
   isClient,
+  isAdmin = false,
   cancelPending,
   ratePending,
   onCancel,
@@ -42,6 +43,7 @@ export function CtAppointmentListCard({
   appointment: Appointment
   isMentor: boolean
   isClient: boolean
+  isAdmin?: boolean
   cancelPending: boolean
   ratePending: boolean
   onCancel: (id: number) => void
@@ -54,9 +56,11 @@ export function CtAppointmentListCard({
     appointment.status === 'mentor_absent'
   const showMeeting = appointment.status === 'confirmed' && !appointment.is_completed
   const otherPerson = isMentor ? appointment.client : appointment.mentor
-  const chatUserId = isMentor
-    ? appointment.client?.id
-    : appointment.mentor?.id
+  const chatUserId = isAdmin
+    ? undefined
+    : isMentor
+      ? appointment.client?.id
+      : appointment.mentor?.id
 
   return (
     <CtAppointmentCardShell className={cn(cancelled && 'opacity-60')}>
@@ -139,11 +143,15 @@ export function CtAppointmentListCard({
             </p>
           ) : null}
 
-          {appointment.rating ? (
+          {(isClient || isAdmin) && appointment.rating ? (
             <p className="text-xs text-muted-foreground">
-              {m.appointment_your_rating({
-                score: String(appointment.rating.score),
-              })}
+              {isClient
+                ? m.appointment_your_rating({
+                    score: String(appointment.rating.score),
+                  })
+                : m.appointment_rating_label({
+                    score: String(appointment.rating.score),
+                  })}
             </p>
           ) : null}
         </div>

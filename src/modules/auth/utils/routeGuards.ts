@@ -1,8 +1,14 @@
 import { redirect } from '@tanstack/react-router'
 import { getAuthToken, setAuthToken } from '@/modules/auth/constants/auth'
 import { getMe } from '@/modules/auth/services'
-import type { UserRole } from '@/modules/auth/types'
+import type { AuthUser, UserRole } from '@/modules/auth/types'
 import { getHomePathByRole } from '@/modules/auth/utils/homePath'
+
+export function isApprovedMentor(user?: AuthUser | null): boolean {
+  return (
+    user?.role === 'mentor' && user.mentor_verification_status === 'approved'
+  )
+}
 
 /** Require a stored auth token (SPA panel shell). */
 export function requireAuthToken() {
@@ -27,5 +33,14 @@ export async function requireRoles(roles: readonly UserRole[]) {
     throw redirect({ to: getHomePathByRole(user.role) })
   }
 
+  return user
+}
+
+/** Mentors may manage schedule only after admin approval. */
+export async function requireApprovedMentor() {
+  const user = await requireRoles(['mentor'])
+  if (!isApprovedMentor(user)) {
+    throw redirect({ to: '/mentor' })
+  }
   return user
 }

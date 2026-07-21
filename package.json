@@ -7,6 +7,7 @@
   },
   "scripts": {
     "dev": "vite dev --port 3000",
+    "dev:devtools": "TANSTACK_DEVTOOLS=1 VITE_TANSTACK_DEVTOOLS=1 vite dev --port 3000",
     "generate-routes": "node node_modules/@tanstack/router-cli/bin/tsr.cjs generate",
     "build": "npm run generate-routes && vite build && node scripts/pwa-build.mjs",
     "build:ahmad": "npm run generate-routes && vite build --mode ahmad-site && node scripts/pwa-build.mjs",
