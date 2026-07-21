@@ -38,7 +38,13 @@ const config = defineConfig({
     nitro({ rollupConfig: { external: [/^@sentry\//] } }),
     tailwindcss(),
     tanstackStart({
-      spa: { enabled: false },
+      // Static SPA for cPanel / public_html — upload `.output/public`
+      spa: {
+        enabled: true,
+        prerender: {
+          outputPath: '/index.html',
+        },
+      },
       prerender: { enabled: false },
     }),
     viteReact(),

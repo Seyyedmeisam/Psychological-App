@@ -5,6 +5,10 @@ dist-ssr
 dev-dist
 *.local
 .env
+.env.*
+!.env.example
+ahmad-site.env
+backend/ahmad-site.env
 .nitro
 .tanstack
 .wrangler
@@ -13,6 +17,7 @@ dev-dist
 __unconfig*
 todos.json
 backend/vendor
+backend/vendor.zip
 backend/.env
 backend/storage/*.key
 backend/database/database.sqlite

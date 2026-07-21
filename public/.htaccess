@@ -1,0 +1,14 @@
+# SPA fallback for Apache / cPanel public_html
+# Copy lands in `.output/public` after `npm run build` / `bun run build`
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Serve real files and directories as-is
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Client-side routes → SPA shell
+  RewriteRule ^ index.html [L]
+</IfModule>

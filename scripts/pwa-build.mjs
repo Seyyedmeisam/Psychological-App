@@ -1,4 +1,4 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 
 import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
@@ -30,8 +30,7 @@ const { count, size, warnings } = await generateSW({
     : {}),
   runtimeCaching: [
     {
-      urlPattern: ({ url }: { url: URL }) =>
-        url.pathname.startsWith('/api/'),
+      urlPattern: ({ url }) => url.pathname.startsWith('/api/'),
       handler: 'NetworkFirst',
       options: {
         cacheName: 'api-cache',
@@ -46,8 +45,7 @@ const { count, size, warnings } = await generateSW({
       },
     },
     {
-      urlPattern: ({ request }: { request: Request }) =>
-        request.destination === 'image',
+      urlPattern: ({ request }) => request.destination === 'image',
       handler: 'CacheFirst',
       options: {
         cacheName: 'image-cache',
