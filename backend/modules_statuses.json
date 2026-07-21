@@ -1,0 +1,6 @@
+{
+    "Auth": true,
+    "User": true,
+    "Appointment": true,
+    "Chat": true
+}

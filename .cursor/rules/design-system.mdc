@@ -1,0 +1,62 @@
+# iOS design system
+
+Stack: **shadcn/ui** primitives in `ui/`, **Ct** composites for app patterns, **Tailwind v4** + CSS tokens.
+
+## Theme tokens
+
+Edit **`src/core/styles/tokens.css`** to retheme the app. Change `--palette-*` values; semantic tokens (`--primary`, `--background`, etc.) map into Tailwind automatically.
+
+**Fonts** (self-hosted in `public/fonts/`):
+- LTR locales → `--font-family-ltr` (system / iOS stack)
+- RTL locales (`fa`, `ar`) → `--font-family-rtl` (**Vazirmatn** via `html[dir='rtl']`)
+
+`@font-face` rules live in `src/core/styles/fonts.css`.
+
+Programmatic reference: `src/core/configs/theme.ts`.
+
+## Layers
+
+| Layer | Path | Naming | Role |
+|-------|------|--------|------|
+| shadcn internals | `modules/app/components/ui/` | lowercase (`button.tsx`) | **Do not import in pages/features** — implementation only |
+| Primitives | `modules/app/components/Ct*.tsx` | `CtButton`, `CtCard`, `CtInput`, … | Public UI API |
+| Select parts | `CtSelectParts.tsx` | `CtSelectRoot`, `CtSelectTrigger`, … | Low-level select (form field uses `forms/CtSelect`) |
+| Surfaces | `modules/app/components/surface/` | `CtSurface`, `CtGroup`, `CtListRow` | iOS grouped layouts |
+| Widgets | `modules/app/components/widgets/` | `CtTable`, … | Composed patterns |
+| Forms | `modules/app/components/forms/` | `CtTextInput`, `CtSelect`, … | react-hook-form fields |
+
+Feature modules reuse app `Ct*` components — do not fork per module.
+
+**Import rule:** pages, layouts, and feature code import `CtButton`, `CtCard`, etc. Never `Button` from `ui/`.
+
+## iOS patterns
+
+- **Background**: `bg-background` (grouped gray)
+- **Elevated card**: `<Card variant="elevated">` or `ios-surface`
+- **Grouped list**: `<CtGroup>` + rows or `<Card variant="grouped">`
+- **Inset field block**: `<Card variant="inset">`
+- **Buttons**: filled (`default`), gray (`secondary`), tinted (`tinted`), plain (`plain` / `ghost`)
+- **Touch target**: default button height `h-11` (44px)
+- **Radius**: `rounded-xl` / `rounded-2xl` via `--radius`
+
+## Motion utilities (`global.css`)
+
+- `ios-press` — subtle scale on tap
+- `ios-fade-in` / `ios-slide-up` — light entrance
+- Respects `prefers-reduced-motion`
+
+## RTL
+
+Use logical utilities only (`ms-*`, `text-start`, `ps-*`). See `rtl-logical-css.mdc`.
+
+## Tables
+
+Use `CtTable` + `CtTableHeader` / `CtTableBody` / `CtTableRow` / `CtTableCell` from `widgets/table/CtTable.tsx`. Renders inside an iOS grouped surface by default.
+
+## Adding shadcn components
+
+```bash
+bunx shadcn@latest add <component> -y
+```
+
+Then apply iOS styling: `rounded-xl`, `bg-input`, `shadow-ios-sm`, `ios-press` where appropriate.

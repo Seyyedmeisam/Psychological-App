@@ -1,0 +1,131 @@
+/**
+ * iOS-style design tokens
+ *
+ * To retheme the app, edit the --palette-* variables below.
+ * Semantic tokens (--background, --primary, etc.) map into Tailwind via global.css.
+ */
+
+:root {
+  /* Brand */
+  --palette-brand: oklch(0.58 0.22 252);
+  --palette-brand-foreground: oklch(1 0 0);
+  --palette-brand-muted: oklch(0.58 0.22 252 / 0.14);
+
+  /* Status */
+  --palette-success: oklch(0.62 0.17 145);
+  --palette-success-foreground: oklch(1 0 0);
+  --palette-warning: oklch(0.75 0.15 75);
+  --palette-warning-foreground: oklch(0.2 0.02 75);
+  --palette-danger: oklch(0.58 0.22 25);
+  --palette-danger-foreground: oklch(1 0 0);
+  --palette-danger-muted: oklch(0.58 0.22 25 / 0.14);
+
+  /* Surfaces */
+  --palette-surface-base: oklch(0.965 0.004 286);
+  --palette-surface-elevated: oklch(1 0 0);
+  --palette-surface-secondary: oklch(0.94 0.004 286);
+  --palette-surface-tertiary: oklch(0.91 0.004 286);
+  --palette-surface-overlay: oklch(1 0 0 / 0.72);
+
+  /* Labels */
+  --palette-label-primary: oklch(0.145 0 0);
+  --palette-label-secondary: oklch(0.55 0.01 286);
+  --palette-label-tertiary: oklch(0.68 0.01 286);
+
+  /* Chrome */
+  --palette-separator: oklch(0.55 0.01 286 / 0.22);
+  --palette-separator-strong: oklch(0.55 0.01 286 / 0.36);
+  --palette-fill: oklch(0.47 0.01 286 / 0.12);
+
+  /* Semantic */
+  --background: var(--palette-surface-base);
+  --foreground: var(--palette-label-primary);
+  --card: var(--palette-surface-elevated);
+  --card-foreground: var(--palette-label-primary);
+  --popover: var(--palette-surface-elevated);
+  --popover-foreground: var(--palette-label-primary);
+  --primary: var(--palette-brand);
+  --primary-foreground: var(--palette-brand-foreground);
+  --secondary: var(--palette-surface-secondary);
+  --secondary-foreground: var(--palette-label-primary);
+  --muted: var(--palette-surface-secondary);
+  --muted-foreground: var(--palette-label-secondary);
+  --accent: var(--palette-brand-muted);
+  --accent-foreground: var(--palette-brand);
+  --destructive: var(--palette-danger);
+  --destructive-foreground: var(--palette-danger-foreground);
+  --success: var(--palette-success);
+  --success-foreground: var(--palette-success-foreground);
+  --warning: var(--palette-warning);
+  --warning-foreground: var(--palette-warning-foreground);
+  --border: var(--palette-separator);
+  --input: var(--palette-surface-secondary);
+  --ring: var(--palette-brand);
+  --radius: 0.75rem;
+
+  /* Motion */
+  --motion-duration-fast: 150ms;
+  --motion-duration-normal: 220ms;
+  --motion-duration-slow: 320ms;
+  --motion-ease-out: cubic-bezier(0.25, 0.8, 0.25, 1);
+  --motion-ease-spring: cubic-bezier(0.34, 1.2, 0.64, 1);
+
+  /* Elevation */
+  --shadow-ios-sm: 0 1px 2px oklch(0 0 0 / 0.04), 0 1px 8px oklch(0 0 0 / 0.03);
+  --shadow-ios-md: 0 2px 8px oklch(0 0 0 / 0.06), 0 8px 24px oklch(0 0 0 / 0.05);
+
+  /* Typography — swap --font-family-rtl to change Persian/Arabic font */
+  --font-family-ltr:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-family-rtl: Vazirmatn, Tahoma, 'Segoe UI', sans-serif;
+  --font-family-sans: var(--font-family-ltr);
+}
+
+html[dir='rtl'] {
+  --font-family-sans: var(--font-family-rtl);
+}
+
+.dark {
+  --palette-brand: oklch(0.68 0.18 252);
+  --palette-brand-foreground: oklch(1 0 0);
+  --palette-brand-muted: oklch(0.68 0.18 252 / 0.18);
+
+  --palette-success: oklch(0.68 0.15 145);
+  --palette-warning: oklch(0.78 0.12 75);
+  --palette-danger: oklch(0.65 0.2 25);
+  --palette-danger-muted: oklch(0.65 0.2 25 / 0.2);
+
+  --palette-surface-base: oklch(0.145 0 0);
+  --palette-surface-elevated: oklch(0.22 0.004 286);
+  --palette-surface-secondary: oklch(0.27 0.004 286);
+  --palette-surface-tertiary: oklch(0.32 0.004 286);
+  --palette-surface-overlay: oklch(0.22 0.004 286 / 0.82);
+
+  --palette-label-primary: oklch(0.985 0 0);
+  --palette-label-secondary: oklch(0.72 0.01 286);
+  --palette-label-tertiary: oklch(0.58 0.01 286);
+
+  --palette-separator: oklch(1 0 0 / 0.12);
+  --palette-separator-strong: oklch(1 0 0 / 0.2);
+  --palette-fill: oklch(1 0 0 / 0.08);
+
+  --background: var(--palette-surface-base);
+  --foreground: var(--palette-label-primary);
+  --card: var(--palette-surface-elevated);
+  --card-foreground: var(--palette-label-primary);
+  --popover: var(--palette-surface-elevated);
+  --popover-foreground: var(--palette-label-primary);
+  --primary: var(--palette-brand);
+  --primary-foreground: var(--palette-brand-foreground);
+  --secondary: var(--palette-surface-secondary);
+  --secondary-foreground: var(--palette-label-primary);
+  --muted: var(--palette-surface-secondary);
+  --muted-foreground: var(--palette-label-secondary);
+  --accent: var(--palette-brand-muted);
+  --accent-foreground: var(--palette-brand);
+  --destructive: var(--palette-danger);
+  --destructive-foreground: var(--palette-danger-foreground);
+  --border: var(--palette-separator);
+  --input: var(--palette-surface-secondary);
+  --ring: var(--palette-brand);
+}

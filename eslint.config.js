@@ -15,6 +15,15 @@ export default [
     },
   },
   {
-    ignores: ['eslint.config.js', 'prettier.config.js'],
+    ignores: [
+      'eslint.config.js',
+      'prettier.config.js',
+      'dev-dist/**',
+      '.output/**',
+      'frontend/**',
+      'backend/**',
+      'dist/**',
+      'src/core/i18n/paraglide/**',
+    ],
   },
 ]

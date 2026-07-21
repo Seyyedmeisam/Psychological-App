@@ -1,0 +1,99 @@
+---
+description: Laravel API modular layout via nwidart/laravel-modules (Modules/)
+alwaysApply: true
+---
+
+# Backend API structure (`nwidart/laravel-modules`)
+
+The API lives in `backend/`. Feature code uses **[nwidart/laravel-modules](https://nwidart.com/laravel-modules/v6/introduction)** (v12 for Laravel 12). Modules live under `backend/Modules/{Name}/` with namespace `Modules\{Name}\`.
+
+Scaffold: `php artisan module:make {Name} --api`
+
+## Platform vs modules
+
+| Area | Path | Role |
+|------|------|------|
+| Platform | `app/Http/Middleware/`, `app/Providers/`, `app/Enums/`, `app/Support/`, `config/`, `database/` | Auth guards, middleware, shared config, cross-cutting helpers |
+| Shell API | `app/Http/Controllers/` (e.g. health) + `routes/api.php` | Non-feature endpoints only; `routes/api.php` is a **thin registry** |
+| Feature modules | `Modules/{Name}/` | Controllers, requests, models, services, module routes |
+
+`{Name}` is **PascalCase**, singular, aligned with frontend modules when they exist (`Appointment` ↔ `src/modules/appointment`, `User` ↔ `src/modules/user`, `Auth` ↔ auth).
+
+## Module folder layout
+
+```
+Modules/{Name}/
+  app/
+    Http/Controllers/
+    Http/Requests/
+    Http/Resources/       # optional
+    Models/
+    Services/             # business logic; no HTTP
+    Providers/            # *ServiceProvider, RouteServiceProvider
+  routes/
+    api.php               # feature API routes (already under /api prefix)
+    web.php               # leave empty unless needed
+  database/               # optional module migrations/seeders
+  module.json
+  composer.json
+```
+
+Autoload: root `composer.json` merges `Modules/*/composer.json` via `wikimedia/composer-merge-plugin`. After adding modules: `composer dump-autoload`.
+
+## Data flow (strict)
+
+```
+Modules/{Name}/routes/api.php  →  Controllers  →  Services  →  Models
+                                      ↑
+                               Http/Requests
+```
+
+- **Controllers** — HTTP only: authorize, validate (FormRequest), call services, return `JsonResponse`.
+- **Services** — domain logic (meetings, stats). Injectable via constructor.
+- **Models** — persistence + relationships + small helpers (`isCompleted()`, `canJoinMeeting()`).
+- **Requests** — `authorize()` + `rules()`.
+
+## Routing
+
+- Module `RouteServiceProvider` loads `routes/api.php` with `middleware('api')->prefix('api')`.
+- Do **not** add another `api` or `v1` prefix in module routes — keep paths like `/appointments`, `/users`, `/auth/...` so frontend URL maps stay valid.
+- `backend/routes/api.php` registers only shell routes (e.g. `/health`).
+
+## Existing modules
+
+| Module | Owns |
+|--------|------|
+| `Auth` | login, register, me, logout |
+| `User` | `User` model, admin CRUD, `UserResource` |
+| `Appointment` | appointments, slots, ratings, meetings, availability, expertise, mentor profile, admin stats |
+
+## Naming
+
+| Item | Example |
+|------|---------|
+| Controller | `Modules\Appointment\Http\Controllers\AppointmentController` |
+| Form request | `StoreAppointmentRequest` |
+| Service | `AppointmentMeetingService`, `GoogleMeetService` |
+| Model | `Modules\User\Models\User`, `Modules\Appointment\Models\Appointment` |
+
+## JSON API shape
+
+- Collections / entities: `['data' => ...]`
+- Validation: Laravel / `ValidationException`
+- Keep field shapes in sync with `src/modules/*/types/*.types.ts`
+
+## When adding code
+
+| What | Where |
+|------|--------|
+| New feature endpoint | `php artisan module:make {Name} --api` (or extend existing module) |
+| Shared non-HTTP helper | `app/Support/` |
+| Migration / app seeder | `database/` (or module `database/` when scoped) |
+| Third-party integration | Module `app/Services/` |
+
+## Do not
+
+- Add feature controllers under `app/Http/Controllers/Api/`.
+- Put feature Eloquent models in `app/Models/`.
+- Embed heavy aggregation in controllers — use a service.
+- Change API paths without updating frontend `services/*Service.ts` and types.

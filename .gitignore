@@ -2,8 +2,13 @@ node_modules
 .DS_Store
 dist
 dist-ssr
+dev-dist
 *.local
 .env
+.env.*
+!.env.example
+ahmad-site.env
+backend/ahmad-site.env
 .nitro
 .tanstack
 .wrangler
@@ -11,3 +16,10 @@ dist-ssr
 .vinxi
 __unconfig*
 todos.json
+backend/vendor
+backend/vendor.zip
+backend/.env
+backend/storage/*.key
+backend/database/database.sqlite
+frontend
+

@@ -5,7 +5,11 @@ alwaysApply: true
 
 # Project structure (TanStack Start + Tailwind + Ant Design)
 
-Stack: TanStack Start, file-based routing, Tailwind CSS, Ant Design UI.
+Stack: TanStack Start, file-based routing, Tailwind CSS, Ant Design UI. API: Laravel in `backend/` (see **`backend-module-structure.mdc`**).
+
+## Backend (`backend/`)
+
+Laravel API uses **[nwidart/laravel-modules](https://nwidart.com/laravel-modules/v6/introduction)** under `Modules/{Name}/` (controllers, requests, models, services, module routes). `routes/api.php` is shell-only; full layout: **`backend-module-structure.mdc`**.
 
 ## Top-level `src/`
 
@@ -62,6 +66,7 @@ Follow **`module-patterns.mdc`** — `modules/book/` is the reference implementa
 | Axios client, env, i18n runtime, global CSS | `core/` |
 | Header, footer, app providers, home/about pages | `modules/app/` |
 | Feature UI, API, routes | `modules/{feature}/` |
+| Laravel feature API (HTTP, models, services) | `backend/Modules/{Name}/` |
 
 - SPA: `src/start.ts` → `defaultSsr: false`; `vite.config.ts` → `spa: { enabled: true }`. No per-route `ssr: false` unless opting back into SSR.
 - Forms: react-hook-form (see `forms.mdc`)
