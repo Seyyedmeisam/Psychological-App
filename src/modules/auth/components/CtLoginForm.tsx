@@ -13,35 +13,61 @@ export function CtLoginForm() {
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={onSubmit} className="flex w-full max-w-md flex-col gap-4">
+      <form onSubmit={onSubmit} className="flex w-full flex-col gap-5">
         {error ? (
-          <CtAlert variant="destructive">
+          <CtAlert
+            variant="destructive"
+            className="login-reveal"
+            style={{ animationDelay: '0ms' }}
+          >
             <AlertCircle />
             <CtAlertTitle>{m.auth_login_failed()}</CtAlertTitle>
             <CtAlertDescription>{error.message}</CtAlertDescription>
           </CtAlert>
         ) : null}
-        <CtTextInput
-          name="mobile"
-          label={m.auth_mobile_label()}
-          rules={{ required: m.auth_mobile_required() }}
-          inputMode="tel"
-          autoComplete="tel"
-        />
-        <CtTextInput
-          name="password"
-          label={m.auth_password_label()}
-          type="password"
-          rules={{ required: m.auth_password_required() }}
-          autoComplete="current-password"
-        />
-        <CtButton type="submit" disabled={isPending} className="w-full">
-          {isPending ? <CtSpinner className="size-4" /> : null}
-          {m.auth_login()}
-        </CtButton>
-        <p className="text-center text-sm text-muted-foreground">
+
+        <div
+          className="login-reveal flex flex-col gap-4"
+          style={{ animationDelay: '420ms' }}
+        >
+          <CtTextInput
+            name="mobile"
+            label={m.auth_mobile_label()}
+            rules={{ required: m.auth_mobile_required() }}
+            inputMode="tel"
+            autoComplete="tel"
+            placeholder="09xxxxxxxxx"
+          />
+          <CtTextInput
+            name="password"
+            label={m.auth_password_label()}
+            type="password"
+            rules={{ required: m.auth_password_required() }}
+            autoComplete="current-password"
+          />
+        </div>
+
+        <div className="login-reveal" style={{ animationDelay: '500ms' }}>
+          <CtButton
+            type="submit"
+            size="lg"
+            disabled={isPending}
+            className="mt-1 w-full transition-transform duration-(--motion-duration-fast) ease-(--motion-ease-out) hover:scale-[1.015] active:scale-[0.985]"
+          >
+            {isPending ? <CtSpinner className="size-4" /> : null}
+            {m.auth_login()}
+          </CtButton>
+        </div>
+
+        <p
+          className="login-reveal text-center text-sm text-muted-foreground"
+          style={{ animationDelay: '560ms' }}
+        >
           {m.auth_no_account()}{' '}
-          <Link to="/register" className="font-medium text-primary hover:underline">
+          <Link
+            to="/register"
+            className="font-semibold text-primary underline-offset-4 transition-colors duration-(--motion-duration-fast) hover:underline"
+          >
             {m.auth_register()}
           </Link>
         </p>

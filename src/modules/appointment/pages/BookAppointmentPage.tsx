@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { m } from '@/core/i18n/paraglide/messages.js'
+import { CtAppointmentWeekTimeline } from '@/modules/appointment/components/CtAppointmentWeekTimeline'
 import { CtAsyncContent } from '@/modules/app/components/feedback/CtAsyncContent'
+import { getApiErrorMessage } from '@/modules/app/utils/apiErrorMessage'
 import { CtButton } from '@/modules/app/components/CtButton'
 import {
   CtCard,
@@ -10,7 +12,6 @@ import {
   CtCardHeader,
   CtCardTitle,
 } from '@/modules/app/components/CtCard'
-import { CtInput } from '@/modules/app/components/CtInput'
 import { CtLabel } from '@/modules/app/components/CtLabel'
 import { CtSpinner } from '@/modules/app/components/CtSpinner'
 import {
@@ -27,26 +28,31 @@ import {
   useMentorsForArea,
 } from '@/modules/appointment/hooks'
 import type { AvailableSlot } from '@/modules/appointment/types'
+import {
+  addDaysIso,
+  getSlotQueryRange,
+  getWeekStartIso,
+} from '@/modules/appointment/utils/weekTimeline'
 import { cn } from '@/lib/utils'
-
-function todayIso() {
-  return new Date().toISOString().slice(0, 10)
-}
 
 export default function BookAppointmentPage() {
   const navigate = useNavigate()
   const areasQuery = useAreasOfExpertise()
   const [areaId, setAreaId] = useState<number | null>(null)
-  const [date, setDate] = useState('')
+  const [weekStart, setWeekStart] = useState(() => getWeekStartIso())
   const [mentorId, setMentorId] = useState<string>('all')
   const [selectedSlot, setSelectedSlot] = useState<AvailableSlot | null>(null)
+
+  const slotRange = useMemo(() => getSlotQueryRange(weekStart), [weekStart])
+  const currentWeekStart = useMemo(() => getWeekStartIso(), [])
 
   const mentorsQuery = useMentorsForArea(areaId)
   const slotsQuery = useAvailableSlots(
     areaId
       ? {
           area_of_expertise_id: areaId,
-          ...(date ? { date } : { days: 14 }),
+          from: slotRange.from,
+          to: slotRange.to,
           ...(mentorId !== 'all' ? { mentor_id: Number(mentorId) } : {}),
         }
       : null,
@@ -64,12 +70,14 @@ export default function BookAppointmentPage() {
 
   useEffect(() => {
     setSelectedSlot(null)
-  }, [date, mentorId])
+  }, [mentorId, weekStart])
 
   const selectedArea = useMemo(
     () => areasQuery.data?.find((area) => area.id === areaId) ?? null,
     [areasQuery.data, areaId],
   )
+
+  const canGoPrevWeek = weekStart > currentWeekStart
 
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-8 ios-slide-up">
@@ -118,49 +126,22 @@ export default function BookAppointmentPage() {
           <div className="space-y-6">
             <CtCard>
               <CtCardHeader>
-                <CtCardTitle className="text-lg">
-                  {m.appointment_filters_title()}
-                </CtCardTitle>
+                <CtCardTitle className="text-lg">{m.appointment_filters_title()}</CtCardTitle>
                 <CtCardDescription>
                   {m.appointment_selected_expertise({
                     name: selectedArea?.name ?? '',
                   })}
                 </CtCardDescription>
               </CtCardHeader>
-              <CtCardContent className="grid gap-4 sm:grid-cols-2">
-                <div className="flex flex-col gap-2">
-                  <CtLabel htmlFor="appointment-date">{m.appointment_filter_date()}</CtLabel>
-                  <CtInput
-                    id="appointment-date"
-                    type="date"
-                    min={todayIso()}
-                    value={date}
-                    onChange={(event) => setDate(event.target.value)}
-                  />
-                  {date ? (
-                    <button
-                      type="button"
-                      className="text-start text-xs text-primary"
-                      onClick={() => setDate('')}
-                    >
-                      {m.appointment_clear_date()}
-                    </button>
-                  ) : (
-                    <p className="text-xs text-muted-foreground">
-                      {m.appointment_date_hint()}
-                    </p>
-                  )}
-                </div>
+              <CtCardContent className="grid gap-4">
                 <div className="flex flex-col gap-2">
                   <CtLabel>{m.appointment_filter_mentor()}</CtLabel>
                   <CtSelectRoot value={mentorId} onValueChange={setMentorId}>
-                    <CtSelectTrigger className="w-full">
+                    <CtSelectTrigger className="w-full sm:max-w-sm">
                       <CtSelectValue placeholder={m.appointment_filter_mentor()} />
                     </CtSelectTrigger>
                     <CtSelectContent>
-                      <CtSelectItem value="all">
-                        {m.appointment_all_mentors()}
-                      </CtSelectItem>
+                      <CtSelectItem value="all">{m.appointment_all_mentors()}</CtSelectItem>
                       {(mentorsQuery.data ?? []).map((mentor) => (
                         <CtSelectItem key={mentor.id} value={String(mentor.id)}>
                           {mentor.name}
@@ -169,64 +150,78 @@ export default function BookAppointmentPage() {
                     </CtSelectContent>
                   </CtSelectRoot>
                 </div>
+
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <p className="text-sm text-muted-foreground">{m.appointment_timeline_hint()}</p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <CtButton
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={!canGoPrevWeek}
+                      onClick={() => setWeekStart((current) => addDaysIso(current, -7))}
+                    >
+                      {m.appointment_prev_week()}
+                    </CtButton>
+                    <CtButton
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      disabled={weekStart === currentWeekStart}
+                      onClick={() => setWeekStart(currentWeekStart)}
+                    >
+                      {m.appointment_this_week()}
+                    </CtButton>
+                    <CtButton
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setWeekStart((current) => addDaysIso(current, 7))}
+                    >
+                      {m.appointment_next_week()}
+                    </CtButton>
+                  </div>
+                </div>
               </CtCardContent>
             </CtCard>
 
             <CtAsyncContent
               isLoading={slotsQuery.isLoading || mentorsQuery.isLoading}
               isError={slotsQuery.isError}
-              errorMessage={slotsQuery.error?.message}
+              errorMessage={
+                slotsQuery.error ? getApiErrorMessage(slotsQuery.error) : undefined
+              }
             >
-              {(slotsQuery.data ?? []).length === 0 ? (
-                <CtCard>
-                  <CtCardContent className="py-8 text-center text-sm text-muted-foreground">
-                    {m.appointment_no_slots()}
-                  </CtCardContent>
-                </CtCard>
-              ) : (
-                <div className="space-y-3">
-                  <h2 className="text-sm font-semibold text-foreground">
-                    {m.appointment_available_slots()}
-                  </h2>
-                  <div className="grid gap-3">
-                    {(slotsQuery.data ?? []).map((slot) => {
-                      const key = `${slot.mentor_id}-${slot.date}-${slot.start_time}`
-                      const active =
-                        selectedSlot?.mentor_id === slot.mentor_id &&
-                        selectedSlot.date === slot.date &&
-                        selectedSlot.start_time === slot.start_time
-                      return (
-                        <button
-                          key={key}
-                          type="button"
-                          onClick={() => setSelectedSlot(slot)}
-                          className={cn(
-                            'ios-press flex flex-wrap items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-start transition-colors',
-                            active
-                              ? 'border-primary bg-primary/10'
-                              : 'border-border bg-card hover:bg-muted/40',
-                          )}
-                        >
-                          <div>
-                            <p className="text-sm font-semibold text-foreground">
-                              {slot.mentor_name}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {slot.date} · {slot.start_time} – {slot.end_time}
-                            </p>
-                          </div>
-                          <span className="text-xs font-medium text-primary">
-                            {active
-                              ? m.appointment_slot_selected()
-                              : m.appointment_select_slot()}
-                          </span>
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-              )}
+              <div className="space-y-3">
+                <h2 className="text-sm font-semibold text-foreground">
+                  {m.appointment_available_slots()}
+                </h2>
+                <CtAppointmentWeekTimeline
+                  weekStart={weekStart}
+                  slots={slotsQuery.data ?? []}
+                  selectedSlot={selectedSlot}
+                  onSelect={setSelectedSlot}
+                />
+              </div>
             </CtAsyncContent>
+
+            {selectedSlot ? (
+              <CtCard variant="inset">
+                <CtCardContent className="flex flex-wrap items-center justify-between gap-3 py-4">
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">
+                      {m.appointment_mentor_label({ name: selectedSlot.mentor_name })}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {selectedSlot.date} · {selectedSlot.start_time} – {selectedSlot.end_time}
+                    </p>
+                  </div>
+                  <CtButton type="button" variant="ghost" size="sm" onClick={() => setSelectedSlot(null)}>
+                    {m.user_cancel()}
+                  </CtButton>
+                </CtCardContent>
+              </CtCard>
+            ) : null}
 
             <div className="flex flex-wrap items-center justify-between gap-3">
               <CtButton asChild variant="secondary">

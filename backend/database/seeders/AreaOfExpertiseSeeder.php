@@ -3,8 +3,8 @@
 namespace Database\Seeders;
 
 use App\Enums\UserRole;
-use App\Models\AreaOfExpertise;
-use App\Models\User;
+use Modules\Appointment\Models\AreaOfExpertise;
+use Modules\User\Models\User;
 use Illuminate\Database\Seeder;
 
 class AreaOfExpertiseSeeder extends Seeder
@@ -41,18 +41,35 @@ class AreaOfExpertiseSeeder extends Seeder
             ->where('role', UserRole::Mentor)
             ->first();
 
-        if ($mentor) {
-            $ids = AreaOfExpertise::query()
-                ->whereIn('slug', [
-                    'child-psychology',
-                    'adolescent-psychology',
-                    'anxiety-stress',
-                    'depression',
-                    'self-esteem',
-                ])
-                ->pluck('id');
+        $sara = User::query()
+            ->where('mobile', '09123333333')
+            ->where('role', UserRole::Mentor)
+            ->first();
 
+        $rezaAreas = [
+            'child-psychology',
+            'adolescent-psychology',
+            'anxiety-stress',
+            'depression',
+            'self-esteem',
+        ];
+
+        $saraAreas = [
+            'couples-therapy',
+            'family-therapy',
+            'anxiety-stress',
+            'self-esteem',
+            'trauma-ptsd',
+        ];
+
+        if ($mentor) {
+            $ids = AreaOfExpertise::query()->whereIn('slug', $rezaAreas)->pluck('id');
             $mentor->areasOfExpertise()->sync($ids);
+        }
+
+        if ($sara) {
+            $ids = AreaOfExpertise::query()->whereIn('slug', $saraAreas)->pluck('id');
+            $sara->areasOfExpertise()->sync($ids);
         }
     }
 }

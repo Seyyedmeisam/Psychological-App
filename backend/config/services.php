@@ -35,4 +35,17 @@ return [
         ],
     ],
 
+    'google' => [
+        'meet' => [
+            // dev: stable per-appointment link (synthetic meet code) or dev_room_url
+            // spaces: Google Meet API (service account)
+            // calendar: Google Calendar conference (service account)
+            'mode' => env('GOOGLE_MEET_MODE', 'dev'),
+            'service_account_json' => env('GOOGLE_SERVICE_ACCOUNT_JSON'),
+            'impersonate' => env('GOOGLE_CALENDAR_IMPERSONATE'),
+            'calendar_id' => env('GOOGLE_CALENDAR_ID', 'primary'),
+            'dev_room_url' => env('GOOGLE_MEET_DEV_ROOM_URL'),
+        ],
+    ],
+
 ];

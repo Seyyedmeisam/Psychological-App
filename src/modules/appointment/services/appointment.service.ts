@@ -1,12 +1,16 @@
 import { requestHandler } from '@/core/api/requestHandler'
 import { appointmentService } from '@/modules/appointment/services/appointmentService'
 import type {
+  AdminStats,
   Appointment,
   AreaOfExpertise,
   AvailableSlot,
   BookAppointmentInput,
   BookingMentor,
+  MentorProfile,
+  RateAppointmentInput,
   SlotFilters,
+  AppointmentJoinResponse,
 } from '@/modules/appointment/types'
 
 export const getAreasOfExpertise = async () => {
@@ -65,6 +69,38 @@ export const bookAppointment = async (input: BookAppointmentInput) => {
 export const cancelAppointment = async (id: number) => {
   const response = await requestHandler.delete<{ data: Appointment }>(
     appointmentService.appointment(id),
+  )
+  return response.data.data
+}
+
+export const rateAppointment = async (input: RateAppointmentInput) => {
+  const response = await requestHandler.post<{ data: Appointment }>(
+    appointmentService.rating(input.appointmentId),
+    {
+      score: input.score,
+      comment: input.comment,
+    },
+  )
+  return response.data.data
+}
+
+export const getAdminStats = async () => {
+  const response = await requestHandler.get<{ data: AdminStats }>(
+    appointmentService.adminStats(),
+  )
+  return response.data.data
+}
+
+export const getMentorProfile = async () => {
+  const response = await requestHandler.get<{ data: MentorProfile }>(
+    appointmentService.mentorProfile(),
+  )
+  return response.data.data
+}
+
+export const joinAppointmentMeeting = async (appointmentId: number) => {
+  const response = await requestHandler.post<{ data: AppointmentJoinResponse }>(
+    appointmentService.meetingJoin(appointmentId),
   )
   return response.data.data
 }

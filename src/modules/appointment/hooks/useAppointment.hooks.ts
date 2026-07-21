@@ -6,20 +6,28 @@ import { getApiErrorMessage } from '@/modules/app/utils/apiErrorMessage'
 import {
   bookAppointment,
   cancelAppointment,
+  getAdminStats,
   getAreasOfExpertise,
   getAvailableSlots,
+  getMentorProfile,
   getMentorsForArea,
   getMyAppointments,
   getMyExpertise,
+  joinAppointmentMeeting,
+  rateAppointment,
   updateMyExpertise,
 } from '@/modules/appointment/services'
 import type {
+  AdminStats,
   Appointment,
   AreaOfExpertise,
   AvailableSlot,
   BookAppointmentInput,
   BookingMentor,
+  MentorProfile,
+  RateAppointmentInput,
   SlotFilters,
+  AppointmentJoinResponse,
 } from '@/modules/appointment/types'
 
 export const useAreasOfExpertise = (
@@ -105,6 +113,8 @@ export const useBookAppointment = (
       await queryClient.invalidateQueries({
         queryKey: ['appointments', 'slots'],
       })
+      await queryClient.invalidateQueries({ queryKey: queryKeys.adminStats })
+      await queryClient.invalidateQueries({ queryKey: queryKeys.mentorProfile })
       toast.success('نوبت با موفقیت ثبت شد')
       await options?.onSuccess?.(data, variables, context)
     },
@@ -128,6 +138,8 @@ export const useCancelAppointment = (
       await queryClient.invalidateQueries({
         queryKey: ['appointments', 'slots'],
       })
+      await queryClient.invalidateQueries({ queryKey: queryKeys.adminStats })
+      await queryClient.invalidateQueries({ queryKey: queryKeys.mentorProfile })
       toast.success('نوبت لغو شد')
       await options?.onSuccess?.(data, variables, context)
     },
@@ -137,3 +149,55 @@ export const useCancelAppointment = (
     },
   })
 }
+
+export const useRateAppointment = (
+  options?: UseMutationOptions<Appointment, Error, RateAppointmentInput>,
+) => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    ...options,
+    mutationFn: rateAppointment,
+    onSuccess: async (data, variables, context) => {
+      await queryClient.invalidateQueries({ queryKey: queryKeys.appointments })
+      await queryClient.invalidateQueries({ queryKey: queryKeys.adminStats })
+      await queryClient.invalidateQueries({ queryKey: queryKeys.mentorProfile })
+      toast.success('امتیاز ثبت شد')
+      await options?.onSuccess?.(data, variables, context)
+    },
+    onError: async (error, variables, context) => {
+      toast.error(getApiErrorMessage(error))
+      await options?.onError?.(error, variables, context)
+    },
+  })
+}
+
+export const useAdminStats = (
+  options?: Omit<UseQueryOptions<AdminStats>, 'queryKey' | 'queryFn'>,
+) =>
+  useQuery({
+    queryKey: queryKeys.adminStats,
+    queryFn: getAdminStats,
+    ...options,
+  })
+
+export const useMentorProfile = (
+  options?: Omit<UseQueryOptions<MentorProfile>, 'queryKey' | 'queryFn'>,
+) =>
+  useQuery({
+    queryKey: queryKeys.mentorProfile,
+    queryFn: getMentorProfile,
+    ...options,
+  })
+
+export const useJoinMeeting = (
+  options?: UseMutationOptions<AppointmentJoinResponse, Error, number>,
+) =>
+  useMutation({
+    ...options,
+    mutationFn: joinAppointmentMeeting,
+    onError: async (error, variables, context) => {
+      toast.error(getApiErrorMessage(error))
+      await options?.onError?.(error, variables, context)
+    },
+  })

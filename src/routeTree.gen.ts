@@ -21,6 +21,9 @@ import { Route as AboutRouteImport } from './modules/app/routes/panel/about'
 import { Route as UsersIndexRouteImport } from './modules/user/routes/index'
 import { Route as ScheduleIndexRouteImport } from './modules/schedule/routes/index'
 import { Route as ProfileIndexRouteImport } from './modules/auth/routes/profile/index'
+import { Route as AppointmentsIndexRouteImport } from './modules/appointment/routes/index'
+import { Route as AppointmentsExpertiseRouteImport } from './modules/appointment/routes/expertise'
+import { Route as AppointmentsBookRouteImport } from './modules/appointment/routes/book'
 import { Route as UsersUpsertIndexRouteImport } from './modules/user/routes/upsert/index'
 import { Route as UsersUserIdIndexRouteImport } from './modules/user/routes/$userId/index'
 import { Route as UsersUpsertUserIdRouteImport } from './modules/user/routes/upsert/$userId'
@@ -85,6 +88,21 @@ const ProfileIndexRoute = ProfileIndexRouteImport.update({
   path: '/profile/',
   getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
 } as any)
+const AppointmentsIndexRoute = AppointmentsIndexRouteImport.update({
+  id: '/appointments/',
+  path: '/appointments/',
+  getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
+} as any)
+const AppointmentsExpertiseRoute = AppointmentsExpertiseRouteImport.update({
+  id: '/appointments/expertise',
+  path: '/appointments/expertise',
+  getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
+} as any)
+const AppointmentsBookRoute = AppointmentsBookRouteImport.update({
+  id: '/appointments/book',
+  path: '/appointments/book',
+  getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
+} as any)
 const UsersUpsertIndexRoute = UsersUpsertIndexRouteImport.update({
   id: '/users/upsert/',
   path: '/users/upsert/',
@@ -109,6 +127,9 @@ export interface FileRoutesByFullPath {
   '/mentor': typeof MentorRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/appointments/book': typeof AppointmentsBookRoute
+  '/appointments/expertise': typeof AppointmentsExpertiseRoute
+  '/appointments/': typeof AppointmentsIndexRoute
   '/profile/': typeof ProfileIndexRoute
   '/schedule/': typeof ScheduleIndexRoute
   '/users/': typeof UsersIndexRoute
@@ -124,6 +145,9 @@ export interface FileRoutesByTo {
   '/mentor': typeof MentorRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
+  '/appointments/book': typeof AppointmentsBookRoute
+  '/appointments/expertise': typeof AppointmentsExpertiseRoute
+  '/appointments': typeof AppointmentsIndexRoute
   '/profile': typeof ProfileIndexRoute
   '/schedule': typeof ScheduleIndexRoute
   '/users': typeof UsersIndexRoute
@@ -142,6 +166,9 @@ export interface FileRoutesById {
   '/_public/login': typeof LoginRoute
   '/_public/register': typeof RegisterRoute
   '/_public/': typeof IndexRoute
+  '/_panel/appointments/book': typeof AppointmentsBookRoute
+  '/_panel/appointments/expertise': typeof AppointmentsExpertiseRoute
+  '/_panel/appointments/': typeof AppointmentsIndexRoute
   '/_panel/profile/': typeof ProfileIndexRoute
   '/_panel/schedule/': typeof ScheduleIndexRoute
   '/_panel/users/': typeof UsersIndexRoute
@@ -159,6 +186,9 @@ export interface FileRouteTypes {
     | '/mentor'
     | '/login'
     | '/register'
+    | '/appointments/book'
+    | '/appointments/expertise'
+    | '/appointments/'
     | '/profile/'
     | '/schedule/'
     | '/users/'
@@ -174,6 +204,9 @@ export interface FileRouteTypes {
     | '/mentor'
     | '/login'
     | '/register'
+    | '/appointments/book'
+    | '/appointments/expertise'
+    | '/appointments'
     | '/profile'
     | '/schedule'
     | '/users'
@@ -191,6 +224,9 @@ export interface FileRouteTypes {
     | '/_public/login'
     | '/_public/register'
     | '/_public/'
+    | '/_panel/appointments/book'
+    | '/_panel/appointments/expertise'
+    | '/_panel/appointments/'
     | '/_panel/profile/'
     | '/_panel/schedule/'
     | '/_panel/users/'
@@ -290,6 +326,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileIndexRouteImport
       parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
     }
+    '/_panel/appointments/': {
+      id: '/_panel/appointments/'
+      path: '/appointments'
+      fullPath: '/appointments/'
+      preLoaderRoute: typeof AppointmentsIndexRouteImport
+      parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
+    }
+    '/_panel/appointments/expertise': {
+      id: '/_panel/appointments/expertise'
+      path: '/appointments/expertise'
+      fullPath: '/appointments/expertise'
+      preLoaderRoute: typeof AppointmentsExpertiseRouteImport
+      parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
+    }
+    '/_panel/appointments/book': {
+      id: '/_panel/appointments/book'
+      path: '/appointments/book'
+      fullPath: '/appointments/book'
+      preLoaderRoute: typeof AppointmentsBookRouteImport
+      parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
+    }
     '/_panel/users/upsert/': {
       id: '/_panel/users/upsert/'
       path: '/users/upsert'
@@ -319,6 +376,9 @@ interface DotDotModulesAppLayoutsPanelRouteChildren {
   DashboardRoute: typeof DashboardRoute
   HomeRoute: typeof HomeRoute
   MentorRoute: typeof MentorRoute
+  AppointmentsBookRoute: typeof AppointmentsBookRoute
+  AppointmentsExpertiseRoute: typeof AppointmentsExpertiseRoute
+  AppointmentsIndexRoute: typeof AppointmentsIndexRoute
   ProfileIndexRoute: typeof ProfileIndexRoute
   ScheduleIndexRoute: typeof ScheduleIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
@@ -333,6 +393,9 @@ const DotDotModulesAppLayoutsPanelRouteChildren: DotDotModulesAppLayoutsPanelRou
     DashboardRoute: DashboardRoute,
     HomeRoute: HomeRoute,
     MentorRoute: MentorRoute,
+    AppointmentsBookRoute: AppointmentsBookRoute,
+    AppointmentsExpertiseRoute: AppointmentsExpertiseRoute,
+    AppointmentsIndexRoute: AppointmentsIndexRoute,
     ProfileIndexRoute: ProfileIndexRoute,
     ScheduleIndexRoute: ScheduleIndexRoute,
     UsersIndexRoute: UsersIndexRoute,

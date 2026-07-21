@@ -16,4 +16,6 @@ export const queryKeys = {
   appointments: ['appointments'] as const,
   appointmentSlots: (filters: Record<string, unknown>) =>
     ['appointments', 'slots', filters] as const,
+  adminStats: ['admin', 'stats'] as const,
+  mentorProfile: ['mentor', 'profile'] as const,
 } as const
