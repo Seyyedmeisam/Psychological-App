@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 
 const SIZE_CLASS = {
+  xs: 'size-8 text-[10px]',
   sm: 'size-10 text-xs',
   md: 'size-14 text-sm',
   lg: 'size-24 text-2xl',

@@ -24,6 +24,9 @@ class UserResource extends JsonResource
                 ? Storage::disk('public')->url($this->avatar)
                 : null,
             'bio' => $this->bio,
+            'mentor_verification_status' => $this->mentor_verification_status?->value,
+            'mentor_verification_note' => $this->mentor_verification_note,
+            'mentor_verified_at' => $this->mentor_verified_at?->toIso8601String(),
             'created_at' => $this->created_at?->toIso8601String(),
         ];
     }

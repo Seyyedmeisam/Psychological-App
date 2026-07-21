@@ -34,6 +34,7 @@ export function CtAppointmentListCard({
   appointment,
   isMentor,
   isClient,
+  isAdmin = false,
   cancelPending,
   ratePending,
   onCancel,
@@ -42,6 +43,7 @@ export function CtAppointmentListCard({
   appointment: Appointment
   isMentor: boolean
   isClient: boolean
+  isAdmin?: boolean
   cancelPending: boolean
   ratePending: boolean
   onCancel: (id: number) => void
@@ -54,9 +56,11 @@ export function CtAppointmentListCard({
     appointment.status === 'mentor_absent'
   const showMeeting = appointment.status === 'confirmed' && !appointment.is_completed
   const otherPerson = isMentor ? appointment.client : appointment.mentor
-  const chatUserId = isMentor
-    ? appointment.client?.id
-    : appointment.mentor?.id
+  const chatUserId = isAdmin
+    ? undefined
+    : isMentor
+      ? appointment.client?.id
+      : appointment.mentor?.id
 
   return (
     <CtAppointmentCardShell className={cn(cancelled && 'opacity-60')}>
@@ -97,13 +101,30 @@ export function CtAppointmentListCard({
                 </a>
               ) : null}
             </div>
-          ) : (
+          ) : null}
+
+          {!isMentor && !isClient ? (
+            <div className="space-y-1 text-sm text-muted-foreground">
+              <p>
+                {m.appointment_client_label({
+                  name: appointment.client?.name ?? '—',
+                })}
+              </p>
+              <p>
+                {m.appointment_mentor_label({
+                  name: appointment.mentor?.name ?? '—',
+                })}
+              </p>
+            </div>
+          ) : null}
+
+          {isClient ? (
             <p className="text-sm text-muted-foreground">
               {m.appointment_mentor_label({
                 name: otherPerson?.name ?? '—',
               })}
             </p>
-          )}
+          ) : null}
 
           {appointment.notes ? (
             <div className="rounded-xl border border-border/70 bg-background px-3 py-3">
@@ -122,11 +143,15 @@ export function CtAppointmentListCard({
             </p>
           ) : null}
 
-          {appointment.rating ? (
+          {(isClient || isAdmin) && appointment.rating ? (
             <p className="text-xs text-muted-foreground">
-              {m.appointment_your_rating({
-                score: String(appointment.rating.score),
-              })}
+              {isClient
+                ? m.appointment_your_rating({
+                    score: String(appointment.rating.score),
+                  })
+                : m.appointment_rating_label({
+                    score: String(appointment.rating.score),
+                  })}
             </p>
           ) : null}
         </div>
@@ -176,7 +201,11 @@ export function CtAppointmentListCard({
                 variant="destructive"
                 size="sm"
                 disabled={cancelPending}
-                onClick={() => onCancel(appointment.id)}
+                onClick={() => {
+                  if (window.confirm(m.appointment_cancel_confirm())) {
+                    onCancel(appointment.id)
+                  }
+                }}
               >
                 {cancelPending ? <CtSpinner className="size-4" /> : null}
                 {m.appointment_cancel()}

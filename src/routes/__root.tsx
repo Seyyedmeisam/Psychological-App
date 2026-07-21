@@ -1,13 +1,17 @@
 import { lazy, Suspense } from 'react'
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
+import {
+  HeadContent,
+  Outlet,
+  Scripts,
+  createRootRoute,
+} from '@tanstack/react-router'
 import appCss from '@/core/styles/global.css?url'
 import { getDocumentDirection, getHtmlLang } from '@/core/i18n/locale'
 import { getLocale } from '@/core/i18n/paraglide/runtime.js'
 import { m } from '@/core/i18n/paraglide/messages.js'
 import { CtAppProviders } from '@/modules/app/providers/CtAppProviders'
 import { CtLoading } from '@/modules/app/components/feedback/CtLoading'
+import { CtTanStackDevtools } from '@/modules/app/components/feedback/CtTanStackDevtools'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -31,6 +35,7 @@ export const Route = createRootRoute({
       { rel: 'manifest', href: '/manifest.webmanifest' },
     ],
   }),
+  component: RootComponent,
   shellComponent: RootDocument,
   notFoundComponent: lazy(() => import('@/modules/app/pages/errors/NotFoundPage')),
 })
@@ -46,20 +51,20 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body dir={dir}>
-        <CtAppProviders>
-          <Suspense fallback={<CtLoading />}>{children}</Suspense>
-        </CtAppProviders>
-        <TanStackDevtools
-          config={{ position: 'bottom-right' }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
+        {children}
+        <CtTanStackDevtools />
         <Scripts />
       </body>
     </html>
+  )
+}
+
+function RootComponent() {
+  return (
+    <CtAppProviders>
+      <Suspense fallback={<CtLoading />}>
+        <Outlet />
+      </Suspense>
+    </CtAppProviders>
   )
 }

@@ -2,6 +2,7 @@
 
 namespace Modules\Auth\Http\Controllers;
 
+use App\Enums\MentorVerificationStatus;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use Modules\Auth\Http\Requests\LoginRequest;
@@ -21,12 +22,16 @@ class AuthController extends Controller
     public function register(RegisterRequest $request): JsonResponse
     {
         $validated = $request->validated();
+        $role = $validated['role'] ?? UserRole::User->value;
 
         $user = User::query()->create([
             'name' => $validated['name'],
             'mobile' => $validated['mobile'],
             'password' => $validated['password'],
-            'role' => $validated['role'] ?? UserRole::User->value,
+            'role' => $role,
+            'mentor_verification_status' => $role === UserRole::Mentor->value
+                ? MentorVerificationStatus::Pending->value
+                : null,
         ]);
 
         $token = $user->createToken('api')->plainTextToken;

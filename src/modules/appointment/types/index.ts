@@ -1,8 +1,14 @@
 export type {
   AdminStats,
+  AdminStatsRecentAppointment,
+  AdminStatsRatingBucket,
+  AdminStatsStatusCount,
+  AdminStatsTopMentor,
+  AdminStatsTrendPoint,
   Appointment,
   AppointmentJoinResponse,
   AppointmentRating,
+  AppointmentStatusValue,
   AreaOfExpertise,
   AvailableSlot,
   BookAppointmentInput,
@@ -11,3 +17,10 @@ export type {
   RateAppointmentInput,
   SlotFilters,
 } from '@/modules/appointment/types/appointment.types'
+
+export type {
+  AdminMentorVerificationItem,
+  MentorVerificationEvidence,
+  MentorVerificationMine,
+  MentorVerificationUploadResult,
+} from '@/modules/appointment/types/verification.types'

@@ -4,7 +4,6 @@ namespace Modules\Appointment\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Modules\Appointment\Models\Appointment;
-use Modules\Appointment\Models\AppointmentRating;
 use Modules\User\Models\User;
 use App\Support\SessionSlots;
 use Carbon\Carbon;
@@ -34,7 +33,6 @@ class MentorProfileController extends Controller
             ->with([
                 'client:id,name,mobile',
                 'areaOfExpertise:id,slug,name,name_en',
-                'rating',
             ])
             ->orderByDesc('date')
             ->orderByDesc('start_time')
@@ -47,13 +45,6 @@ class MentorProfileController extends Controller
             static fn (Appointment $row) => $row->status === 'confirmed' && ! $row->isPast(),
         );
         $cancelled = $appointments->where('status', 'cancelled');
-
-        $ratingAvg = AppointmentRating::query()
-            ->where('mentor_id', $mentor->id)
-            ->avg('score');
-        $ratingCount = AppointmentRating::query()
-            ->where('mentor_id', $mentor->id)
-            ->count();
 
         $expertise = $mentor->areasOfExpertise()
             ->orderBy('sort_order')
@@ -110,8 +101,6 @@ class MentorProfileController extends Controller
                 'meetings_done' => $completed->count(),
                 'meetings_upcoming' => $upcoming->count(),
                 'meetings_cancelled' => $cancelled->count(),
-                'rating_average' => $ratingAvg !== null ? round((float) $ratingAvg, 1) : null,
-                'rating_count' => $ratingCount,
             ],
             'expertise' => $expertise,
             'meetings_by_expertise' => $meetingsByExpertise,
@@ -157,12 +146,6 @@ class MentorProfileController extends Controller
                     'id' => $appointment->areaOfExpertise->id,
                     'name' => $appointment->areaOfExpertise->name,
                     'name_en' => $appointment->areaOfExpertise->name_en,
-                ]
-                : null,
-            'rating' => $appointment->rating
-                ? [
-                    'score' => (int) $appointment->rating->score,
-                    'comment' => $appointment->rating->comment,
                 ]
                 : null,
         ];

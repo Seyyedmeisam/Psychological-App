@@ -1,1 +1,7 @@
-export { userToFormValues, normalizeUser, normalizeUsers } from './normalizeUser'
+export {
+  userToFormValues,
+  normalizeUser,
+  normalizeUsers,
+  normalizePaginatedUsers,
+} from './normalizeUser'
+

@@ -24,10 +24,9 @@ const toUserPayload = (values: UserFormValues) => {
 }
 
 export const getUsers = async (params?: UsersListParams) => {
-  const response = await requestHandler.get<User[] | { data: User[] }>(
-    userService.getUsers(),
-    { params },
-  )
+  const response = await requestHandler.get<unknown>(userService.getUsers(), {
+    params,
+  })
   return response.data
 }
 
@@ -56,5 +55,15 @@ export const updateUser = async (id: number, values: UserFormValues) => {
 
 export const deleteUser = async (id: number) => {
   const response = await requestHandler.delete<void>(userService.deleteUser(id))
+  return response.data
+}
+
+export const updateUserAvatar = async (id: number, file: File) => {
+  const formData = new FormData()
+  formData.append('avatar', file)
+  const response = await requestHandler.post<User | { data: User }>(
+    userService.updateUserAvatar(id),
+    formData,
+  )
   return response.data
 }

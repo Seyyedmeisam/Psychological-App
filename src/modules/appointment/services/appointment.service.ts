@@ -13,6 +13,12 @@ import type {
   AppointmentJoinResponse,
   AppointmentStatusValue,
 } from '@/modules/appointment/types'
+import type {
+  AdminMentorVerificationItem,
+  MentorVerificationMine,
+  MentorVerificationUploadResult,
+} from '@/modules/appointment/types/verification.types'
+import type { AuthUser } from '@/modules/auth/types'
 
 export const getAreasOfExpertise = async () => {
   const response = await requestHandler.get<{ data: AreaOfExpertise[] }>(
@@ -113,6 +119,65 @@ export const getMentorProfile = async () => {
 export const joinAppointmentMeeting = async (appointmentId: number) => {
   const response = await requestHandler.post<{ data: AppointmentJoinResponse }>(
     appointmentService.meetingJoin(appointmentId),
+  )
+  return response.data.data
+}
+
+export const getMyMentorVerification = async () => {
+  const response = await requestHandler.get<{ data: MentorVerificationMine }>(
+    appointmentService.mentorVerification(),
+  )
+  return response.data.data
+}
+
+export const uploadMentorEvidence = async (input: {
+  file: File
+  area_of_expertise_id?: number | null
+}) => {
+  const formData = new FormData()
+  formData.append('file', input.file)
+  if (input.area_of_expertise_id != null) {
+    formData.append('area_of_expertise_id', String(input.area_of_expertise_id))
+  }
+  const response = await requestHandler.post<{ data: MentorVerificationUploadResult }>(
+    appointmentService.mentorVerificationEvidence(),
+    formData,
+  )
+  return response.data.data
+}
+
+export const deleteMentorEvidence = async (evidenceId: number) => {
+  await requestHandler.delete(
+    appointmentService.mentorVerificationEvidenceItem(evidenceId),
+  )
+}
+
+export const getAdminMentorVerifications = async (
+  status: 'pending' | 'approved' | 'rejected' | 'all' = 'pending',
+) => {
+  const response = await requestHandler.get<{ data: AdminMentorVerificationItem[] }>(
+    appointmentService.adminMentorVerifications(),
+    {
+      params: status === 'all' ? undefined : { status },
+    },
+  )
+  return response.data.data
+}
+
+export const approveMentorVerification = async (userId: number) => {
+  const response = await requestHandler.post<{ data: AuthUser }>(
+    appointmentService.adminMentorApprove(userId),
+  )
+  return response.data.data
+}
+
+export const rejectMentorVerification = async (input: {
+  userId: number
+  note?: string
+}) => {
+  const response = await requestHandler.post<{ data: AuthUser }>(
+    appointmentService.adminMentorReject(input.userId),
+    { note: input.note || null },
   )
   return response.data.data
 }

@@ -21,18 +21,21 @@ export default function MyAppointmentsPage() {
   const rateMutation = useRateAppointment()
   const isMentor = user?.role === 'mentor'
   const isClient = user?.role === 'user'
+  const isAdmin = user?.role === 'admin'
 
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-8 ios-slide-up">
       <CtPageIntro
         title={m.appointment_mine_title()}
         description={
-          isMentor
-            ? m.appointment_mine_subtitle_mentor()
-            : m.appointment_mine_subtitle()
+          isAdmin
+            ? m.appointment_mine_subtitle_admin()
+            : isMentor
+              ? m.appointment_mine_subtitle_mentor()
+              : m.appointment_mine_subtitle()
         }
         action={
-          user?.role === 'user' || user?.role === 'admin' ? (
+          user?.role === 'user' ? (
             <CtButton asChild className="shrink-0">
               <Link to="/appointments/book">{m.nav_book_appointment()}</Link>
             </CtButton>
@@ -59,6 +62,7 @@ export default function MyAppointmentsPage() {
                 appointment={appointment}
                 isMentor={isMentor}
                 isClient={isClient}
+                isAdmin={isAdmin}
                 cancelPending={cancelMutation.isPending}
                 ratePending={rateMutation.isPending}
                 onCancel={(id) => cancelMutation.mutate(id)}

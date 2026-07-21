@@ -92,16 +92,65 @@ export type SlotFilters = {
   days?: number
 }
 
+export type AdminStatsTrendPoint = {
+  date: string
+  count: number
+}
+
+export type AdminStatsStatusCount = {
+  status: string
+  count: number
+}
+
+export type AdminStatsRatingBucket = {
+  score: number
+  count: number
+}
+
+export type AdminStatsTopMentor = {
+  id: number
+  name: string
+  avatar: string | null
+  meetings_count: number
+  rating_average: number | null
+  rating_count: number
+}
+
+export type AdminStatsRecentAppointment = {
+  id: number
+  date: string
+  start_time: string
+  end_time: string
+  status: string
+  is_completed: boolean
+  client: { id: number | null; name: string | null }
+  mentor: { id: number | null; name: string | null }
+  area_of_expertise: { id: number; name: string } | null
+}
+
 export type AdminStats = {
   clients_total: number
   mentors_total: number
+  admins_total: number
+  users_total: number
   clients_booked: number
+  appointments_total: number
   meetings_confirmed: number
   meetings_cancelled: number
+  meetings_user_absent: number
+  meetings_mentor_absent: number
   meetings_upcoming: number
   meetings_completed: number
   rating_average: number | null
   rating_count: number
+  conversations_total: number
+  messages_total: number
+  messages_today: number
+  appointments_by_status: AdminStatsStatusCount[]
+  appointments_trend: AdminStatsTrendPoint[]
+  rating_distribution: AdminStatsRatingBucket[]
+  top_mentors: AdminStatsTopMentor[]
+  recent_appointments: AdminStatsRecentAppointment[]
 }
 
 export type MentorProfile = {
@@ -117,8 +166,6 @@ export type MentorProfile = {
     meetings_done: number
     meetings_upcoming: number
     meetings_cancelled: number
-    rating_average: number | null
-    rating_count: number
   }
   expertise: Array<{
     id: number
@@ -155,6 +202,5 @@ export type MentorProfile = {
       name: string
       name_en: string | null
     } | null
-    rating: AppointmentRating | null
   }>
 }

@@ -5,6 +5,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
+import type { BaseSyntheticEvent } from 'react'
 import type {
   UseInfiniteQueryOptions,
   UseMutationOptions,
@@ -13,6 +14,8 @@ import type {
 import { toast } from 'sonner'
 import { queryKeys } from '@/core/constants/queryKeys'
 import { pagination } from '@/core/constants/pagination'
+import type { PaginatedResult } from '@/core/types/pagination.types'
+import { m } from '@/core/i18n/paraglide/messages.js'
 import { getApiErrorMessage } from '@/modules/app/utils/apiErrorMessage'
 import {
   createUser,
@@ -20,27 +23,31 @@ import {
   getUserById,
   getUsers,
   updateUser,
+  updateUserAvatar,
 } from '@/modules/user/services'
 import type { User, UserFormValues, UsersListParams } from '@/modules/user/types'
 import {
   userToFormValues,
   normalizeUser,
   normalizeUsers,
+  normalizePaginatedUsers,
 } from '@/modules/user/utils'
 
 export type UserUpsertResult = {
   form: ReturnType<typeof useForm<UserFormValues>>
-  onSubmit: () => void
+  onSubmit: (event?: BaseSyntheticEvent) => Promise<void>
+  save: (onSuccess?: (user: User) => void) => void
   isPending: boolean
 }
 
 export const useUsers = (
   params?: UsersListParams,
-  options?: Omit<UseQueryOptions<User[]>, 'queryKey' | 'queryFn'>,
+  options?: Omit<UseQueryOptions<PaginatedResult<User>>, 'queryKey' | 'queryFn'>,
 ) =>
   useQuery({
-    queryKey: queryKeys.usersList(params),
-    queryFn: async () => normalizeUsers(await getUsers(params)),
+    queryKey: queryKeys.usersList({ ...params, _v: 2 }),
+    queryFn: async () => normalizePaginatedUsers(await getUsers(params)),
+    placeholderData: (previous) => previous,
     ...options,
   })
 
@@ -142,6 +149,34 @@ export const useDeleteUser = (
   })
 }
 
+export const useUpdateUserAvatar = (
+  userId: number,
+  options?: UseMutationOptions<User, Error, File>,
+) => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    ...options,
+    mutationFn: async (file: File) =>
+      normalizeUser(await updateUserAvatar(userId, file)) as User,
+    onSuccess: async (data, variables, onMutateResult, context) => {
+      queryClient.setQueryData(queryKeys.user(userId), data)
+      await queryClient.invalidateQueries({ queryKey: queryKeys.users })
+      // Keep /me in sync when admin edits their own row from the users list.
+      const me = queryClient.getQueryData<{ id: number }>(queryKeys.me)
+      if (me?.id === userId) {
+        queryClient.setQueryData(queryKeys.me, data)
+      }
+      toast.success(m.auth_profile_photo_updated())
+      await options?.onSuccess?.(data, variables, onMutateResult, context)
+    },
+    onError: async (error, variables, onMutateResult, context) => {
+      toast.error(getApiErrorMessage(error))
+      await options?.onError?.(error, variables, onMutateResult, context)
+    },
+  })
+}
+
 export const useUserUpsertForm = (userId?: number): UserUpsertResult => {
   const isEdit = Boolean(userId && userId > 0)
   const { data: user } = useUser(userId ?? 0, { enabled: isEdit })
@@ -158,5 +193,12 @@ export const useUserUpsertForm = (userId?: number): UserUpsertResult => {
     form,
     isPending: mutation.isPending,
     onSubmit: form.handleSubmit((values) => mutation.mutate(values)),
+    save: (onSuccess) => {
+      void form.handleSubmit((values) =>
+        mutation.mutate(values, {
+          onSuccess: (saved) => onSuccess?.(saved),
+        }),
+      )()
+    },
   }
 }

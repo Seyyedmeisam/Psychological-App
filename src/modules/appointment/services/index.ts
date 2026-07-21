@@ -1,6 +1,9 @@
 export {
+  approveMentorVerification,
   bookAppointment,
   cancelAppointment,
+  deleteMentorEvidence,
+  getAdminMentorVerifications,
   getAdminStats,
   getAreasOfExpertise,
   getAvailableSlots,
@@ -8,8 +11,11 @@ export {
   getMentorsForArea,
   getMyAppointments,
   getMyExpertise,
+  getMyMentorVerification,
   joinAppointmentMeeting,
   rateAppointment,
+  rejectMentorVerification,
   updateAppointmentStatus,
   updateMyExpertise,
+  uploadMentorEvidence,
 } from '@/modules/appointment/services/appointment.service'

@@ -38,7 +38,7 @@ function CtPwaDialogShell({
 
   return (
     <CtDialogRoot open={open} onOpenChange={onOpenChange}>
-      <CtDialogContent className="top-1/2 left-1/2 max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-5 rounded-2xl p-5 sm:max-w-md sm:p-6 ios-slide-up">
+      <CtDialogContent className="max-w-[calc(100%-2rem)] gap-5 rounded-2xl p-5 sm:max-w-md sm:p-6 ios-slide-up">
         <div className="flex items-start gap-3">
           <div
             className={cn(

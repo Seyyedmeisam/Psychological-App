@@ -123,7 +123,7 @@ export default function MentorSchedulePage() {
               appointments={appointmentsQuery.data ?? []}
               statusPendingId={
                 statusMutation.isPending
-                  ? (statusMutation.variables?.appointmentId ?? null)
+                  ? statusMutation.variables.appointmentId
                   : null
               }
               onUpdateStatus={(appointmentId, status: AppointmentStatusValue) => {

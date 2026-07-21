@@ -24,8 +24,8 @@ export const pwaOptions = {
     'fonts/Vazirmatn-Bold.ttf',
   ],
   manifest: {
-    name: 'Psychological Support',
-    short_name: 'PsySupport',
+    name: 'همدل',
+    short_name: 'همدل',
     description:
       'A secure platform for clients and counselors. Connect with licensed professionals and access support resources.',
     theme_color: themeColor,
@@ -59,7 +59,8 @@ export const pwaOptions = {
     ],
   },
   devOptions: {
-    enabled: true,
+    // Keep SW generation out of everyday `bun run dev` (big Windows slowdown).
+    enabled: false,
     type: 'module',
     navigateFallback: 'index.html',
     suppressWarnings: true,

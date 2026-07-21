@@ -5,13 +5,15 @@ import { m } from '@/core/i18n/paraglide/messages.js'
 import { cn } from '@/lib/utils'
 import { CtButton } from '@/modules/app/components/CtButton'
 import type { Appointment } from '@/modules/appointment/types'
+import type {
+  AppointmentStatusValue,
+  AppointmentVisualKind,
+} from '@/modules/appointment/utils/appointmentStatus'
 import {
   appointmentCalendarCellClass,
   appointmentLegendDotClass,
   appointmentStatusLabel,
   getAppointmentVisualKind,
-  type AppointmentStatusValue,
-  type AppointmentVisualKind,
 } from '@/modules/appointment/utils/appointmentStatus'
 import {
   addDaysIso,
@@ -61,6 +63,8 @@ type CtAppointmentsWeekGridProps = {
   appointments: Appointment[]
   statusPendingId?: number | null
   onUpdateStatus?: (appointmentId: number, status: AppointmentStatusValue) => void
+  /** Show mentor name under client (useful for admin all-mentor views). */
+  showMentor?: boolean
 }
 
 export function CtAppointmentsWeekGrid({
@@ -68,6 +72,7 @@ export function CtAppointmentsWeekGrid({
   appointments,
   statusPendingId = null,
   onUpdateStatus,
+  showMentor = false,
 }: Readonly<CtAppointmentsWeekGridProps>) {
   const currentWeekStart = getWeekStartIso()
   const [weekStart, setWeekStart] = useState(currentWeekStart)
@@ -75,9 +80,12 @@ export function CtAppointmentsWeekGrid({
   const today = todayIso()
 
   const bySlot = useMemo(() => {
-    const map = new Map<string, Appointment>()
+    const map = new Map<string, Appointment[]>()
     for (const appointment of appointments) {
-      map.set(appointmentKey(appointment.date, appointment.start_time), appointment)
+      const key = appointmentKey(appointment.date, appointment.start_time)
+      const list = map.get(key) ?? []
+      list.push(appointment)
+      map.set(key, list)
     }
     return map
   }, [appointments])
@@ -187,8 +195,9 @@ export function CtAppointmentsWeekGrid({
                   </div>
                 </td>
                 {weekDates.map((date) => {
-                  const appointment = bySlot.get(appointmentKey(date, slot.start))
-                  if (!appointment) {
+                  const cellAppointments =
+                    bySlot.get(appointmentKey(date, slot.start)) ?? []
+                  if (cellAppointments.length === 0) {
                     return (
                       <td key={`${date}-${slot.start}`} className="px-1.5 py-1.5">
                         <div className="flex min-h-18 items-center justify-center rounded-xl border border-dashed border-border/60 bg-muted/20 text-[11px] text-muted-foreground/70">
@@ -198,53 +207,69 @@ export function CtAppointmentsWeekGrid({
                     )
                   }
 
-                  const kind = getAppointmentVisualKind(appointment)
-                  const canMarkAbsence =
-                    Boolean(onUpdateStatus) &&
-                    appointment.status === 'confirmed' &&
-                    appointment.is_completed
-                  const pending = statusPendingId === appointment.id
-
                   return (
                     <td key={`${date}-${slot.start}`} className="px-1.5 py-1.5 align-top">
-                      <div
-                        className={cn(
-                          'flex min-h-18 flex-col justify-between gap-1 rounded-xl border px-2 py-1.5 text-start',
-                          appointmentCalendarCellClass(kind),
-                        )}
-                      >
-                        <div className="min-w-0">
-                          <p className="truncate text-xs font-semibold leading-tight">
-                            {appointment.client?.name ?? '—'}
-                          </p>
-                          <p className="mt-0.5 truncate text-[10px] opacity-80">
-                            {appointment.area_of_expertise?.name ??
-                              appointmentStatusLabel(appointment)}
-                          </p>
-                        </div>
-                        <p className="text-[10px] font-medium opacity-90">
-                          {appointmentStatusLabel(appointment)}
-                        </p>
-                        {canMarkAbsence ? (
-                          <div className="flex flex-wrap gap-1 pt-0.5">
-                            <button
-                              type="button"
-                              disabled={pending}
-                              className="rounded-md bg-background/55 px-1.5 py-0.5 text-[10px] font-medium hover:bg-background/80 disabled:opacity-50"
-                              onClick={() => onUpdateStatus?.(appointment.id, 'user_absent')}
+                      <div className="flex flex-col gap-1">
+                        {cellAppointments.map((appointment) => {
+                          const kind = getAppointmentVisualKind(appointment)
+                          const canMarkAbsence =
+                            Boolean(onUpdateStatus) &&
+                            appointment.status === 'confirmed' &&
+                            appointment.is_completed
+                          const pending = statusPendingId === appointment.id
+
+                          return (
+                            <div
+                              key={appointment.id}
+                              className={cn(
+                                'flex min-h-18 flex-col justify-between gap-1 rounded-xl border px-2 py-1.5 text-start',
+                                appointmentCalendarCellClass(kind),
+                              )}
                             >
-                              {m.schedule_mark_user_absent()}
-                            </button>
-                            <button
-                              type="button"
-                              disabled={pending}
-                              className="rounded-md bg-background/55 px-1.5 py-0.5 text-[10px] font-medium hover:bg-background/80 disabled:opacity-50"
-                              onClick={() => onUpdateStatus?.(appointment.id, 'mentor_absent')}
-                            >
-                              {m.schedule_mark_mentor_absent()}
-                            </button>
-                          </div>
-                        ) : null}
+                              <div className="min-w-0">
+                                <p className="truncate text-xs font-semibold leading-tight">
+                                  {appointment.client?.name ?? '—'}
+                                </p>
+                                {showMentor ? (
+                                  <p className="mt-0.5 truncate text-[10px] opacity-80">
+                                    {appointment.mentor?.name ?? '—'}
+                                  </p>
+                                ) : null}
+                                <p className="mt-0.5 truncate text-[10px] opacity-80">
+                                  {appointment.area_of_expertise?.name ??
+                                    appointmentStatusLabel(appointment)}
+                                </p>
+                              </div>
+                              <p className="text-[10px] font-medium opacity-90">
+                                {appointmentStatusLabel(appointment)}
+                              </p>
+                              {canMarkAbsence ? (
+                                <div className="flex flex-wrap gap-1 pt-0.5">
+                                  <button
+                                    type="button"
+                                    disabled={pending}
+                                    className="rounded-md bg-background/55 px-1.5 py-0.5 text-[10px] font-medium hover:bg-background/80 disabled:opacity-50"
+                                    onClick={() =>
+                                      onUpdateStatus?.(appointment.id, 'user_absent')
+                                    }
+                                  >
+                                    {m.schedule_mark_user_absent()}
+                                  </button>
+                                  <button
+                                    type="button"
+                                    disabled={pending}
+                                    className="rounded-md bg-background/55 px-1.5 py-0.5 text-[10px] font-medium hover:bg-background/80 disabled:opacity-50"
+                                    onClick={() =>
+                                      onUpdateStatus?.(appointment.id, 'mentor_absent')
+                                    }
+                                  >
+                                    {m.schedule_mark_mentor_absent()}
+                                  </button>
+                                </div>
+                              ) : null}
+                            </div>
+                          )
+                        })}
                       </div>
                     </td>
                   )

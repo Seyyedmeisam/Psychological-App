@@ -19,6 +19,7 @@ import { Route as LoginRouteImport } from './modules/auth/routes/public/login'
 import { Route as FaqRouteImport } from './modules/app/routes/public/faq'
 import { Route as ContactRouteImport } from './modules/app/routes/public/contact'
 import { Route as AboutRouteImport } from './modules/app/routes/public/about'
+import { Route as MentorVerificationsRouteImport } from './modules/app/routes/panel/mentor-verifications'
 import { Route as MentorRouteImport } from './modules/app/routes/panel/mentor'
 import { Route as HomeRouteImport } from './modules/app/routes/panel/home'
 import { Route as DashboardRouteImport } from './modules/app/routes/panel/dashboard'
@@ -83,6 +84,11 @@ const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
   getParentRoute: () => DotDotModulesAppLayoutsPublicRoute,
+} as any)
+const MentorVerificationsRoute = MentorVerificationsRouteImport.update({
+  id: '/mentor-verifications',
+  path: '/mentor-verifications',
+  getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
 } as any)
 const MentorRoute = MentorRouteImport.update({
   id: '/mentor',
@@ -160,6 +166,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/home': typeof HomeRoute
   '/mentor': typeof MentorRoute
+  '/mentor-verifications': typeof MentorVerificationsRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
@@ -184,6 +191,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/home': typeof HomeRoute
   '/mentor': typeof MentorRoute
+  '/mentor-verifications': typeof MentorVerificationsRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
@@ -210,6 +218,7 @@ export interface FileRoutesById {
   '/_panel/dashboard': typeof DashboardRoute
   '/_panel/home': typeof HomeRoute
   '/_panel/mentor': typeof MentorRoute
+  '/_panel/mentor-verifications': typeof MentorVerificationsRoute
   '/_public/about': typeof AboutRoute
   '/_public/contact': typeof ContactRoute
   '/_public/faq': typeof FaqRoute
@@ -237,6 +246,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/home'
     | '/mentor'
+    | '/mentor-verifications'
     | '/about'
     | '/contact'
     | '/faq'
@@ -261,6 +271,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/home'
     | '/mentor'
+    | '/mentor-verifications'
     | '/about'
     | '/contact'
     | '/faq'
@@ -286,6 +297,7 @@ export interface FileRouteTypes {
     | '/_panel/dashboard'
     | '/_panel/home'
     | '/_panel/mentor'
+    | '/_panel/mentor-verifications'
     | '/_public/about'
     | '/_public/contact'
     | '/_public/faq'
@@ -383,6 +395,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof DotDotModulesAppLayoutsPublicRoute
+    }
+    '/_panel/mentor-verifications': {
+      id: '/_panel/mentor-verifications'
+      path: '/mentor-verifications'
+      fullPath: '/mentor-verifications'
+      preLoaderRoute: typeof MentorVerificationsRouteImport
+      parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
     }
     '/_panel/mentor': {
       id: '/_panel/mentor'
@@ -489,6 +508,7 @@ interface DotDotModulesAppLayoutsPanelRouteChildren {
   DashboardRoute: typeof DashboardRoute
   HomeRoute: typeof HomeRoute
   MentorRoute: typeof MentorRoute
+  MentorVerificationsRoute: typeof MentorVerificationsRoute
   AppointmentsBookRoute: typeof AppointmentsBookRoute
   AppointmentsExpertiseRoute: typeof AppointmentsExpertiseRoute
   AppointmentsIndexRoute: typeof AppointmentsIndexRoute
@@ -507,6 +527,7 @@ const DotDotModulesAppLayoutsPanelRouteChildren: DotDotModulesAppLayoutsPanelRou
     DashboardRoute: DashboardRoute,
     HomeRoute: HomeRoute,
     MentorRoute: MentorRoute,
+    MentorVerificationsRoute: MentorVerificationsRoute,
     AppointmentsBookRoute: AppointmentsBookRoute,
     AppointmentsExpertiseRoute: AppointmentsExpertiseRoute,
     AppointmentsIndexRoute: AppointmentsIndexRoute,

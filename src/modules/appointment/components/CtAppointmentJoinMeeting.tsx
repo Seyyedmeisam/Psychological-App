@@ -3,7 +3,10 @@ import { m } from '@/core/i18n/paraglide/messages.js'
 import { CtButton } from '@/modules/app/components/CtButton'
 import { CtSpinner } from '@/modules/app/components/CtSpinner'
 import { useJoinMeeting } from '@/modules/appointment/hooks'
-import { canJoinAppointmentMeeting } from '@/modules/appointment/utils/appointmentSession'
+import {
+  canJoinAppointmentMeeting,
+  minutesUntilJoinOpens,
+} from '@/modules/appointment/utils/appointmentSession'
 import { useEffect, useState } from 'react'
 
 type JoinableAppointment = {
@@ -23,11 +26,12 @@ export function CtAppointmentJoinMeeting({
   const [now, setNow] = useState(() => new Date())
 
   useEffect(() => {
-    const id = window.setInterval(() => setNow(new Date()), 30_000)
+    const id = window.setInterval(() => setNow(new Date()), 15_000)
     return () => window.clearInterval(id)
   }, [])
 
   const canJoin = canJoinAppointmentMeeting(appointment, now)
+  const minutesLeft = minutesUntilJoinOpens(appointment, now)
   const cancelled =
     appointment.status === 'cancelled' ||
     appointment.status === 'user_absent' ||
@@ -36,6 +40,12 @@ export function CtAppointmentJoinMeeting({
   if (cancelled) {
     return null
   }
+
+  const label = canJoin
+    ? m.appointment_join_meeting()
+    : minutesLeft !== null && minutesLeft > 0 && minutesLeft <= 120
+      ? m.appointment_join_in_minutes({ minutes: String(minutesLeft) })
+      : m.appointment_join_meeting_soon()
 
   return (
     <CtButton
@@ -55,7 +65,7 @@ export function CtAppointmentJoinMeeting({
       ) : (
         <Video className="me-2 size-4" aria-hidden />
       )}
-      {canJoin ? m.appointment_join_meeting() : m.appointment_join_meeting_soon()}
+      {label}
     </CtButton>
   )
 }
