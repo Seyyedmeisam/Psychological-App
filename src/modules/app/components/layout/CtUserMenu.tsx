@@ -2,7 +2,6 @@ import { Link } from '@tanstack/react-router'
 import { ChevronDown, Info, LogOut, UserRound } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { m } from '@/core/i18n/paraglide/messages.js'
-import { getDocumentDirection } from '@/core/i18n/locale'
 import {
   CtDropdownMenu,
   CtDropdownMenuContent,
@@ -12,6 +11,7 @@ import {
   CtDropdownMenuTrigger,
 } from '@/modules/app/components/CtDropdownMenuParts'
 import { useLogout } from '@/modules/auth/hooks'
+import { useAppLocale } from '@/modules/app/providers/CtI18nProvider'
 import type { AuthUser } from '@/modules/auth/types'
 import { cn } from '@/lib/utils'
 
@@ -55,7 +55,7 @@ export function CtUserMenu({
   user: AuthUser
 }>) {
   const logout = useLogout()
-  const dir = getDocumentDirection()
+  const { dir } = useAppLocale()
 
   return (
     <CtDropdownMenu dir={dir}>
@@ -64,7 +64,7 @@ export function CtUserMenu({
           type="button"
           aria-label={m.nav_profile()}
           className={cn(
-            'group inline-flex h-11 max-w-[14rem] items-center gap-2.5 rounded-2xl border border-border/80 bg-card/90 pe-2.5 ps-1.5 text-start shadow-ios-sm backdrop-blur-md transition-[background-color,border-color,box-shadow,transform] duration-(--motion-duration-fast) ease-(--motion-ease-out)',
+            'group inline-flex h-11 max-w-56 items-center gap-2.5 rounded-2xl border border-border/80 bg-card/90 pe-2.5 ps-1.5 text-start shadow-ios-sm backdrop-blur-md transition-[background-color,border-color,box-shadow,transform] duration-(--motion-duration-fast) ease-(--motion-ease-out)',
             'hover:border-primary/25 hover:bg-card hover:shadow-ios-md',
             'focus-visible:border-ring/40 focus-visible:ring-2 focus-visible:ring-ring/25 focus-visible:outline-none',
             'data-[state=open]:border-primary/30 data-[state=open]:bg-card data-[state=open]:shadow-ios-md',

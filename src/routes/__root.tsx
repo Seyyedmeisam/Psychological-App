@@ -43,7 +43,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body>
+      <body dir={dir}>
         <CtAppProviders>
           <Suspense fallback={<CtLoading />}>{children}</Suspense>
         </CtAppProviders>

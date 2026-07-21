@@ -12,17 +12,18 @@ import {
 import { m } from '@/core/i18n/paraglide/messages.js'
 
 export function CtLocaleSwitcher() {
-  const { locale, setAppLocale } = useAppLocale()
+  const { locale, dir, setAppLocale } = useAppLocale()
 
   return (
     <CtSelectRoot
+      dir={dir}
       value={locale}
       onValueChange={(value) => setAppLocale(value as AppLocale)}
     >
       <CtSelectTrigger className="w-38" size="sm" aria-label={m.locale_label()}>
         <CtSelectValue placeholder={m.locale_label()} />
       </CtSelectTrigger>
-      <CtSelectContent>
+      <CtSelectContent dir={dir}>
         {locales.map((code) => (
           <CtSelectItem key={code} value={code}>
             {localeLabels[code]}

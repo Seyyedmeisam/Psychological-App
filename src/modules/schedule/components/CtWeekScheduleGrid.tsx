@@ -72,36 +72,38 @@ export function CtWeekScheduleGrid({
             <th className="sticky start-0 z-10 bg-secondary/60 px-3 py-3 text-start font-semibold text-muted-foreground">
               {m.schedule_time()}
             </th>
-            {WEEK_DAYS.map((day) => (
+            {templateSlots.map((slot) => (
               <th
-                key={day}
+                key={slot.start}
                 className="px-2 py-3 text-center font-semibold text-foreground"
               >
-                {dayLabel(day)}
+                <div className="flex flex-col items-center gap-0.5">
+                  <span>
+                    {slot.start} – {slot.end}
+                  </span>
+                  <span className="text-xs font-normal text-muted-foreground">
+                    {m.schedule_session_meta()}
+                  </span>
+                </div>
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {templateSlots.map((slot, index) => (
+          {WEEK_DAYS.map((day, index) => (
             <tr
-              key={slot.start}
+              key={day}
               className={cn(
                 'border-b border-border/70',
                 index % 2 === 0 ? 'bg-card' : 'bg-secondary/20',
               )}
             >
               <td className="sticky start-0 z-10 bg-inherit px-3 py-2 whitespace-nowrap">
-                <div className="flex flex-col">
-                  <span className="font-semibold text-foreground">
-                    {slot.start} – {slot.end}
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    {m.schedule_session_meta()}
-                  </span>
-                </div>
+                <span className="font-semibold text-foreground">
+                  {dayLabel(day)}
+                </span>
               </td>
-              {WEEK_DAYS.map((day) => {
+              {templateSlots.map((slot) => {
                 const active = selectedSet.has(slotKey(day, slot.start))
                 return (
                   <td key={`${day}-${slot.start}`} className="px-1.5 py-1.5">
