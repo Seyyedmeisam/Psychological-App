@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import type { ReactNode } from 'react'
+import { Direction } from 'radix-ui'
 import type { AppLocale } from '@/core/i18n/localeLabels'
 import { getDocumentDirection, getHtmlLang } from '@/core/i18n/locale'
 import { getLocale, setLocale as setParaglideLocale } from '@/core/i18n/paraglide/runtime.js'
@@ -13,12 +14,12 @@ const I18nContext = createContext<I18nContextValue | null>(null)
 
 export function CtI18nProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [locale, setLocale] = useState<AppLocale>(() => getLocale())
+  const direction = getDocumentDirection(locale)
 
   useEffect(() => {
-    const direction = getDocumentDirection(locale)
     document.documentElement.lang = getHtmlLang(locale)
     document.documentElement.dir = direction
-  }, [locale])
+  }, [direction, locale])
 
   const value = useMemo<I18nContextValue>(
     () => ({
@@ -31,7 +32,11 @@ export function CtI18nProvider({ children }: Readonly<{ children: ReactNode }>) 
     [locale],
   )
 
-  return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>
+  return (
+    <I18nContext.Provider value={value}>
+      <Direction.Provider dir={direction}>{children}</Direction.Provider>
+    </I18nContext.Provider>
+  )
 }
 
 export const useAppLocale = () => {
