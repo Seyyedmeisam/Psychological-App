@@ -19,7 +19,6 @@ todos.json
 backend/vendor
 backend/vendor.zip
 backend/.env
-backend/public/migrate-once.php
 backend/storage/*.key
 backend/database/database.sqlite
 frontend
