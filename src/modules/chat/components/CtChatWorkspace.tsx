@@ -17,6 +17,7 @@ import { CtAsyncContent } from '@/modules/app/components/feedback/CtAsyncContent
 import { CtAvatar } from '@/modules/app/components/CtAvatar'
 import { CtButton } from '@/modules/app/components/CtButton'
 import { CtInput } from '@/modules/app/components/CtInput'
+import { CtPageIntro } from '@/modules/app/components/CtPageIntro'
 import { CtSpinner } from '@/modules/app/components/CtSpinner'
 import { useMe } from '@/modules/auth/hooks'
 import {
@@ -405,23 +406,20 @@ export function CtChatWorkspace({
 
   return (
     <section className="mx-auto flex h-[min(78vh,820px)] w-full max-w-6xl flex-col gap-4 px-4 py-6 ios-slide-up sm:px-6">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            {m.chat_title()}
-          </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {m.chat_subtitle()}
-          </p>
-        </div>
-        <CtButton
-          type="button"
-          variant={peopleOpen ? 'secondary' : 'default'}
-          onClick={() => setPeopleOpen((value) => !value)}
-        >
-          {peopleOpen ? m.chat_close_new() : m.chat_new()}
-        </CtButton>
-      </div>
+      <CtPageIntro
+        className="mb-0"
+        title={m.chat_title()}
+        description={m.chat_subtitle()}
+        action={
+          <CtButton
+            type="button"
+            variant={peopleOpen ? 'secondary' : 'default'}
+            onClick={() => setPeopleOpen((value) => !value)}
+          >
+            {peopleOpen ? m.chat_close_new() : m.chat_new()}
+          </CtButton>
+        }
+      />
 
       <div className="flex min-h-0 flex-1 overflow-hidden rounded-2xl border border-border/70 bg-card shadow-ios-sm">
         <aside

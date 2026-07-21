@@ -2,13 +2,8 @@ import { Link } from '@tanstack/react-router'
 import { m } from '@/core/i18n/paraglide/messages.js'
 import { useMe } from '@/modules/auth/hooks'
 import { CtButton } from '@/modules/app/components/CtButton'
-import {
-  CtCard,
-  CtCardContent,
-  CtCardDescription,
-  CtCardHeader,
-  CtCardTitle,
-} from '@/modules/app/components/CtCard'
+import { CtPageIntro } from '@/modules/app/components/CtPageIntro'
+import { CtCard, CtCardContent } from '@/modules/app/components/CtCard'
 import { CtGroup } from '@/modules/app/components/surface/CtGroup'
 import { CtSurface } from '@/modules/app/components/surface/CtSurface'
 
@@ -17,14 +12,10 @@ export default function ClientHomePage() {
 
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-8 ios-slide-up">
-      <CtCard variant="inset" className="mb-6">
-        <CtCardHeader>
-          <CtCardTitle className="text-2xl">{m.client_home_title()}</CtCardTitle>
-          <CtCardDescription>
-            {m.client_home_welcome({ name: user?.name ?? '' })}
-          </CtCardDescription>
-        </CtCardHeader>
-      </CtCard>
+      <CtPageIntro
+        title={m.client_home_title()}
+        description={m.client_home_welcome({ name: user?.name ?? '' })}
+      />
 
       <CtSurface title={m.client_home_actions()}>
         <CtGroup>

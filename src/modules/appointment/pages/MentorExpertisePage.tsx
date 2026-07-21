@@ -2,13 +2,11 @@ import { useEffect, useMemo, useState } from 'react'
 import { CheckCircle2, Sparkles } from 'lucide-react'
 import { m } from '@/core/i18n/paraglide/messages.js'
 import { CtAsyncContent } from '@/modules/app/components/feedback/CtAsyncContent'
-import { CtButton } from '@/modules/app/components/CtButton'
 import {
-  CtCard,
-  CtCardDescription,
-  CtCardHeader,
-  CtCardTitle,
-} from '@/modules/app/components/CtCard'
+  CtAlert,
+  CtAlertDescription,
+} from '@/modules/app/components/CtAlert'
+import { CtButton } from '@/modules/app/components/CtButton'
 import { CtSpinner } from '@/modules/app/components/CtSpinner'
 import { CtExpertiseSelectCard } from '@/modules/appointment/components/CtExpertiseSelectCard'
 import {
@@ -58,28 +56,22 @@ export default function MentorExpertisePage() {
       />
 
       <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6">
-      <CtCard
-        variant="plain"
-        className="expertise-hero mb-8 overflow-hidden rounded-3xl border border-border/70 bg-card/85 p-0 shadow-ios-md backdrop-blur-xl"
-      >
-        <CtCardHeader className="relative gap-3 px-6 py-6 sm:px-8 sm:py-8">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-e-0 top-0 size-40 bg-primary/10 blur-3xl"
-          />
-          <div className="relative flex flex-wrap items-start justify-between gap-4">
-            <div className="max-w-2xl space-y-2 text-start">
-              <p className="inline-flex items-center gap-2 text-sm font-semibold text-primary">
-                <Sparkles className="size-4" aria-hidden />
-                {m.nav_expertise()}
-              </p>
-              <CtCardTitle className="text-2xl sm:text-3xl">
-                {m.expertise_title()}
-              </CtCardTitle>
-              <CtCardDescription className="text-sm leading-relaxed sm:text-base">
+      <div className="expertise-hero mb-8 space-y-4 overflow-hidden rounded-3xl border border-border/70 bg-card/85 px-6 py-6 shadow-ios-md backdrop-blur-xl sm:px-8 sm:py-8">
+        <div className="relative flex flex-wrap items-start justify-between gap-4">
+          <div className="max-w-2xl space-y-3 text-start">
+            <p className="inline-flex items-center gap-2 text-sm font-semibold text-primary">
+              <Sparkles className="size-4" aria-hidden />
+              {m.nav_expertise()}
+            </p>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+              {m.expertise_title()}
+            </h1>
+            <CtAlert>
+              <CtAlertDescription className="sm:text-base">
                 {m.expertise_subtitle()}
-              </CtCardDescription>
-            </div>
+              </CtAlertDescription>
+            </CtAlert>
+          </div>
 
             <div
               className={cn(
@@ -101,8 +93,7 @@ export default function MentorExpertisePage() {
               </span>
             </div>
           </div>
-        </CtCardHeader>
-      </CtCard>
+      </div>
 
       <CtAsyncContent
         isLoading={areasQuery.isLoading || myExpertiseQuery.isLoading}

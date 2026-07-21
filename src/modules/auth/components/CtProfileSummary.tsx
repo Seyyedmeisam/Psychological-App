@@ -264,7 +264,7 @@ export function CtProfileSummary({ user }: Readonly<{ user: AuthUser }>) {
                   </CtButton>
                   <CtButton
                     type="button"
-                    variant="secondary"
+                    variant="destructive"
                     onClick={onCancel}
                     disabled={updateProfile.isPending}
                   >

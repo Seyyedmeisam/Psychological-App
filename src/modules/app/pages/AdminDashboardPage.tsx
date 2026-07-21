@@ -2,12 +2,7 @@ import { Link } from '@tanstack/react-router'
 import { m } from '@/core/i18n/paraglide/messages.js'
 import { CtAsyncContent } from '@/modules/app/components/feedback/CtAsyncContent'
 import { CtButton } from '@/modules/app/components/CtButton'
-import {
-  CtCard,
-  CtCardDescription,
-  CtCardHeader,
-  CtCardTitle,
-} from '@/modules/app/components/CtCard'
+import { CtPageIntro } from '@/modules/app/components/CtPageIntro'
 import { useAdminStats } from '@/modules/appointment/hooks'
 import { useMe } from '@/modules/auth/hooks'
 
@@ -29,14 +24,11 @@ export default function AdminDashboardPage() {
 
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-8 ios-slide-up">
-      <CtCard variant="inset" className="mb-8">
-        <CtCardHeader>
-          <CtCardTitle className="text-2xl">{m.dashboard_title()}</CtCardTitle>
-          <CtCardDescription>
-            {m.dashboard_welcome({ name: user?.name ?? '' })}
-          </CtCardDescription>
-        </CtCardHeader>
-      </CtCard>
+      <CtPageIntro
+        title={m.dashboard_title()}
+        description={m.dashboard_welcome({ name: user?.name ?? '' })}
+        className="mb-8"
+      />
 
       <CtAsyncContent
         isLoading={statsQuery.isLoading}

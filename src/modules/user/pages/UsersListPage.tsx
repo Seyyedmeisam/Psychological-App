@@ -4,6 +4,7 @@ import { m } from '@/core/i18n/paraglide/messages.js'
 import { CtAsyncContent } from '@/modules/app/components/feedback/CtAsyncContent'
 import { CtButton } from '@/modules/app/components/CtButton'
 import { CtInput } from '@/modules/app/components/CtInput'
+import { CtPageIntro } from '@/modules/app/components/CtPageIntro'
 import {
   CtSelectContent,
   CtSelectItem,
@@ -48,12 +49,14 @@ export default function UsersListPage() {
 
   return (
     <section className="mx-auto w-full max-w-7xl px-4 py-8 ios-slide-up">
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold tracking-tight text-foreground">{m.users_title()}</h1>
-        <CtButton asChild>
-          <Link to="/users/upsert">{m.users_add()}</Link>
-        </CtButton>
-      </div>
+      <CtPageIntro
+        title={m.users_title()}
+        action={
+          <CtButton asChild>
+            <Link to="/users/upsert">{m.users_add()}</Link>
+          </CtButton>
+        }
+      />
 
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
         <CtInput

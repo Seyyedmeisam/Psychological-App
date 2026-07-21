@@ -5,6 +5,7 @@ import { CtAppointmentWeekTimeline } from '@/modules/appointment/components/CtAp
 import { CtAsyncContent } from '@/modules/app/components/feedback/CtAsyncContent'
 import { getApiErrorMessage } from '@/modules/app/utils/apiErrorMessage'
 import { CtButton } from '@/modules/app/components/CtButton'
+import { CtPageIntro } from '@/modules/app/components/CtPageIntro'
 import {
   CtCard,
   CtCardContent,
@@ -85,12 +86,10 @@ export default function BookAppointmentPage() {
 
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-8 ios-slide-up">
-      <CtCard variant="inset" className="mb-6">
-        <CtCardHeader>
-          <CtCardTitle className="text-2xl">{m.appointment_book_title()}</CtCardTitle>
-          <CtCardDescription>{m.appointment_book_subtitle()}</CtCardDescription>
-        </CtCardHeader>
-      </CtCard>
+      <CtPageIntro
+        title={m.appointment_book_title()}
+        description={m.appointment_book_subtitle()}
+      />
 
       <CtAsyncContent
         isLoading={areasQuery.isLoading}
@@ -223,7 +222,7 @@ export default function BookAppointmentPage() {
                     </div>
                     <CtButton
                       type="button"
-                      variant="ghost"
+                      variant="destructive"
                       size="sm"
                       onClick={() => {
                         setSelectedSlot(null)

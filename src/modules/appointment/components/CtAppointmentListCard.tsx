@@ -173,7 +173,7 @@ export function CtAppointmentListCard({
 
             {!cancelled && !appointment.is_completed ? (
               <CtButton
-                variant="ghost"
+                variant="destructive"
                 size="sm"
                 disabled={cancelPending}
                 onClick={() => onCancel(appointment.id)}

@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router'
 import { m } from '@/core/i18n/paraglide/messages.js'
 import { CtAsyncContent } from '@/modules/app/components/feedback/CtAsyncContent'
 import { CtButton } from '@/modules/app/components/CtButton'
+import { CtPageIntro } from '@/modules/app/components/CtPageIntro'
 import {
   CtAppointmentCardShell,
   CtAppointmentStatusBadge,
@@ -77,30 +78,29 @@ export default function MentorHomePage() {
       >
         {profileQuery.data ? (
           <>
-            <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-              <div>
-                <h1 className="text-2xl font-bold tracking-tight text-foreground">
-                  {m.mentor_profile_title()}
-                </h1>
-                <p className="mt-2 text-muted-foreground">
-                  {m.mentor_home_welcome({ name: profileQuery.data.mentor.name })}
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <CtButton asChild variant="secondary" size="sm">
-                  <Link to="/appointments">{m.nav_my_appointments()}</Link>
-                </CtButton>
-                <CtButton asChild variant="secondary" size="sm">
-                  <Link to="/schedule">{m.nav_schedule()}</Link>
-                </CtButton>
-                <CtButton asChild variant="secondary" size="sm">
-                  <Link to="/appointments/expertise">{m.nav_expertise()}</Link>
-                </CtButton>
-                <CtButton asChild variant="secondary" size="sm">
-                  <Link to="/chats">{m.nav_chats()}</Link>
-                </CtButton>
-              </div>
-            </div>
+            <CtPageIntro
+              className="mb-8"
+              title={m.mentor_profile_title()}
+              description={m.mentor_home_welcome({
+                name: profileQuery.data.mentor.name,
+              })}
+              action={
+                <div className="flex flex-wrap gap-2">
+                  <CtButton asChild variant="secondary" size="sm">
+                    <Link to="/appointments">{m.nav_my_appointments()}</Link>
+                  </CtButton>
+                  <CtButton asChild variant="secondary" size="sm">
+                    <Link to="/schedule">{m.nav_schedule()}</Link>
+                  </CtButton>
+                  <CtButton asChild variant="secondary" size="sm">
+                    <Link to="/appointments/expertise">{m.nav_expertise()}</Link>
+                  </CtButton>
+                  <CtButton asChild variant="secondary" size="sm">
+                    <Link to="/chats">{m.nav_chats()}</Link>
+                  </CtButton>
+                </div>
+              }
+            />
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <StatCard

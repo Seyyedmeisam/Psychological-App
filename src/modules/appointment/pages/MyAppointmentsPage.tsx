@@ -2,13 +2,8 @@ import { Link } from '@tanstack/react-router'
 import { m } from '@/core/i18n/paraglide/messages.js'
 import { CtAsyncContent } from '@/modules/app/components/feedback/CtAsyncContent'
 import { CtButton } from '@/modules/app/components/CtButton'
-import {
-  CtCard,
-  CtCardContent,
-  CtCardDescription,
-  CtCardHeader,
-  CtCardTitle,
-} from '@/modules/app/components/CtCard'
+import { CtPageIntro } from '@/modules/app/components/CtPageIntro'
+import { CtCard, CtCardContent } from '@/modules/app/components/CtCard'
 import { useMe } from '@/modules/auth/hooks'
 import { CtAppointmentListCard } from '@/modules/appointment/components/CtAppointmentListCard'
 import {
@@ -29,23 +24,21 @@ export default function MyAppointmentsPage() {
 
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-8 ios-slide-up">
-      <CtCard variant="inset" className="mb-6">
-        <CtCardHeader className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <CtCardTitle className="text-2xl">{m.appointment_mine_title()}</CtCardTitle>
-            <CtCardDescription>
-              {isMentor
-                ? m.appointment_mine_subtitle_mentor()
-                : m.appointment_mine_subtitle()}
-            </CtCardDescription>
-          </div>
-          {user?.role === 'user' || user?.role === 'admin' ? (
+      <CtPageIntro
+        title={m.appointment_mine_title()}
+        description={
+          isMentor
+            ? m.appointment_mine_subtitle_mentor()
+            : m.appointment_mine_subtitle()
+        }
+        action={
+          user?.role === 'user' || user?.role === 'admin' ? (
             <CtButton asChild className="shrink-0">
               <Link to="/appointments/book">{m.nav_book_appointment()}</Link>
             </CtButton>
-          ) : null}
-        </CtCardHeader>
-      </CtCard>
+          ) : null
+        }
+      />
 
       <CtAsyncContent
         isLoading={appointmentsQuery.isLoading}

@@ -18,7 +18,7 @@ export default function UserUpsertPage() {
         <h1 className="text-2xl font-bold text-foreground">
           {isEdit ? m.user_edit() : m.user_create()}
         </h1>
-        <CtButton asChild variant="outline">
+        <CtButton asChild variant="destructive">
           <Link to="/users">{m.user_cancel()}</Link>
         </CtButton>
       </div>

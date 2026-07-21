@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react'
 import { m } from '@/core/i18n/paraglide/messages.js'
 import { CtAsyncContent } from '@/modules/app/components/feedback/CtAsyncContent'
-import { CtButton } from '@/modules/app/components/CtButton'
-import { CtSpinner } from '@/modules/app/components/CtSpinner'
 import {
-  CtCard,
-  CtCardDescription,
-  CtCardHeader,
-  CtCardTitle,
-} from '@/modules/app/components/CtCard'
+  CtAlert,
+  CtAlertDescription,
+} from '@/modules/app/components/CtAlert'
+import { CtButton } from '@/modules/app/components/CtButton'
+import { CtPageIntro } from '@/modules/app/components/CtPageIntro'
+import { CtSpinner } from '@/modules/app/components/CtSpinner'
 import {
   useMyAppointments,
   useUpdateAppointmentStatus,
@@ -67,12 +66,10 @@ export default function MentorSchedulePage() {
 
   return (
     <section className="mx-auto w-full max-w-7xl px-4 py-8 ios-slide-up">
-      <CtCard variant="inset" className="mb-6">
-        <CtCardHeader>
-          <CtCardTitle className="text-2xl">{m.schedule_page_title()}</CtCardTitle>
-          <CtCardDescription>{m.schedule_page_subtitle()}</CtCardDescription>
-        </CtCardHeader>
-      </CtCard>
+      <CtPageIntro
+        title={m.schedule_page_title()}
+        description={m.schedule_page_subtitle()}
+      />
 
       <div
         className="mb-6 inline-flex rounded-2xl border border-border bg-card p-1 shadow-ios-sm"
@@ -116,9 +113,11 @@ export default function MentorSchedulePage() {
       >
         {tab === 'appointments' ? (
           <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              {m.schedule_appointments_help()}
-            </p>
+            <CtAlert>
+              <CtAlertDescription>
+                {m.schedule_appointments_help()}
+              </CtAlertDescription>
+            </CtAlert>
             <CtAppointmentsWeekGrid
               templateSlots={templateSlots}
               appointments={appointmentsQuery.data ?? []}
@@ -135,12 +134,14 @@ export default function MentorSchedulePage() {
         ) : (
           <>
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-              <p className="text-sm text-muted-foreground">
-                {m.schedule_help({
-                  session: String(templateQuery.data?.session_minutes ?? 90),
-                  breakMinutes: String(templateQuery.data?.break_minutes ?? 15),
-                })}
-              </p>
+              <CtAlert className="min-w-0 flex-1">
+                <CtAlertDescription>
+                  {m.schedule_help({
+                    session: String(templateQuery.data?.session_minutes ?? 90),
+                    breakMinutes: String(templateQuery.data?.break_minutes ?? 15),
+                  })}
+                </CtAlertDescription>
+              </CtAlert>
               <CtButton
                 type="button"
                 onClick={() => updateMutation.mutate(draft)}
