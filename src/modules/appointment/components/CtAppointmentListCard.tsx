@@ -97,13 +97,30 @@ export function CtAppointmentListCard({
                 </a>
               ) : null}
             </div>
-          ) : (
+          ) : null}
+
+          {!isMentor && !isClient ? (
+            <div className="space-y-1 text-sm text-muted-foreground">
+              <p>
+                {m.appointment_client_label({
+                  name: appointment.client?.name ?? '—',
+                })}
+              </p>
+              <p>
+                {m.appointment_mentor_label({
+                  name: appointment.mentor?.name ?? '—',
+                })}
+              </p>
+            </div>
+          ) : null}
+
+          {isClient ? (
             <p className="text-sm text-muted-foreground">
               {m.appointment_mentor_label({
                 name: otherPerson?.name ?? '—',
               })}
             </p>
-          )}
+          ) : null}
 
           {appointment.notes ? (
             <div className="rounded-xl border border-border/70 bg-background px-3 py-3">
@@ -176,7 +193,11 @@ export function CtAppointmentListCard({
                 variant="destructive"
                 size="sm"
                 disabled={cancelPending}
-                onClick={() => onCancel(appointment.id)}
+                onClick={() => {
+                  if (window.confirm(m.appointment_cancel_confirm())) {
+                    onCancel(appointment.id)
+                  }
+                }}
               >
                 {cancelPending ? <CtSpinner className="size-4" /> : null}
                 {m.appointment_cancel()}

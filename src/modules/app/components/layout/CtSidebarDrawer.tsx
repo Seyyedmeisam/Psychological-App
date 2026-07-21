@@ -9,7 +9,7 @@ export function CtSidebarDrawer() {
 
   return (
     <CtDialogRoot open={isMobileOpen} onOpenChange={setMobileOpen}>
-      <CtDialogContent className="inset-y-0 inset-s-0 h-dvh max-w-[90vw] translate-x-0 rounded-none border-0 p-0 duration-[var(--motion-duration-slow)] data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-left-2 data-[state=open]:fade-in-0 data-[state=open]:slide-in-from-left-2 sm:max-w-sm">
+      <CtDialogContent placement="drawer-start">
         <div className="flex items-center justify-end border-b border-border px-2 py-2">
           <CtButton
             type="button"
@@ -28,4 +28,3 @@ export function CtSidebarDrawer() {
     </CtDialogRoot>
   )
 }
-

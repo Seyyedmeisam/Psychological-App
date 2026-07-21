@@ -102,6 +102,44 @@ export default function MentorHomePage() {
               }
             />
 
+            {(!profileQuery.data.expertise.length ||
+              !profileQuery.data.availability.length) && (
+              <div className="mb-6 rounded-2xl border border-primary/25 bg-primary/5 px-4 py-4">
+                <p className="text-sm font-semibold text-foreground">
+                  {m.mentor_setup_title()}
+                </p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {m.mentor_setup_hint()}
+                </p>
+                <ul className="mt-3 space-y-2 text-sm">
+                  <li className="flex flex-wrap items-center justify-between gap-2">
+                    <span>
+                      {profileQuery.data.expertise.length
+                        ? m.mentor_setup_expertise_done()
+                        : m.mentor_setup_expertise_todo()}
+                    </span>
+                    {!profileQuery.data.expertise.length ? (
+                      <CtButton asChild size="sm" variant="secondary">
+                        <Link to="/appointments/expertise">{m.nav_expertise()}</Link>
+                      </CtButton>
+                    ) : null}
+                  </li>
+                  <li className="flex flex-wrap items-center justify-between gap-2">
+                    <span>
+                      {profileQuery.data.availability.length
+                        ? m.mentor_setup_schedule_done()
+                        : m.mentor_setup_schedule_todo()}
+                    </span>
+                    {!profileQuery.data.availability.length ? (
+                      <CtButton asChild size="sm" variant="secondary">
+                        <Link to="/schedule">{m.nav_schedule()}</Link>
+                      </CtButton>
+                    ) : null}
+                  </li>
+                </ul>
+              </div>
+            )}
+
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <StatCard
                 label={m.mentor_stat_meetings_done()}

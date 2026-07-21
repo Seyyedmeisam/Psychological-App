@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { env } from '@/core/configs/env'
-import { getAuthToken } from '@/modules/auth/constants/auth'
+import { getAuthToken, setAuthToken } from '@/modules/auth/constants/auth'
 
 export const apiClient = axios.create({
   baseURL: env.apiBaseUrl,
@@ -20,3 +20,36 @@ apiClient.interceptors.request.use((config) => {
   }
   return config
 })
+
+let redirectingToLogin = false
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error: unknown) => {
+    if (!axios.isAxiosError(error) || error.response?.status !== 401) {
+      return Promise.reject(error)
+    }
+
+    const requestUrl = error.config?.url ?? ''
+    const isCredentialRequest =
+      requestUrl.includes('/auth/login') ||
+      requestUrl.includes('/auth/register')
+
+    // Failed login/register should show form errors, not bounce away
+    if (isCredentialRequest) {
+      return Promise.reject(error)
+    }
+
+    setAuthToken(null)
+
+    if (typeof window !== 'undefined' && !redirectingToLogin) {
+      const onLoginPage = window.location.pathname.includes('/login')
+      if (!onLoginPage) {
+        redirectingToLogin = true
+        window.location.assign('/login')
+      }
+    }
+
+    return Promise.reject(error)
+  },
+)

@@ -5,6 +5,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
+import type { BaseSyntheticEvent } from 'react'
 import type {
   UseInfiniteQueryOptions,
   UseMutationOptions,
@@ -13,6 +14,7 @@ import type {
 import { toast } from 'sonner'
 import { queryKeys } from '@/core/constants/queryKeys'
 import { pagination } from '@/core/constants/pagination'
+import type { PaginatedResult } from '@/core/types/pagination.types'
 import { getApiErrorMessage } from '@/modules/app/utils/apiErrorMessage'
 import {
   createUser,
@@ -26,21 +28,24 @@ import {
   userToFormValues,
   normalizeUser,
   normalizeUsers,
+  normalizePaginatedUsers,
 } from '@/modules/user/utils'
 
 export type UserUpsertResult = {
   form: ReturnType<typeof useForm<UserFormValues>>
-  onSubmit: () => void
+  onSubmit: (event?: BaseSyntheticEvent) => Promise<void>
+  save: (onSuccess?: (user: User) => void) => void
   isPending: boolean
 }
 
 export const useUsers = (
   params?: UsersListParams,
-  options?: Omit<UseQueryOptions<User[]>, 'queryKey' | 'queryFn'>,
+  options?: Omit<UseQueryOptions<PaginatedResult<User>>, 'queryKey' | 'queryFn'>,
 ) =>
   useQuery({
-    queryKey: queryKeys.usersList(params),
-    queryFn: async () => normalizeUsers(await getUsers(params)),
+    queryKey: queryKeys.usersList({ ...params, _v: 2 }),
+    queryFn: async () => normalizePaginatedUsers(await getUsers(params)),
+    placeholderData: (previous) => previous,
     ...options,
   })
 
@@ -158,5 +163,12 @@ export const useUserUpsertForm = (userId?: number): UserUpsertResult => {
     form,
     isPending: mutation.isPending,
     onSubmit: form.handleSubmit((values) => mutation.mutate(values)),
+    save: (onSuccess) => {
+      void form.handleSubmit((values) =>
+        mutation.mutate(values, {
+          onSuccess: (saved) => onSuccess?.(saved),
+        }),
+      )()
+    },
   }
 }

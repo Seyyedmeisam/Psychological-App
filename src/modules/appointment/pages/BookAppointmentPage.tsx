@@ -123,6 +123,11 @@ export default function BookAppointmentPage() {
               )
             })}
           </div>
+          {(areasQuery.data ?? []).length === 0 ? (
+            <p className="mt-4 rounded-2xl border border-dashed border-border bg-card px-4 py-8 text-center text-sm text-muted-foreground">
+              {m.appointment_no_expertise_areas()}
+            </p>
+          ) : null}
         </div>
 
         {areaId ? (

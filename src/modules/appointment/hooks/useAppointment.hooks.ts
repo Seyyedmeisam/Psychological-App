@@ -73,7 +73,7 @@ export const useUpdateMyExpertise = (
     mutationFn: updateMyExpertise,
     onSuccess: async (data, variables, onMutateResult, context) => {
       queryClient.setQueryData(queryKeys.mentorExpertise, data)
-      toast.success('حوزه‌های تخصصی ذخیره شد')
+      toast.success(m.appointment_toast_expertise_saved())
       await options?.onSuccess?.(data, variables, onMutateResult, context)
     },
     onError: async (error, variables, onMutateResult, context) => {
@@ -118,7 +118,7 @@ export const useBookAppointment = (
       })
       await queryClient.invalidateQueries({ queryKey: queryKeys.adminStats })
       await queryClient.invalidateQueries({ queryKey: queryKeys.mentorProfile })
-      toast.success('نوبت با موفقیت ثبت شد')
+      toast.success(m.appointment_toast_booked())
       await options?.onSuccess?.(data, variables, onMutateResult, context)
     },
     onError: async (error, variables, onMutateResult, context) => {
@@ -143,7 +143,7 @@ export const useCancelAppointment = (
       })
       await queryClient.invalidateQueries({ queryKey: queryKeys.adminStats })
       await queryClient.invalidateQueries({ queryKey: queryKeys.mentorProfile })
-      toast.success('نوبت لغو شد')
+      toast.success(m.appointment_toast_cancelled())
       await options?.onSuccess?.(data, variables, onMutateResult, context)
     },
     onError: async (error, variables, onMutateResult, context) => {
@@ -194,7 +194,7 @@ export const useRateAppointment = (
       await queryClient.invalidateQueries({ queryKey: queryKeys.appointments })
       await queryClient.invalidateQueries({ queryKey: queryKeys.adminStats })
       await queryClient.invalidateQueries({ queryKey: queryKeys.mentorProfile })
-      toast.success('امتیاز ثبت شد')
+      toast.success(m.appointment_toast_rated())
       await options?.onSuccess?.(data, variables, onMutateResult, context)
     },
     onError: async (error, variables, onMutateResult, context) => {

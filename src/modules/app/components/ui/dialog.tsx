@@ -3,8 +3,77 @@ import { Dialog as DialogPrimitive } from 'radix-ui'
 
 import { cn } from '@/lib/utils'
 
-function Dialog(props: Readonly<React.ComponentProps<typeof DialogPrimitive.Root>>) {
-  return <DialogPrimitive.Root {...props} />
+type DialogProps = React.ComponentProps<typeof DialogPrimitive.Root> & {
+  /**
+   * When open, push a history entry so the browser/Android back button
+   * closes this dialog instead of leaving the page. Default: true.
+   */
+  historyBack?: boolean
+}
+
+function Dialog({
+  open,
+  onOpenChange,
+  historyBack = true,
+  ...props
+}: Readonly<DialogProps>) {
+  const dialogId = React.useId()
+  const pushedRef = React.useRef(false)
+  const closingViaBackRef = React.useRef(false)
+
+  React.useEffect(() => {
+    if (!historyBack || open !== true) return
+
+    const previous =
+      typeof history.state === 'object' && history.state !== null
+        ? (history.state as Record<string, unknown>)
+        : {}
+
+    if (previous.ctDialog !== dialogId) {
+      history.pushState({ ...previous, ctDialog: dialogId }, '')
+    }
+    pushedRef.current = true
+
+    const onPopState = () => {
+      if (!pushedRef.current) return
+      pushedRef.current = false
+      closingViaBackRef.current = true
+      onOpenChange?.(false)
+    }
+
+    window.addEventListener('popstate', onPopState)
+    return () => {
+      window.removeEventListener('popstate', onPopState)
+    }
+  }, [dialogId, historyBack, onOpenChange, open])
+
+  React.useEffect(() => {
+    if (open === true || !pushedRef.current) return
+
+    if (closingViaBackRef.current) {
+      closingViaBackRef.current = false
+      return
+    }
+
+    pushedRef.current = false
+    history.back()
+  }, [open])
+
+  const handleOpenChange = (next: boolean) => {
+    if (!next && historyBack && pushedRef.current) {
+      history.back()
+      return
+    }
+    onOpenChange?.(next)
+  }
+
+  return (
+    <DialogPrimitive.Root
+      open={open}
+      onOpenChange={historyBack ? handleOpenChange : onOpenChange}
+      {...props}
+    />
+  )
 }
 
 function DialogTrigger(props: Readonly<React.ComponentProps<typeof DialogPrimitive.Trigger>>) {
@@ -34,16 +103,27 @@ function DialogOverlay({
   )
 }
 
+type DialogContentProps = React.ComponentProps<typeof DialogPrimitive.Content> & {
+  /** Default `center`. Use `drawer-start` for edge drawers (e.g. mobile sidebar). */
+  placement?: 'center' | 'drawer-start'
+}
+
 function DialogContent({
   className,
+  placement = 'center',
   ...props
-}: React.ComponentProps<typeof DialogPrimitive.Content>) {
+}: DialogContentProps) {
   return (
     <DialogPortal>
       <DialogOverlay />
       <DialogPrimitive.Content
         className={cn(
-          'fixed z-50 grid w-full gap-4 border border-border bg-card p-6 shadow-ios-md outline-none data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0',
+          'fixed z-50 grid gap-4 border border-border bg-card shadow-ios-md outline-none',
+          'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0',
+          placement === 'center' &&
+            'inset-0 m-auto h-fit w-[calc(100%-2rem)] max-h-[min(90dvh,52rem)] max-w-lg overflow-y-auto rounded-3xl p-6',
+          placement === 'drawer-start' &&
+            'inset-y-0 inset-s-0 m-0 h-dvh w-full max-w-[90vw] overflow-hidden rounded-none border-0 p-0 duration-(--motion-duration-slow) data-[state=closed]:slide-out-to-left-2 data-[state=open]:slide-in-from-left-2 sm:max-w-sm',
           className,
         )}
         {...props}
@@ -86,3 +166,4 @@ export {
   DialogTitle,
   DialogDescription,
 }
+export type { DialogProps, DialogContentProps }

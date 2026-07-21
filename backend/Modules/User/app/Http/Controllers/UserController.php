@@ -29,9 +29,9 @@ class UserController extends Controller
             $query->where('role', $role);
         }
 
-        $perPage = (int) $request->input('per_page', 15);
+        $perPage = min(100, max(1, (int) $request->input('per_page', 15)));
 
-        return response()->json($query->paginate($perPage));
+        return UserResource::collection($query->paginate($perPage))->response();
     }
 
     public function store(StoreUserRequest $request): JsonResponse

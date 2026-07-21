@@ -95,7 +95,7 @@ const appointmentGroup: NavGroup = {
       to: '/appointments/book',
       label: () => m.nav_book_appointment(),
       icon: CalendarPlus,
-      roles: ['user', 'admin'],
+      roles: ['user'],
     },
     {
       to: '/appointments',

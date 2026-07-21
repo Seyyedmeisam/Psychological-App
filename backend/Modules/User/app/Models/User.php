@@ -11,6 +11,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Modules\Appointment\Models\Appointment;
+use Modules\Appointment\Models\AppointmentRating;
 use Modules\Appointment\Models\AreaOfExpertise;
 use Modules\Appointment\Models\MentorAvailability;
 
@@ -55,6 +56,14 @@ class User extends Authenticatable
     public function mentorAppointments(): HasMany
     {
         return $this->hasMany(Appointment::class, 'mentor_id');
+    }
+
+    /**
+     * @return HasMany<AppointmentRating, $this>
+     */
+    public function receivedRatings(): HasMany
+    {
+        return $this->hasMany(AppointmentRating::class, 'mentor_id');
     }
 
     /**

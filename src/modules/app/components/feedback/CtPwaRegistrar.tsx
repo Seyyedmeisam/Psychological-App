@@ -62,15 +62,25 @@ export function CtPwaRegistrar() {
     if (window.matchMedia('(display-mode: standalone)').matches) return
     if (localStorage.getItem(INSTALL_DISMISS_KEY) === '1') return
 
+    /** Wait so the install dialog does not interrupt the first screen. */
+    const INSTALL_PROMPT_DELAY_MS = 45_000
+    let showTimer: number | null = null
+
     const onBeforeInstall = (event: Event) => {
       event.preventDefault()
       setInstallPrompt(event as BeforeInstallPromptEvent)
-      setInstallOpen(true)
+
+      if (showTimer !== null) window.clearTimeout(showTimer)
+      showTimer = window.setTimeout(() => {
+        setInstallOpen(true)
+      }, INSTALL_PROMPT_DELAY_MS)
     }
 
     window.addEventListener('beforeinstallprompt', onBeforeInstall)
-    return () =>
+    return () => {
       window.removeEventListener('beforeinstallprompt', onBeforeInstall)
+      if (showTimer !== null) window.clearTimeout(showTimer)
+    }
   }, [])
 
   return (

@@ -4,6 +4,8 @@ export type AppointmentMeetingFields = {
   can_join_meeting?: boolean
 }
 
+const JOIN_EARLY_MS = 15 * 60 * 1000
+
 export function parseAppointmentDateTime(date: string, time: string): Date {
   const [year, month, day] = date.split('-').map(Number)
   const [hours, minutes] = time.split(':').map(Number)
@@ -19,10 +21,6 @@ export function isAppointmentInSessionWindow(
   },
   now = new Date(),
 ): boolean {
-  if (appointment.is_in_session !== undefined) {
-    return Boolean(appointment.is_in_session)
-  }
-
   if (appointment.status !== 'confirmed') {
     return false
   }
@@ -33,6 +31,7 @@ export function isAppointmentInSessionWindow(
   return now >= start && now <= end
 }
 
+/** Prefer local clock so the join button updates without waiting for refetch. */
 export function canJoinAppointmentMeeting(
   appointment: AppointmentMeetingFields & {
     date: string
@@ -42,9 +41,28 @@ export function canJoinAppointmentMeeting(
   },
   now = new Date(),
 ): boolean {
-  if (appointment.can_join_meeting !== undefined) {
-    return Boolean(appointment.can_join_meeting)
+  if (appointment.status !== 'confirmed') {
+    return false
   }
 
-  return isAppointmentInSessionWindow(appointment, now)
+  const start = parseAppointmentDateTime(appointment.date, appointment.start_time)
+  const end = parseAppointmentDateTime(appointment.date, appointment.end_time)
+  const joinFrom = new Date(start.getTime() - JOIN_EARLY_MS)
+
+  return now >= joinFrom && now <= end
+}
+
+export function minutesUntilJoinOpens(
+  appointment: {
+    date: string
+    start_time: string
+    status: string
+  },
+  now = new Date(),
+): number | null {
+  if (appointment.status !== 'confirmed') return null
+  const start = parseAppointmentDateTime(appointment.date, appointment.start_time)
+  const joinFrom = new Date(start.getTime() - JOIN_EARLY_MS)
+  if (now >= joinFrom) return 0
+  return Math.ceil((joinFrom.getTime() - now.getTime()) / 60_000)
 }

@@ -1,5 +1,10 @@
 import { lazy, Suspense } from 'react'
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+import {
+  HeadContent,
+  Outlet,
+  Scripts,
+  createRootRoute,
+} from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import appCss from '@/core/styles/global.css?url'
@@ -31,6 +36,7 @@ export const Route = createRootRoute({
       { rel: 'manifest', href: '/manifest.webmanifest' },
     ],
   }),
+  component: RootComponent,
   shellComponent: RootDocument,
   notFoundComponent: lazy(() => import('@/modules/app/pages/errors/NotFoundPage')),
 })
@@ -46,9 +52,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body dir={dir}>
-        <CtAppProviders>
-          <Suspense fallback={<CtLoading />}>{children}</Suspense>
-        </CtAppProviders>
+        {children}
         <TanStackDevtools
           config={{ position: 'bottom-right' }}
           plugins={[
@@ -61,5 +65,15 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <Scripts />
       </body>
     </html>
+  )
+}
+
+function RootComponent() {
+  return (
+    <CtAppProviders>
+      <Suspense fallback={<CtLoading />}>
+        <Outlet />
+      </Suspense>
+    </CtAppProviders>
   )
 }

@@ -11,7 +11,6 @@ import {
   CtDropdownMenuTrigger,
 } from '@/modules/app/components/CtDropdownMenuParts'
 import { useLogout } from '@/modules/auth/hooks'
-import { useAppLocale } from '@/modules/app/providers/CtI18nProvider'
 import type { AuthUser } from '@/modules/auth/types'
 import { cn } from '@/lib/utils'
 
@@ -57,10 +56,9 @@ export function CtUserMenu({
   user: AuthUser
 }>) {
   const logout = useLogout()
-  const { dir } = useAppLocale()
 
   return (
-    <CtDropdownMenu dir={dir}>
+    <CtDropdownMenu>
       <CtDropdownMenuTrigger asChild>
         <button
           type="button"

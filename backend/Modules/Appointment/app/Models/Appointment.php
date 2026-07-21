@@ -128,8 +128,17 @@ class Appointment extends Model
             && $now->lessThanOrEqualTo($this->sessionEndsAt());
     }
 
+    /** Clients/mentors may join 15 minutes before start through session end. */
     public function canJoinMeeting(): bool
     {
-        return $this->isInSessionWindow();
+        if ($this->statusEnum() !== AppointmentStatus::Confirmed) {
+            return false;
+        }
+
+        $now = \Carbon\Carbon::now();
+        $joinFrom = $this->sessionStartsAt()->copy()->subMinutes(15);
+
+        return $now->greaterThanOrEqualTo($joinFrom)
+            && $now->lessThanOrEqualTo($this->sessionEndsAt());
     }
 }

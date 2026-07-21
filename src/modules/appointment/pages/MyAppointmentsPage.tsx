@@ -32,7 +32,7 @@ export default function MyAppointmentsPage() {
             : m.appointment_mine_subtitle()
         }
         action={
-          user?.role === 'user' || user?.role === 'admin' ? (
+          user?.role === 'user' ? (
             <CtButton asChild className="shrink-0">
               <Link to="/appointments/book">{m.nav_book_appointment()}</Link>
             </CtButton>

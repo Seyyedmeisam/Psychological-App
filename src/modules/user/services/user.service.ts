@@ -24,10 +24,9 @@ const toUserPayload = (values: UserFormValues) => {
 }
 
 export const getUsers = async (params?: UsersListParams) => {
-  const response = await requestHandler.get<User[] | { data: User[] }>(
-    userService.getUsers(),
-    { params },
-  )
+  const response = await requestHandler.get<unknown>(userService.getUsers(), {
+    params,
+  })
   return response.data
 }
 

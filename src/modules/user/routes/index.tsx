@@ -1,6 +1,8 @@
 import { lazy } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
+import { requireRoles } from '@/modules/auth/utils/routeGuards'
 
 export const Route = createFileRoute('/_panel/users/')({
-  component: lazy(() => import('@/modules/user/pages/UserDetailPage')),
+  beforeLoad: () => requireRoles(['admin']),
+  component: lazy(() => import('@/modules/user/pages/UsersListPage')),
 })

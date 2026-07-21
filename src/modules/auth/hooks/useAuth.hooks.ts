@@ -56,7 +56,7 @@ export const useLogin = (
     onSuccess: async (data, variables, onMutateResult, context) => {
       setAuthToken(data.token)
       queryClient.setQueryData(queryKeys.me, data.user)
-      toast.success('با موفقیت وارد شدید')
+      toast.success(m.auth_toast_login_success())
       await options?.onSuccess?.(data, variables, onMutateResult, context)
       await navigate({ to: getHomePathByRole(data.user.role) })
     },
@@ -79,7 +79,7 @@ export const useRegister = (
     onSuccess: async (data, variables, onMutateResult, context) => {
       setAuthToken(data.token)
       queryClient.setQueryData(queryKeys.me, data.user)
-      toast.success('ثبت‌نام با موفقیت انجام شد')
+      toast.success(m.auth_toast_register_success())
       await options?.onSuccess?.(data, variables, onMutateResult, context)
       await navigate({ to: getHomePathByRole(data.user.role) })
     },
@@ -102,7 +102,7 @@ export const useLogout = (
     onSuccess: async (data, variables, onMutateResult, context) => {
       setAuthToken(null)
       queryClient.removeQueries({ queryKey: queryKeys.me })
-      toast.success('خارج شدید')
+      toast.success(m.auth_toast_logout_success())
       await options?.onSuccess?.(data, variables, onMutateResult, context)
       await navigate({ to: '/login' })
     },

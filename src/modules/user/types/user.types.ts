@@ -6,6 +6,8 @@ export type User = {
   mobile: string
   email?: string | null
   role: UserRole
+  avatar_url?: string | null
+  bio?: string | null
   created_at?: string
 }
 
