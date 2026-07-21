@@ -3,12 +3,14 @@
 namespace Modules\User\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Modules\User\Http\Requests\StoreUserRequest;
+use Modules\User\Http\Requests\UpdateUserAvatarRequest;
 use Modules\User\Http\Requests\UpdateUserRequest;
 use Modules\User\Http\Resources\UserResource;
 use Modules\User\Models\User;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -61,6 +63,18 @@ class UserController extends Controller
         }
 
         $user->update($validated);
+
+        return response()->json(['data' => new UserResource($user->fresh())]);
+    }
+
+    public function updateAvatar(UpdateUserAvatarRequest $request, User $user): JsonResponse
+    {
+        if ($user->avatar) {
+            Storage::disk('public')->delete($user->avatar);
+        }
+
+        $path = $request->file('avatar')->store('avatars', 'public');
+        $user->update(['avatar' => $path]);
 
         return response()->json(['data' => new UserResource($user->fresh())]);
     }

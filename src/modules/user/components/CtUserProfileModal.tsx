@@ -3,12 +3,13 @@ import { getLocale } from '@/core/i18n/paraglide/runtime.js'
 import { m } from '@/core/i18n/paraglide/messages.js'
 import { CtSelect, CtTextInput } from '@/modules/app/components/forms'
 import { CtAsyncContent } from '@/modules/app/components/feedback/CtAsyncContent'
-import { CtAvatar } from '@/modules/app/components/CtAvatar'
 import { CtButton } from '@/modules/app/components/CtButton'
 import { CtSpinner } from '@/modules/app/components/CtSpinner'
 import { CtModal } from '@/modules/app/components/widgets/modal/CtModal'
+import { CtUserAvatarEditor } from '@/modules/user/components/CtUserAvatarEditor'
 import {
   useDeleteUser,
+  useUpdateUserAvatar,
   useUser,
   useUserUpsertForm,
 } from '@/modules/user/hooks'
@@ -51,6 +52,7 @@ export function CtUserProfileModal({
   const { form, save, isPending } = useUserUpsertForm(
     open && mode === 'edit' && id > 0 ? id : undefined,
   )
+  const updateAvatar = useUpdateUserAvatar(id)
   const deleteUser = useDeleteUser({
     onSuccess: async () => {
       onOpenChange(false)
@@ -62,6 +64,11 @@ export function CtUserProfileModal({
     if (window.confirm(m.user_delete_confirm())) {
       deleteUser.mutate(id)
     }
+  }
+
+  const onAvatarSelect = (file: File) => {
+    if (!id) return
+    updateAvatar.mutate(file)
   }
 
   return (
@@ -132,9 +139,13 @@ export function CtUserProfileModal({
         errorMessage={error?.message}
       >
         {mode === 'view' && data ? (
-          <UserProfileView user={data} />
+          <UserProfileView
+            user={data}
+            avatarPending={updateAvatar.isPending}
+            onAvatarSelect={onAvatarSelect}
+          />
         ) : null}
-        {mode === 'edit' ? (
+        {mode === 'edit' && data ? (
           <FormProvider {...form}>
             <form
               className="grid gap-4 sm:grid-cols-2"
@@ -143,6 +154,16 @@ export function CtUserProfileModal({
                 save(() => onModeChange('view'))
               }}
             >
+              <div className="sm:col-span-2">
+                <CtUserAvatarEditor
+                  name={data.name}
+                  seed={data.id}
+                  src={data.avatar_url}
+                  size="lg"
+                  isPending={updateAvatar.isPending}
+                  onSelect={onAvatarSelect}
+                />
+              </div>
               <CtTextInput
                 name="name"
                 label={m.auth_name_label()}
@@ -197,20 +218,28 @@ export function CtUserProfileModal({
   )
 }
 
-function UserProfileView({ user }: Readonly<{ user: User }>) {
+function UserProfileView({
+  user,
+  avatarPending,
+  onAvatarSelect,
+}: Readonly<{
+  user: User
+  avatarPending: boolean
+  onAvatarSelect: (file: File) => void
+}>) {
   return (
     <div className="space-y-5">
-      <div className="flex items-center gap-3">
-        <CtAvatar
-          name={user.name}
-          seed={user.id}
-          src={user.avatar_url}
-          size="md"
-        />
-        <div className="min-w-0">
-          <p className="truncate text-lg font-semibold">{user.name}</p>
-          <p className="text-sm text-muted-foreground">{formatRole(user.role)}</p>
-        </div>
+      <CtUserAvatarEditor
+        name={user.name}
+        seed={user.id}
+        src={user.avatar_url}
+        size="lg"
+        isPending={avatarPending}
+        onSelect={onAvatarSelect}
+      />
+      <div className="min-w-0">
+        <p className="truncate text-lg font-semibold">{user.name}</p>
+        <p className="text-sm text-muted-foreground">{formatRole(user.role)}</p>
       </div>
       <dl className="grid gap-3 text-sm">
         <div className="grid gap-1 border-b border-border pb-3">

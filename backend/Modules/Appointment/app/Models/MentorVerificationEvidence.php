@@ -9,6 +9,8 @@ use Modules\User\Models\User;
 
 class MentorVerificationEvidence extends Model
 {
+    protected $table = 'mentor_verification_evidences';
+
     protected $fillable = [
         'user_id',
         'area_of_expertise_id',

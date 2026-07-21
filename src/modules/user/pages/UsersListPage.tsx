@@ -13,6 +13,7 @@ import {
   CtSelectTrigger,
   CtSelectValue,
 } from '@/modules/app/components/CtSelectParts'
+import { CtAvatar } from '@/modules/app/components/CtAvatar'
 import {
   CtDataTable,
 } from '@/modules/app/components/widgets/table/CtDataTable'
@@ -70,6 +71,28 @@ export default function UsersListPage() {
 
   const columns = useMemo<CtDataTableColumn<User>[]>(
     () => [
+      {
+        id: 'avatar',
+        header: m.user_avatar_label(),
+        className: 'w-14',
+        cell: (user) => (
+          <button
+            type="button"
+            className="ios-press rounded-full"
+            onClick={() => openUser(user.id, 'view')}
+            aria-label={user.name}
+          >
+            <CtAvatar
+              name={user.name}
+              seed={user.id}
+              src={user.avatar_url}
+              size="xs"
+              className="ring-2 ring-border"
+            />
+          </button>
+        ),
+        exportValue: (user) => user.avatar_url ?? '',
+      },
       {
         id: 'name',
         header: m.auth_name_label(),

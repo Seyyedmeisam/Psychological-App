@@ -15,6 +15,7 @@ import { toast } from 'sonner'
 import { queryKeys } from '@/core/constants/queryKeys'
 import { pagination } from '@/core/constants/pagination'
 import type { PaginatedResult } from '@/core/types/pagination.types'
+import { m } from '@/core/i18n/paraglide/messages.js'
 import { getApiErrorMessage } from '@/modules/app/utils/apiErrorMessage'
 import {
   createUser,
@@ -22,6 +23,7 @@ import {
   getUserById,
   getUsers,
   updateUser,
+  updateUserAvatar,
 } from '@/modules/user/services'
 import type { User, UserFormValues, UsersListParams } from '@/modules/user/types'
 import {
@@ -143,6 +145,34 @@ export const useDeleteUser = (
     onError: async (error, ...rest) => {
       toast.error(getApiErrorMessage(error))
       await options?.onError?.(error, ...rest)
+    },
+  })
+}
+
+export const useUpdateUserAvatar = (
+  userId: number,
+  options?: UseMutationOptions<User, Error, File>,
+) => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    ...options,
+    mutationFn: async (file: File) =>
+      normalizeUser(await updateUserAvatar(userId, file)) as User,
+    onSuccess: async (data, variables, onMutateResult, context) => {
+      queryClient.setQueryData(queryKeys.user(userId), data)
+      await queryClient.invalidateQueries({ queryKey: queryKeys.users })
+      // Keep /me in sync when admin edits their own row from the users list.
+      const me = queryClient.getQueryData<{ id: number }>(queryKeys.me)
+      if (me?.id === userId) {
+        queryClient.setQueryData(queryKeys.me, data)
+      }
+      toast.success(m.auth_profile_photo_updated())
+      await options?.onSuccess?.(data, variables, onMutateResult, context)
+    },
+    onError: async (error, variables, onMutateResult, context) => {
+      toast.error(getApiErrorMessage(error))
+      await options?.onError?.(error, variables, onMutateResult, context)
     },
   })
 }

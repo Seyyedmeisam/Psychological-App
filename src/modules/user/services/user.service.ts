@@ -57,3 +57,13 @@ export const deleteUser = async (id: number) => {
   const response = await requestHandler.delete<void>(userService.deleteUser(id))
   return response.data
 }
+
+export const updateUserAvatar = async (id: number, file: File) => {
+  const formData = new FormData()
+  formData.append('avatar', file)
+  const response = await requestHandler.post<User | { data: User }>(
+    userService.updateUserAvatar(id),
+    formData,
+  )
+  return response.data
+}

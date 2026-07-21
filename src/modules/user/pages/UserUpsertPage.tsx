@@ -4,13 +4,16 @@ import { m } from '@/core/i18n/paraglide/messages.js'
 import { CtSelect, CtTextInput } from '@/modules/app/components/forms'
 import { CtButton } from '@/modules/app/components/CtButton'
 import { CtSpinner } from '@/modules/app/components/CtSpinner'
-import { useUserUpsertForm } from '@/modules/user/hooks'
+import { CtUserAvatarEditor } from '@/modules/user/components/CtUserAvatarEditor'
+import { useUpdateUserAvatar, useUser, useUserUpsertForm } from '@/modules/user/hooks'
 
 export default function UserUpsertPage() {
   const params = useParams({ strict: false })
   const userId = params.userId ? Number(params.userId) : undefined
   const isEdit = Boolean(userId && userId > 0)
   const { form, onSubmit, isPending } = useUserUpsertForm(userId)
+  const { data: user } = useUser(userId ?? 0, { enabled: isEdit })
+  const updateAvatar = useUpdateUserAvatar(userId ?? 0)
 
   return (
     <section className="mx-auto w-full max-w-6xl px-4 py-8">
@@ -24,6 +27,18 @@ export default function UserUpsertPage() {
       </div>
       <FormProvider {...form}>
         <form onSubmit={onSubmit} className="w-full max-w-2xl">
+          {isEdit && user ? (
+            <div className="mb-6">
+              <CtUserAvatarEditor
+                name={user.name}
+                seed={user.id}
+                src={user.avatar_url}
+                size="lg"
+                isPending={updateAvatar.isPending}
+                onSelect={(file) => updateAvatar.mutate(file)}
+              />
+            </div>
+          ) : null}
           <div className="grid gap-4 lg:grid-cols-2">
             <CtTextInput
               name="name"

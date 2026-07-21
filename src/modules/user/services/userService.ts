@@ -5,5 +5,6 @@ export const userService = {
   getUserById: (id: number | string) => `${BASE}/${id}`,
   createUser: () => BASE,
   updateUser: (id: number | string) => `${BASE}/${id}`,
+  updateUserAvatar: (id: number | string) => `${BASE}/${id}/avatar`,
   deleteUser: (id: number | string) => `${BASE}/${id}`,
 }
