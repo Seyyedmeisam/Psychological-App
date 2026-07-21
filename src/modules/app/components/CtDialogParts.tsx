@@ -5,5 +5,6 @@ export {
   DialogClose as CtDialogClose,
   DialogOverlay as CtDialogOverlay,
   DialogContent as CtDialogContent,
+  DialogTitle as CtDialogTitle,
+  DialogDescription as CtDialogDescription,
 } from '@/modules/app/components/ui/dialog'
-

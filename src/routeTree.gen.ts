@@ -12,20 +12,26 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as DotDotModulesAppLayoutsPublicRouteImport } from './modules/app/layouts/_public'
 import { Route as DotDotModulesAppLayoutsPanelRouteImport } from './modules/app/layouts/_panel'
 import { Route as IndexRouteImport } from './modules/app/routes/public/index'
+import { Route as TermsRouteImport } from './modules/app/routes/public/terms'
 import { Route as RegisterRouteImport } from './modules/auth/routes/public/register'
+import { Route as PrivacyRouteImport } from './modules/app/routes/public/privacy'
 import { Route as LoginRouteImport } from './modules/auth/routes/public/login'
+import { Route as FaqRouteImport } from './modules/app/routes/public/faq'
+import { Route as ContactRouteImport } from './modules/app/routes/public/contact'
+import { Route as AboutRouteImport } from './modules/app/routes/public/about'
 import { Route as MentorRouteImport } from './modules/app/routes/panel/mentor'
 import { Route as HomeRouteImport } from './modules/app/routes/panel/home'
 import { Route as DashboardRouteImport } from './modules/app/routes/panel/dashboard'
-import { Route as AboutRouteImport } from './modules/app/routes/panel/about'
 import { Route as UsersIndexRouteImport } from './modules/user/routes/index'
 import { Route as ScheduleIndexRouteImport } from './modules/schedule/routes/index'
 import { Route as ProfileIndexRouteImport } from './modules/auth/routes/profile/index'
+import { Route as ChatsIndexRouteImport } from './modules/chat/routes/index'
 import { Route as AppointmentsIndexRouteImport } from './modules/appointment/routes/index'
 import { Route as AppointmentsExpertiseRouteImport } from './modules/appointment/routes/expertise'
 import { Route as AppointmentsBookRouteImport } from './modules/appointment/routes/book'
 import { Route as UsersUpsertIndexRouteImport } from './modules/user/routes/upsert/index'
 import { Route as UsersUserIdIndexRouteImport } from './modules/user/routes/$userId/index'
+import { Route as ChatsChatIdIndexRouteImport } from './modules/chat/routes/$chatId/index'
 import { Route as UsersUpsertUserIdRouteImport } from './modules/user/routes/upsert/$userId'
 
 const DotDotModulesAppLayoutsPublicRoute =
@@ -43,14 +49,39 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => DotDotModulesAppLayoutsPublicRoute,
 } as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => DotDotModulesAppLayoutsPublicRoute,
+} as any)
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
   getParentRoute: () => DotDotModulesAppLayoutsPublicRoute,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => DotDotModulesAppLayoutsPublicRoute,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => DotDotModulesAppLayoutsPublicRoute,
+} as any)
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => DotDotModulesAppLayoutsPublicRoute,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => DotDotModulesAppLayoutsPublicRoute,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => DotDotModulesAppLayoutsPublicRoute,
 } as any)
 const MentorRoute = MentorRouteImport.update({
@@ -68,11 +99,6 @@ const DashboardRoute = DashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
 } as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
-} as any)
 const UsersIndexRoute = UsersIndexRouteImport.update({
   id: '/users/',
   path: '/users/',
@@ -86,6 +112,11 @@ const ScheduleIndexRoute = ScheduleIndexRouteImport.update({
 const ProfileIndexRoute = ProfileIndexRouteImport.update({
   id: '/profile/',
   path: '/profile/',
+  getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
+} as any)
+const ChatsIndexRoute = ChatsIndexRouteImport.update({
+  id: '/chats/',
+  path: '/chats/',
   getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
 } as any)
 const AppointmentsIndexRoute = AppointmentsIndexRouteImport.update({
@@ -113,6 +144,11 @@ const UsersUserIdIndexRoute = UsersUserIdIndexRouteImport.update({
   path: '/users/$userId/',
   getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
 } as any)
+const ChatsChatIdIndexRoute = ChatsChatIdIndexRouteImport.update({
+  id: '/chats/$chatId/',
+  path: '/chats/$chatId/',
+  getParentRoute: () => DotDotModulesAppLayoutsPanelRoute,
+} as any)
 const UsersUpsertUserIdRoute = UsersUpsertUserIdRouteImport.update({
   id: '/users/upsert/$userId',
   path: '/users/upsert/$userId',
@@ -121,37 +157,49 @@ const UsersUpsertUserIdRoute = UsersUpsertUserIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/dashboard': typeof DashboardRoute
   '/home': typeof HomeRoute
   '/mentor': typeof MentorRoute
+  '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
+  '/faq': typeof FaqRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
   '/register': typeof RegisterRoute
+  '/terms': typeof TermsRoute
   '/appointments/book': typeof AppointmentsBookRoute
   '/appointments/expertise': typeof AppointmentsExpertiseRoute
   '/appointments/': typeof AppointmentsIndexRoute
+  '/chats/': typeof ChatsIndexRoute
   '/profile/': typeof ProfileIndexRoute
   '/schedule/': typeof ScheduleIndexRoute
   '/users/': typeof UsersIndexRoute
   '/users/upsert/$userId': typeof UsersUpsertUserIdRoute
+  '/chats/$chatId/': typeof ChatsChatIdIndexRoute
   '/users/$userId/': typeof UsersUserIdIndexRoute
   '/users/upsert/': typeof UsersUpsertIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/dashboard': typeof DashboardRoute
   '/home': typeof HomeRoute
   '/mentor': typeof MentorRoute
+  '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
+  '/faq': typeof FaqRoute
   '/login': typeof LoginRoute
+  '/privacy': typeof PrivacyRoute
   '/register': typeof RegisterRoute
+  '/terms': typeof TermsRoute
   '/appointments/book': typeof AppointmentsBookRoute
   '/appointments/expertise': typeof AppointmentsExpertiseRoute
   '/appointments': typeof AppointmentsIndexRoute
+  '/chats': typeof ChatsIndexRoute
   '/profile': typeof ProfileIndexRoute
   '/schedule': typeof ScheduleIndexRoute
   '/users': typeof UsersIndexRoute
   '/users/upsert/$userId': typeof UsersUpsertUserIdRoute
+  '/chats/$chatId': typeof ChatsChatIdIndexRoute
   '/users/$userId': typeof UsersUserIdIndexRoute
   '/users/upsert': typeof UsersUpsertIndexRoute
 }
@@ -159,20 +207,26 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_panel': typeof DotDotModulesAppLayoutsPanelRouteWithChildren
   '/_public': typeof DotDotModulesAppLayoutsPublicRouteWithChildren
-  '/_panel/about': typeof AboutRoute
   '/_panel/dashboard': typeof DashboardRoute
   '/_panel/home': typeof HomeRoute
   '/_panel/mentor': typeof MentorRoute
+  '/_public/about': typeof AboutRoute
+  '/_public/contact': typeof ContactRoute
+  '/_public/faq': typeof FaqRoute
   '/_public/login': typeof LoginRoute
+  '/_public/privacy': typeof PrivacyRoute
   '/_public/register': typeof RegisterRoute
+  '/_public/terms': typeof TermsRoute
   '/_public/': typeof IndexRoute
   '/_panel/appointments/book': typeof AppointmentsBookRoute
   '/_panel/appointments/expertise': typeof AppointmentsExpertiseRoute
   '/_panel/appointments/': typeof AppointmentsIndexRoute
+  '/_panel/chats/': typeof ChatsIndexRoute
   '/_panel/profile/': typeof ProfileIndexRoute
   '/_panel/schedule/': typeof ScheduleIndexRoute
   '/_panel/users/': typeof UsersIndexRoute
   '/_panel/users/upsert/$userId': typeof UsersUpsertUserIdRoute
+  '/_panel/chats/$chatId/': typeof ChatsChatIdIndexRoute
   '/_panel/users/$userId/': typeof UsersUserIdIndexRoute
   '/_panel/users/upsert/': typeof UsersUpsertIndexRoute
 }
@@ -180,57 +234,75 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/about'
     | '/dashboard'
     | '/home'
     | '/mentor'
+    | '/about'
+    | '/contact'
+    | '/faq'
     | '/login'
+    | '/privacy'
     | '/register'
+    | '/terms'
     | '/appointments/book'
     | '/appointments/expertise'
     | '/appointments/'
+    | '/chats/'
     | '/profile/'
     | '/schedule/'
     | '/users/'
     | '/users/upsert/$userId'
+    | '/chats/$chatId/'
     | '/users/$userId/'
     | '/users/upsert/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/about'
     | '/dashboard'
     | '/home'
     | '/mentor'
+    | '/about'
+    | '/contact'
+    | '/faq'
     | '/login'
+    | '/privacy'
     | '/register'
+    | '/terms'
     | '/appointments/book'
     | '/appointments/expertise'
     | '/appointments'
+    | '/chats'
     | '/profile'
     | '/schedule'
     | '/users'
     | '/users/upsert/$userId'
+    | '/chats/$chatId'
     | '/users/$userId'
     | '/users/upsert'
   id:
     | '__root__'
     | '/_panel'
     | '/_public'
-    | '/_panel/about'
     | '/_panel/dashboard'
     | '/_panel/home'
     | '/_panel/mentor'
+    | '/_public/about'
+    | '/_public/contact'
+    | '/_public/faq'
     | '/_public/login'
+    | '/_public/privacy'
     | '/_public/register'
+    | '/_public/terms'
     | '/_public/'
     | '/_panel/appointments/book'
     | '/_panel/appointments/expertise'
     | '/_panel/appointments/'
+    | '/_panel/chats/'
     | '/_panel/profile/'
     | '/_panel/schedule/'
     | '/_panel/users/'
     | '/_panel/users/upsert/$userId'
+    | '/_panel/chats/$chatId/'
     | '/_panel/users/$userId/'
     | '/_panel/users/upsert/'
   fileRoutesById: FileRoutesById
@@ -263,6 +335,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof DotDotModulesAppLayoutsPublicRoute
     }
+    '/_public/terms': {
+      id: '/_public/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof DotDotModulesAppLayoutsPublicRoute
+    }
     '/_public/register': {
       id: '/_public/register'
       path: '/register'
@@ -270,11 +349,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof DotDotModulesAppLayoutsPublicRoute
     }
+    '/_public/privacy': {
+      id: '/_public/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof DotDotModulesAppLayoutsPublicRoute
+    }
     '/_public/login': {
       id: '/_public/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof DotDotModulesAppLayoutsPublicRoute
+    }
+    '/_public/faq': {
+      id: '/_public/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
+      parentRoute: typeof DotDotModulesAppLayoutsPublicRoute
+    }
+    '/_public/contact': {
+      id: '/_public/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof DotDotModulesAppLayoutsPublicRoute
+    }
+    '/_public/about': {
+      id: '/_public/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof DotDotModulesAppLayoutsPublicRoute
     }
     '/_panel/mentor': {
@@ -298,13 +405,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
     }
-    '/_panel/about': {
-      id: '/_panel/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
-    }
     '/_panel/users/': {
       id: '/_panel/users/'
       path: '/users'
@@ -324,6 +424,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile/'
       preLoaderRoute: typeof ProfileIndexRouteImport
+      parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
+    }
+    '/_panel/chats/': {
+      id: '/_panel/chats/'
+      path: '/chats'
+      fullPath: '/chats/'
+      preLoaderRoute: typeof ChatsIndexRouteImport
       parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
     }
     '/_panel/appointments/': {
@@ -361,6 +468,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UsersUserIdIndexRouteImport
       parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
     }
+    '/_panel/chats/$chatId/': {
+      id: '/_panel/chats/$chatId/'
+      path: '/chats/$chatId'
+      fullPath: '/chats/$chatId/'
+      preLoaderRoute: typeof ChatsChatIdIndexRouteImport
+      parentRoute: typeof DotDotModulesAppLayoutsPanelRoute
+    }
     '/_panel/users/upsert/$userId': {
       id: '/_panel/users/upsert/$userId'
       path: '/users/upsert/$userId'
@@ -372,34 +486,36 @@ declare module '@tanstack/react-router' {
 }
 
 interface DotDotModulesAppLayoutsPanelRouteChildren {
-  AboutRoute: typeof AboutRoute
   DashboardRoute: typeof DashboardRoute
   HomeRoute: typeof HomeRoute
   MentorRoute: typeof MentorRoute
   AppointmentsBookRoute: typeof AppointmentsBookRoute
   AppointmentsExpertiseRoute: typeof AppointmentsExpertiseRoute
   AppointmentsIndexRoute: typeof AppointmentsIndexRoute
+  ChatsIndexRoute: typeof ChatsIndexRoute
   ProfileIndexRoute: typeof ProfileIndexRoute
   ScheduleIndexRoute: typeof ScheduleIndexRoute
   UsersIndexRoute: typeof UsersIndexRoute
   UsersUpsertUserIdRoute: typeof UsersUpsertUserIdRoute
+  ChatsChatIdIndexRoute: typeof ChatsChatIdIndexRoute
   UsersUserIdIndexRoute: typeof UsersUserIdIndexRoute
   UsersUpsertIndexRoute: typeof UsersUpsertIndexRoute
 }
 
 const DotDotModulesAppLayoutsPanelRouteChildren: DotDotModulesAppLayoutsPanelRouteChildren =
   {
-    AboutRoute: AboutRoute,
     DashboardRoute: DashboardRoute,
     HomeRoute: HomeRoute,
     MentorRoute: MentorRoute,
     AppointmentsBookRoute: AppointmentsBookRoute,
     AppointmentsExpertiseRoute: AppointmentsExpertiseRoute,
     AppointmentsIndexRoute: AppointmentsIndexRoute,
+    ChatsIndexRoute: ChatsIndexRoute,
     ProfileIndexRoute: ProfileIndexRoute,
     ScheduleIndexRoute: ScheduleIndexRoute,
     UsersIndexRoute: UsersIndexRoute,
     UsersUpsertUserIdRoute: UsersUpsertUserIdRoute,
+    ChatsChatIdIndexRoute: ChatsChatIdIndexRoute,
     UsersUserIdIndexRoute: UsersUserIdIndexRoute,
     UsersUpsertIndexRoute: UsersUpsertIndexRoute,
   }
@@ -410,15 +526,25 @@ const DotDotModulesAppLayoutsPanelRouteWithChildren =
   )
 
 interface DotDotModulesAppLayoutsPublicRouteChildren {
+  AboutRoute: typeof AboutRoute
+  ContactRoute: typeof ContactRoute
+  FaqRoute: typeof FaqRoute
   LoginRoute: typeof LoginRoute
+  PrivacyRoute: typeof PrivacyRoute
   RegisterRoute: typeof RegisterRoute
+  TermsRoute: typeof TermsRoute
   IndexRoute: typeof IndexRoute
 }
 
 const DotDotModulesAppLayoutsPublicRouteChildren: DotDotModulesAppLayoutsPublicRouteChildren =
   {
+    AboutRoute: AboutRoute,
+    ContactRoute: ContactRoute,
+    FaqRoute: FaqRoute,
     LoginRoute: LoginRoute,
+    PrivacyRoute: PrivacyRoute,
     RegisterRoute: RegisterRoute,
+    TermsRoute: TermsRoute,
     IndexRoute: IndexRoute,
   }
 

@@ -5,6 +5,7 @@ import type {
   AuthUser,
   LoginFormValues,
   RegisterFormValues,
+  UpdateProfileFormValues,
 } from '@/modules/auth/types/auth.types'
 
 type AuthPayload = { data: AuthResponse }
@@ -21,6 +22,24 @@ export const login = async (values: LoginFormValues) => {
 
 export const getMe = async () => {
   const response = await requestHandler.get<{ data: AuthUser }>(authService.me())
+  return response.data.data
+}
+
+export const updateAvatar = async (file: File) => {
+  const formData = new FormData()
+  formData.append('avatar', file)
+  const response = await requestHandler.post<{ data: AuthUser }>(
+    authService.avatar(),
+    formData,
+  )
+  return response.data.data
+}
+
+export const updateProfile = async (values: UpdateProfileFormValues) => {
+  const response = await requestHandler.put<{ data: AuthUser }>(
+    authService.me(),
+    values,
+  )
   return response.data.data
 }
 

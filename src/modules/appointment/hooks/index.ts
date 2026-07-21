@@ -10,5 +10,6 @@ export {
   useMyAppointments,
   useMyExpertise,
   useRateAppointment,
+  useUpdateAppointmentStatus,
   useUpdateMyExpertise,
 } from '@/modules/appointment/hooks/useAppointment.hooks'

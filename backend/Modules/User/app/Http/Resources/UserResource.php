@@ -4,6 +4,7 @@ namespace Modules\User\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 /** @mixin \Modules\User\Models\User */
 class UserResource extends JsonResource
@@ -19,6 +20,10 @@ class UserResource extends JsonResource
             'mobile' => $this->mobile,
             'email' => $this->email,
             'role' => $this->role->value,
+            'avatar_url' => $this->avatar
+                ? Storage::disk('public')->url($this->avatar)
+                : null,
+            'bio' => $this->bio,
             'created_at' => $this->created_at?->toIso8601String(),
         ];
     }

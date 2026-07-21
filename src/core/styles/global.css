@@ -108,9 +108,14 @@
   animation: sidebar-item-in var(--motion-duration-normal) var(--motion-ease-out) both;
 }
 
-@utility home-reveal {
+@utility expertise-card {
   opacity: 0;
   animation: login-fade-up 560ms var(--motion-ease-spring) both;
+}
+
+@utility expertise-hero {
+  opacity: 0;
+  animation: login-panel-in 640ms var(--motion-ease-spring) both;
 }
 
 @utility home-card-lift {

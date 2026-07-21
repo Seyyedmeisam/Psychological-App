@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { ChevronDown, Info, LogOut, UserRound } from 'lucide-react'
+import { ChevronDown, LogOut, UserRound } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { m } from '@/core/i18n/paraglide/messages.js'
 import {
@@ -24,8 +24,10 @@ function roleLabel(role: AuthUser['role']) {
 function initials(name: string) {
   const parts = name.trim().split(/\s+/).filter(Boolean)
   if (parts.length === 0) return '?'
-  if (parts.length === 1) return parts[0]!.slice(0, 2).toUpperCase()
-  return `${parts[0]![0] ?? ''}${parts[1]![0] ?? ''}`.toUpperCase()
+  const first = parts[0] ?? ''
+  if (parts.length === 1) return first.slice(0, 2).toUpperCase()
+  const second = parts[1] ?? ''
+  return `${first.charAt(0)}${second.charAt(0)}`.toUpperCase()
 }
 
 function MenuIcon({
@@ -71,11 +73,21 @@ export function CtUserMenu({
           )}
         >
           <span className="relative flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-primary text-xs font-bold text-primary-foreground">
-            {initials(user.name)}
-            <span
-              aria-hidden
-              className="absolute inset-0 bg-linear-to-br from-white/25 to-transparent"
-            />
+            {user.avatar_url ? (
+              <img
+                src={user.avatar_url}
+                alt=""
+                className="size-full object-cover"
+              />
+            ) : (
+              <>
+                {initials(user.name)}
+                <span
+                  aria-hidden
+                  className="absolute inset-0 bg-linear-to-br from-white/25 to-transparent"
+                />
+              </>
+            )}
           </span>
 
           <span className="hidden min-w-0 flex-1 flex-col sm:flex">
@@ -94,7 +106,7 @@ export function CtUserMenu({
         </button>
       </CtDropdownMenuTrigger>
 
-      <CtDropdownMenuContent align="end" dir={dir} className="w-72 p-0">
+      <CtDropdownMenuContent align="end" className="w-72 p-0">
         <div className="relative overflow-hidden rounded-t-2xl border-b border-border/70 bg-linear-to-br from-primary/12 via-card to-card px-4 pb-4 pt-4">
           <div
             aria-hidden
@@ -102,11 +114,21 @@ export function CtUserMenu({
           />
           <div className="relative flex items-center gap-3">
             <span className="relative flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-primary text-sm font-bold text-primary-foreground shadow-ios-sm">
-              {initials(user.name)}
-              <span
-                aria-hidden
-                className="absolute inset-0 bg-linear-to-br from-white/25 to-transparent"
-              />
+              {user.avatar_url ? (
+                <img
+                  src={user.avatar_url}
+                  alt=""
+                  className="size-full object-cover"
+                />
+              ) : (
+                <>
+                  {initials(user.name)}
+                  <span
+                    aria-hidden
+                    className="absolute inset-0 bg-linear-to-br from-white/25 to-transparent"
+                  />
+                </>
+              )}
             </span>
             <div className="min-w-0 flex-1 text-start">
               <p className="truncate text-base font-semibold text-foreground">
@@ -133,20 +155,6 @@ export function CtUserMenu({
                   <span>{m.nav_profile()}</span>
                   <span className="text-[11px] font-normal text-muted-foreground">
                     {m.auth_profile_subtitle()}
-                  </span>
-                </span>
-              </Link>
-            </CtDropdownMenuItem>
-
-            <CtDropdownMenuItem asChild>
-              <Link to="/about" className="font-medium">
-                <MenuIcon>
-                  <Info className="size-4" />
-                </MenuIcon>
-                <span className="flex min-w-0 flex-1 flex-col text-start">
-                  <span>{m.nav_about()}</span>
-                  <span className="text-[11px] font-normal text-muted-foreground">
-                    {m.about_title()}
                   </span>
                 </span>
               </Link>

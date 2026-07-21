@@ -5,8 +5,8 @@ import type { AppLocale } from '@/core/i18n/localeLabels'
 import {
   applyDocumentLocale,
   getDocumentDirection,
-  type DocumentDirection,
 } from '@/core/i18n/locale'
+import type { DocumentDirection } from '@/core/i18n/locale'
 import { getLocale, setLocale as setParaglideLocale } from '@/core/i18n/paraglide/runtime.js'
 
 type I18nContextValue = {

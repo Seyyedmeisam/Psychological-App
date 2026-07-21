@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { UseMutationOptions, UseQueryOptions } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { queryKeys } from '@/core/constants/queryKeys'
+import { m } from '@/core/i18n/paraglide/messages.js'
 import { getApiErrorMessage } from '@/modules/app/utils/apiErrorMessage'
 import {
   bookAppointment,
@@ -15,6 +16,7 @@ import {
   getMyExpertise,
   joinAppointmentMeeting,
   rateAppointment,
+  updateAppointmentStatus,
   updateMyExpertise,
 } from '@/modules/appointment/services'
 import type {
@@ -28,6 +30,7 @@ import type {
   RateAppointmentInput,
   SlotFilters,
   AppointmentJoinResponse,
+  AppointmentStatusValue,
 } from '@/modules/appointment/types'
 
 export const useAreasOfExpertise = (
@@ -68,14 +71,14 @@ export const useUpdateMyExpertise = (
   return useMutation({
     ...options,
     mutationFn: updateMyExpertise,
-    onSuccess: async (data, variables, context) => {
+    onSuccess: async (data, variables, onMutateResult, context) => {
       queryClient.setQueryData(queryKeys.mentorExpertise, data)
       toast.success('حوزه‌های تخصصی ذخیره شد')
-      await options?.onSuccess?.(data, variables, context)
+      await options?.onSuccess?.(data, variables, onMutateResult, context)
     },
-    onError: async (error, variables, context) => {
+    onError: async (error, variables, onMutateResult, context) => {
       toast.error(getApiErrorMessage(error))
-      await options?.onError?.(error, variables, context)
+      await options?.onError?.(error, variables, onMutateResult, context)
     },
   })
 }
@@ -108,7 +111,7 @@ export const useBookAppointment = (
   return useMutation({
     ...options,
     mutationFn: bookAppointment,
-    onSuccess: async (data, variables, context) => {
+    onSuccess: async (data, variables, onMutateResult, context) => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.appointments })
       await queryClient.invalidateQueries({
         queryKey: ['appointments', 'slots'],
@@ -116,11 +119,11 @@ export const useBookAppointment = (
       await queryClient.invalidateQueries({ queryKey: queryKeys.adminStats })
       await queryClient.invalidateQueries({ queryKey: queryKeys.mentorProfile })
       toast.success('نوبت با موفقیت ثبت شد')
-      await options?.onSuccess?.(data, variables, context)
+      await options?.onSuccess?.(data, variables, onMutateResult, context)
     },
-    onError: async (error, variables, context) => {
+    onError: async (error, variables, onMutateResult, context) => {
       toast.error(getApiErrorMessage(error))
-      await options?.onError?.(error, variables, context)
+      await options?.onError?.(error, variables, onMutateResult, context)
     },
   })
 }
@@ -133,7 +136,7 @@ export const useCancelAppointment = (
   return useMutation({
     ...options,
     mutationFn: cancelAppointment,
-    onSuccess: async (data, variables, context) => {
+    onSuccess: async (data, variables, onMutateResult, context) => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.appointments })
       await queryClient.invalidateQueries({
         queryKey: ['appointments', 'slots'],
@@ -141,11 +144,40 @@ export const useCancelAppointment = (
       await queryClient.invalidateQueries({ queryKey: queryKeys.adminStats })
       await queryClient.invalidateQueries({ queryKey: queryKeys.mentorProfile })
       toast.success('نوبت لغو شد')
-      await options?.onSuccess?.(data, variables, context)
+      await options?.onSuccess?.(data, variables, onMutateResult, context)
     },
-    onError: async (error, variables, context) => {
+    onError: async (error, variables, onMutateResult, context) => {
       toast.error(getApiErrorMessage(error))
-      await options?.onError?.(error, variables, context)
+      await options?.onError?.(error, variables, onMutateResult, context)
+    },
+  })
+}
+
+export const useUpdateAppointmentStatus = (
+  options?: UseMutationOptions<
+    Appointment,
+    Error,
+    { appointmentId: number; status: AppointmentStatusValue }
+  >,
+) => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    ...options,
+    mutationFn: updateAppointmentStatus,
+    onSuccess: async (data, variables, onMutateResult, context) => {
+      await queryClient.invalidateQueries({ queryKey: queryKeys.appointments })
+      await queryClient.invalidateQueries({
+        queryKey: ['appointments', 'slots'],
+      })
+      await queryClient.invalidateQueries({ queryKey: queryKeys.adminStats })
+      await queryClient.invalidateQueries({ queryKey: queryKeys.mentorProfile })
+      toast.success(m.schedule_status_updated())
+      await options?.onSuccess?.(data, variables, onMutateResult, context)
+    },
+    onError: async (error, variables, onMutateResult, context) => {
+      toast.error(getApiErrorMessage(error))
+      await options?.onError?.(error, variables, onMutateResult, context)
     },
   })
 }
@@ -158,16 +190,16 @@ export const useRateAppointment = (
   return useMutation({
     ...options,
     mutationFn: rateAppointment,
-    onSuccess: async (data, variables, context) => {
+    onSuccess: async (data, variables, onMutateResult, context) => {
       await queryClient.invalidateQueries({ queryKey: queryKeys.appointments })
       await queryClient.invalidateQueries({ queryKey: queryKeys.adminStats })
       await queryClient.invalidateQueries({ queryKey: queryKeys.mentorProfile })
       toast.success('امتیاز ثبت شد')
-      await options?.onSuccess?.(data, variables, context)
+      await options?.onSuccess?.(data, variables, onMutateResult, context)
     },
-    onError: async (error, variables, context) => {
+    onError: async (error, variables, onMutateResult, context) => {
       toast.error(getApiErrorMessage(error))
-      await options?.onError?.(error, variables, context)
+      await options?.onError?.(error, variables, onMutateResult, context)
     },
   })
 }
@@ -196,8 +228,8 @@ export const useJoinMeeting = (
   useMutation({
     ...options,
     mutationFn: joinAppointmentMeeting,
-    onError: async (error, variables, context) => {
+    onError: async (error, variables, onMutateResult, context) => {
       toast.error(getApiErrorMessage(error))
-      await options?.onError?.(error, variables, context)
+      await options?.onError?.(error, variables, onMutateResult, context)
     },
   })

@@ -4,14 +4,16 @@ import { useNavigate } from '@tanstack/react-router'
 import type { UseMutationOptions, UseQueryOptions } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { queryKeys } from '@/core/constants/queryKeys'
+import { m } from '@/core/i18n/paraglide/messages.js'
 import { getApiErrorMessage } from '@/modules/app/utils/apiErrorMessage'
 import { getAuthToken, setAuthToken } from '@/modules/auth/constants/auth'
-import { getMe, login, logout, register } from '@/modules/auth/services'
+import { getMe, login, logout, register, updateAvatar, updateProfile } from '@/modules/auth/services'
 import type {
   AuthResponse,
   AuthUser,
   LoginFormValues,
   RegisterFormValues,
+  UpdateProfileFormValues,
 } from '@/modules/auth/types'
 import { getHomePathByRole } from '@/modules/auth/utils/homePath'
 
@@ -51,16 +53,16 @@ export const useLogin = (
   return useMutation({
     ...options,
     mutationFn: login,
-    onSuccess: async (data, variables, context) => {
+    onSuccess: async (data, variables, onMutateResult, context) => {
       setAuthToken(data.token)
       queryClient.setQueryData(queryKeys.me, data.user)
       toast.success('با موفقیت وارد شدید')
-      await options?.onSuccess?.(data, variables, context)
+      await options?.onSuccess?.(data, variables, onMutateResult, context)
       await navigate({ to: getHomePathByRole(data.user.role) })
     },
-    onError: async (error, variables, context) => {
+    onError: async (error, variables, onMutateResult, context) => {
       toast.error(getApiErrorMessage(error))
-      await options?.onError?.(error, variables, context)
+      await options?.onError?.(error, variables, onMutateResult, context)
     },
   })
 }
@@ -74,16 +76,16 @@ export const useRegister = (
   return useMutation({
     ...options,
     mutationFn: register,
-    onSuccess: async (data, variables, context) => {
+    onSuccess: async (data, variables, onMutateResult, context) => {
       setAuthToken(data.token)
       queryClient.setQueryData(queryKeys.me, data.user)
       toast.success('ثبت‌نام با موفقیت انجام شد')
-      await options?.onSuccess?.(data, variables, context)
+      await options?.onSuccess?.(data, variables, onMutateResult, context)
       await navigate({ to: getHomePathByRole(data.user.role) })
     },
-    onError: async (error, variables, context) => {
+    onError: async (error, variables, onMutateResult, context) => {
       toast.error(getApiErrorMessage(error))
-      await options?.onError?.(error, variables, context)
+      await options?.onError?.(error, variables, onMutateResult, context)
     },
   })
 }
@@ -97,19 +99,60 @@ export const useLogout = (
   return useMutation({
     ...options,
     mutationFn: logout,
-    onSuccess: async (data, variables, context) => {
+    onSuccess: async (data, variables, onMutateResult, context) => {
       setAuthToken(null)
       queryClient.removeQueries({ queryKey: queryKeys.me })
       toast.success('خارج شدید')
-      await options?.onSuccess?.(data, variables, context)
+      await options?.onSuccess?.(data, variables, onMutateResult, context)
       await navigate({ to: '/login' })
     },
-    onError: async (error, variables, context) => {
+    onError: async (error, variables, onMutateResult, context) => {
       setAuthToken(null)
       queryClient.removeQueries({ queryKey: queryKeys.me })
       toast.error(getApiErrorMessage(error))
-      await options?.onError?.(error, variables, context)
+      await options?.onError?.(error, variables, onMutateResult, context)
       await navigate({ to: '/login' })
+    },
+  })
+}
+
+export const useUpdateAvatar = (
+  options?: UseMutationOptions<AuthUser, Error, File>,
+) => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    ...options,
+    mutationFn: updateAvatar,
+    onSuccess: async (data, variables, onMutateResult, context) => {
+      queryClient.setQueryData(queryKeys.me, data)
+      toast.success(m.auth_profile_photo_updated())
+      await options?.onSuccess?.(data, variables, onMutateResult, context)
+    },
+    onError: async (error, variables, onMutateResult, context) => {
+      toast.error(getApiErrorMessage(error))
+      await options?.onError?.(error, variables, onMutateResult, context)
+    },
+  })
+}
+
+export const useUpdateProfile = (
+  options?: UseMutationOptions<AuthUser, Error, UpdateProfileFormValues>,
+) => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    ...options,
+    mutationFn: updateProfile,
+    onSuccess: async (data, variables, onMutateResult, context) => {
+      queryClient.setQueryData(queryKeys.me, data)
+      await queryClient.invalidateQueries({ queryKey: queryKeys.mentorProfile })
+      toast.success(m.auth_profile_updated())
+      await options?.onSuccess?.(data, variables, onMutateResult, context)
+    },
+    onError: async (error, variables, onMutateResult, context) => {
+      toast.error(getApiErrorMessage(error))
+      await options?.onError?.(error, variables, onMutateResult, context)
     },
   })
 }

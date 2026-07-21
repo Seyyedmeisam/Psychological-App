@@ -2,15 +2,21 @@
 
 namespace Modules\Appointment\Http\Requests;
 
+use App\Enums\UserRole;
 use App\Support\SessionSlots;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Modules\User\Models\User;
 
 class StoreAppointmentRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true;
+        /** @var User|null $user */
+        $user = $this->user();
+
+        return $user !== null
+            && in_array($user->role, [UserRole::User, UserRole::Admin], true);
     }
 
     /**

@@ -4,9 +4,9 @@ import {
   CalendarDays,
   CalendarPlus,
   Home,
-  Info,
   LayoutDashboard,
-  PanelLeft,
+  LogOut,
+  MessageCircle,
   Sparkles,
   User,
   Users,
@@ -14,7 +14,7 @@ import {
 import { m } from '@/core/i18n/paraglide/messages.js'
 import { cn } from '@/lib/utils'
 import { useSidebar } from '@/modules/app/providers/CtSidebarProvider'
-import { useMe } from '@/modules/auth/hooks'
+import { useLogout, useMe } from '@/modules/auth/hooks'
 import type { UserRole } from '@/modules/auth/types'
 
 type NavItem = {
@@ -27,8 +27,8 @@ type NavItem = {
     | '/appointments'
     | '/appointments/book'
     | '/appointments/expertise'
+    | '/chats'
     | '/profile'
-    | '/about'
   label: () => string
   icon: typeof Home
   roles?: UserRole[]
@@ -78,6 +78,12 @@ const topNavItems: NavItem[] = [
     icon: Sparkles,
     roles: ['mentor'],
   },
+  {
+    to: '/chats',
+    label: () => m.nav_chats(),
+    icon: MessageCircle,
+    roles: ['user', 'mentor', 'admin'],
+  },
 ]
 
 const appointmentGroup: NavGroup = {
@@ -100,10 +106,11 @@ const appointmentGroup: NavGroup = {
   ],
 }
 
-const bottomNavItems: NavItem[] = [
-  { to: '/profile', label: () => m.nav_profile(), icon: User },
-  { to: '/about', label: () => m.nav_about(), icon: Info },
-]
+const profileItem: NavItem = {
+  to: '/profile',
+  label: () => m.nav_profile(),
+  icon: User,
+}
 
 function isVisible(item: { roles?: UserRole[] }, role?: UserRole) {
   if (!item.roles) return true
@@ -114,15 +121,15 @@ function isVisible(item: { roles?: UserRole[] }, role?: UserRole) {
 function NavLink({
   item,
   collapsed,
-  variant,
   index,
   onNavigate,
+  className,
 }: Readonly<{
   item: NavItem
   collapsed: boolean
-  variant: 'desktop' | 'mobile'
   index: number
   onNavigate: () => void
+  className?: string
 }>) {
   const Icon = item.icon
   return (
@@ -133,6 +140,7 @@ function NavLink({
       className={cn(
         'ios-press ios-sidebar-item flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors duration-(--motion-duration-fast) hover:bg-muted/60 hover:text-foreground [&.active]:bg-accent [&.active]:text-accent-foreground',
         collapsed && 'w-12 justify-center gap-0 px-0',
+        className,
       )}
       aria-label={collapsed ? item.label() : undefined}
     >
@@ -152,6 +160,7 @@ function NavLink({
 export function CtSidebar({ variant }: Readonly<{ variant: 'desktop' | 'mobile' }>) {
   const { isCollapsed, setMobileOpen } = useSidebar()
   const { data: user } = useMe()
+  const logout = useLogout()
   const collapsed = variant === 'desktop' && isCollapsed
   const role = user?.role
 
@@ -161,10 +170,14 @@ export function CtSidebar({ variant }: Readonly<{ variant: 'desktop' | 'mobile' 
   )
   const showGroup =
     isVisible(appointmentGroup, role) && visibleGroupItems.length > 0
-  const visibleBottom = bottomNavItems.filter((item) => isVisible(item, role))
 
   const onNavigate = () => {
     if (variant === 'mobile') setMobileOpen(false)
+  }
+
+  const onLogout = () => {
+    onNavigate()
+    logout.mutate()
   }
 
   let index = 0
@@ -172,29 +185,17 @@ export function CtSidebar({ variant }: Readonly<{ variant: 'desktop' | 'mobile' 
   return (
     <aside
       className={cn(
-        'flex h-full flex-col border-e border-border bg-card transition-[width] duration-(--motion-duration-slow) ease-(--motion-ease-out)',
+        'flex h-full min-h-0 flex-col border-e border-border bg-card transition-[width] duration-(--motion-duration-slow) ease-(--motion-ease-out)',
         collapsed ? 'w-16' : 'w-56',
       )}
       aria-label="Sidebar"
     >
-      <div
+      <nav
         className={cn(
-          'flex items-center gap-2 overflow-hidden border-b border-border px-4 py-4',
-          collapsed && 'justify-center px-2',
+          'flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto overscroll-contain p-2',
+          collapsed && 'items-center',
         )}
       >
-        <PanelLeft className="size-5 shrink-0 text-muted-foreground transition-transform duration-(--motion-duration-normal) ease-(--motion-ease-spring)" />
-        <span
-          className={cn(
-            'overflow-hidden whitespace-nowrap text-sm font-semibold text-foreground transition-[opacity,max-width] duration-(--motion-duration-normal) ease-(--motion-ease-out)',
-            collapsed ? 'max-w-0 opacity-0' : 'max-w-32 opacity-100',
-          )}
-        >
-          {m.app_name()}
-        </span>
-      </div>
-
-      <nav className={cn('flex flex-1 flex-col gap-1 p-2', collapsed && 'items-center')}>
         {visibleTop.map((item) => {
           const current = index++
           return (
@@ -202,7 +203,6 @@ export function CtSidebar({ variant }: Readonly<{ variant: 'desktop' | 'mobile' 
               key={item.to}
               item={item}
               collapsed={collapsed}
-              variant={variant}
               index={current}
               onNavigate={onNavigate}
             />
@@ -225,7 +225,6 @@ export function CtSidebar({ variant }: Readonly<{ variant: 'desktop' | 'mobile' 
                   key={item.to}
                   item={item}
                   collapsed={collapsed}
-                  variant={variant}
                   index={current}
                   onNavigate={onNavigate}
                 />
@@ -233,21 +232,41 @@ export function CtSidebar({ variant }: Readonly<{ variant: 'desktop' | 'mobile' 
             })}
           </div>
         ) : null}
-
-        {visibleBottom.map((item) => {
-          const current = index++
-          return (
-            <NavLink
-              key={item.to}
-              item={item}
-              collapsed={collapsed}
-              variant={variant}
-              index={current}
-              onNavigate={onNavigate}
-            />
-          )
-        })}
       </nav>
+
+      <div
+        className={cn(
+          'shrink-0 border-t border-border bg-card p-2',
+          collapsed && 'flex flex-col items-center',
+        )}
+      >
+        <NavLink
+          item={profileItem}
+          collapsed={collapsed}
+          index={index++}
+          onNavigate={onNavigate}
+        />
+        <button
+          type="button"
+          onClick={onLogout}
+          disabled={logout.isPending}
+          aria-label={m.auth_logout()}
+          className={cn(
+            'ios-press mt-1 flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-destructive transition-colors duration-(--motion-duration-fast) hover:bg-destructive/10 disabled:opacity-45',
+            collapsed && 'w-12 justify-center gap-0 px-0',
+          )}
+        >
+          <LogOut className="size-4 shrink-0" aria-hidden />
+          <span
+            className={cn(
+              'truncate transition-[opacity,max-width] duration-(--motion-duration-normal) ease-(--motion-ease-out)',
+              collapsed ? 'max-w-0 opacity-0' : 'max-w-36 opacity-100',
+            )}
+          >
+            {m.auth_logout()}
+          </span>
+        </button>
+      </div>
     </aside>
   )
 }

@@ -14,6 +14,7 @@ import {
 } from '@/modules/app/components/CtCard'
 import { CtLabel } from '@/modules/app/components/CtLabel'
 import { CtSpinner } from '@/modules/app/components/CtSpinner'
+import { CtTextarea } from '@/modules/app/components/CtTextarea'
 import {
   CtSelectContent,
   CtSelectItem,
@@ -42,6 +43,7 @@ export default function BookAppointmentPage() {
   const [weekStart, setWeekStart] = useState(() => getWeekStartIso())
   const [mentorId, setMentorId] = useState<string>('all')
   const [selectedSlot, setSelectedSlot] = useState<AvailableSlot | null>(null)
+  const [notes, setNotes] = useState('')
 
   const slotRange = useMemo(() => getSlotQueryRange(weekStart), [weekStart])
   const currentWeekStart = useMemo(() => getWeekStartIso(), [])
@@ -66,10 +68,12 @@ export default function BookAppointmentPage() {
   useEffect(() => {
     setMentorId('all')
     setSelectedSlot(null)
+    setNotes('')
   }, [areaId])
 
   useEffect(() => {
     setSelectedSlot(null)
+    setNotes('')
   }, [mentorId, weekStart])
 
   const selectedArea = useMemo(
@@ -207,18 +211,42 @@ export default function BookAppointmentPage() {
 
             {selectedSlot ? (
               <CtCard variant="inset">
-                <CtCardContent className="flex flex-wrap items-center justify-between gap-3 py-4">
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">
-                      {m.appointment_mentor_label({ name: selectedSlot.mentor_name })}
-                    </p>
+                <CtCardContent className="space-y-4 py-4">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">
+                        {m.appointment_mentor_label({ name: selectedSlot.mentor_name })}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {selectedSlot.date} · {selectedSlot.start_time} – {selectedSlot.end_time}
+                      </p>
+                    </div>
+                    <CtButton
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedSlot(null)
+                        setNotes('')
+                      }}
+                    >
+                      {m.user_cancel()}
+                    </CtButton>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <CtLabel htmlFor="appointment-notes">{m.appointment_notes_label()}</CtLabel>
+                    <CtTextarea
+                      id="appointment-notes"
+                      value={notes}
+                      onChange={(event) => setNotes(event.target.value)}
+                      maxLength={1000}
+                      placeholder={m.appointment_notes_placeholder()}
+                      rows={4}
+                    />
                     <p className="text-xs text-muted-foreground">
-                      {selectedSlot.date} · {selectedSlot.start_time} – {selectedSlot.end_time}
+                      {m.appointment_notes_hint()}
                     </p>
                   </div>
-                  <CtButton type="button" variant="ghost" size="sm" onClick={() => setSelectedSlot(null)}>
-                    {m.user_cancel()}
-                  </CtButton>
                 </CtCardContent>
               </CtCard>
             ) : null}
@@ -232,11 +260,13 @@ export default function BookAppointmentPage() {
                 disabled={!selectedSlot || bookMutation.isPending}
                 onClick={() => {
                   if (!selectedSlot || !areaId) return
+                  const trimmedNotes = notes.trim()
                   bookMutation.mutate({
                     area_of_expertise_id: areaId,
                     mentor_id: selectedSlot.mentor_id,
                     date: selectedSlot.date,
                     start_time: selectedSlot.start_time,
+                    ...(trimmedNotes ? { notes: trimmedNotes } : {}),
                   })
                 }}
               >

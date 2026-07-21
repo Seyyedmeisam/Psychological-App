@@ -6,4 +6,6 @@ export {
   useMe,
   useRegister,
   useRegisterForm,
+  useUpdateAvatar,
+  useUpdateProfile,
 } from './useAuth.hooks'

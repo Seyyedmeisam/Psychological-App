@@ -14,5 +14,6 @@ export const appointmentService = {
   slots: () => `${APPOINTMENTS}/slots`,
   appointment: (id: number) => `${APPOINTMENTS}/${id}`,
   rating: (id: number) => `${APPOINTMENTS}/${id}/rating`,
+  status: (id: number) => `${APPOINTMENTS}/${id}/status`,
   meetingJoin: (id: number) => `${APPOINTMENTS}/${id}/meeting/join`,
 } as const

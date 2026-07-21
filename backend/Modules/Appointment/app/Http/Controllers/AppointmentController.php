@@ -2,10 +2,12 @@
 
 namespace Modules\Appointment\Http\Controllers;
 
+use App\Enums\AppointmentStatus;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use Modules\Appointment\Http\Requests\StoreAppointmentRatingRequest;
 use Modules\Appointment\Http\Requests\StoreAppointmentRequest;
+use Modules\Appointment\Http\Requests\UpdateAppointmentStatusRequest;
 use Modules\Appointment\Models\Appointment;
 use Modules\Appointment\Models\AppointmentRating;
 use Modules\Appointment\Models\AreaOfExpertise;
@@ -101,7 +103,7 @@ class AppointmentController extends Controller
         $booked = Appointment::query()
             ->whereIn('mentor_id', $mentorIds)
             ->whereBetween('date', [$from->toDateString(), $to->toDateString()])
-            ->where('status', '!=', 'cancelled')
+            ->where('status', AppointmentStatus::Confirmed->value)
             ->get(['mentor_id', 'date', 'start_time'])
             ->mapWithKeys(static function (Appointment $row) {
                 $date = $row->date instanceof Carbon
@@ -208,7 +210,7 @@ class AppointmentController extends Controller
             ->where('mentor_id', $mentor->id)
             ->whereDate('date', $date->toDateString())
             ->where('start_time', $start)
-            ->where('status', '!=', 'cancelled')
+            ->where('status', AppointmentStatus::Confirmed->value)
             ->exists();
 
         if ($taken) {
@@ -225,7 +227,7 @@ class AppointmentController extends Controller
                 'date' => $date->toDateString(),
                 'start_time' => $start,
                 'end_time' => $end,
-                'status' => 'confirmed',
+                'status' => AppointmentStatus::Confirmed->value,
                 'notes' => $data['notes'] ?? null,
             ]);
         });
@@ -281,7 +283,36 @@ class AppointmentController extends Controller
             abort(403);
         }
 
-        $appointment->update(['status' => 'cancelled']);
+        $appointment->update(['status' => AppointmentStatus::Cancelled->value]);
+
+        $appointment->load([
+            'client:id,name,mobile',
+            'mentor:id,name,mobile',
+            'areaOfExpertise:id,slug,name,name_en',
+            'rating',
+        ]);
+
+        return response()->json([
+            'data' => $this->formatAppointment($appointment),
+        ]);
+    }
+
+    public function updateStatus(
+        UpdateAppointmentStatusRequest $request,
+        Appointment $appointment,
+    ): JsonResponse {
+        $status = AppointmentStatus::from($request->validated('status'));
+
+        if (
+            in_array($status, [AppointmentStatus::UserAbsent, AppointmentStatus::MentorAbsent], true)
+            && ! $appointment->isPast()
+        ) {
+            throw ValidationException::withMessages([
+                'status' => ['Absence can only be recorded after the session end time.'],
+            ]);
+        }
+
+        $appointment->update(['status' => $status->value]);
 
         $appointment->load([
             'client:id,name,mobile',
@@ -304,9 +335,9 @@ class AppointmentController extends Controller
             abort(403);
         }
 
-        if ($appointment->status === 'cancelled') {
+        if ($appointment->statusEnum() !== AppointmentStatus::Confirmed) {
             throw ValidationException::withMessages([
-                'score' => ['Cancelled appointments cannot be rated.'],
+                'score' => ['Only completed confirmed sessions can be rated.'],
             ]);
         }
 

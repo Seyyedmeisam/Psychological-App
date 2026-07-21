@@ -11,6 +11,7 @@ import type {
   RateAppointmentInput,
   SlotFilters,
   AppointmentJoinResponse,
+  AppointmentStatusValue,
 } from '@/modules/appointment/types'
 
 export const getAreasOfExpertise = async () => {
@@ -69,6 +70,17 @@ export const bookAppointment = async (input: BookAppointmentInput) => {
 export const cancelAppointment = async (id: number) => {
   const response = await requestHandler.delete<{ data: Appointment }>(
     appointmentService.appointment(id),
+  )
+  return response.data.data
+}
+
+export const updateAppointmentStatus = async (input: {
+  appointmentId: number
+  status: AppointmentStatusValue
+}) => {
+  const response = await requestHandler.patch<{ data: Appointment }>(
+    appointmentService.status(input.appointmentId),
+    { status: input.status },
   )
   return response.data.data
 }

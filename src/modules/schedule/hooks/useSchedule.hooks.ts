@@ -50,14 +50,14 @@ export const useUpdateMyAvailability = (
   return useMutation({
     ...options,
     mutationFn: updateMyAvailability,
-    onSuccess: async (data, variables, context) => {
+    onSuccess: async (data, variables, onMutateResult, context) => {
       queryClient.setQueryData(queryKeys.availabilityMine, data)
       toast.success('برنامه هفتگی ذخیره شد')
-      await options?.onSuccess?.(data, variables, context)
+      await options?.onSuccess?.(data, variables, onMutateResult, context)
     },
-    onError: async (error, variables, context) => {
+    onError: async (error, variables, onMutateResult, context) => {
       toast.error(getApiErrorMessage(error))
-      await options?.onError?.(error, variables, context)
+      await options?.onError?.(error, variables, onMutateResult, context)
     },
   })
 }

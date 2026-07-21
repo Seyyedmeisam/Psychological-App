@@ -7,6 +7,7 @@ import {
   CtAppointmentCardShell,
   CtAppointmentStatusBadge,
 } from '@/modules/appointment/components/CtAppointmentCardParts'
+import { CtAppointmentChatButton } from '@/modules/appointment/components/CtAppointmentChatButton'
 import { CtAppointmentJoinMeeting } from '@/modules/appointment/components/CtAppointmentJoinMeeting'
 import { useMentorProfile } from '@/modules/appointment/hooks'
 import { cn } from '@/lib/utils'
@@ -87,10 +88,16 @@ export default function MentorHomePage() {
               </div>
               <div className="flex flex-wrap gap-2">
                 <CtButton asChild variant="secondary" size="sm">
+                  <Link to="/appointments">{m.nav_my_appointments()}</Link>
+                </CtButton>
+                <CtButton asChild variant="secondary" size="sm">
                   <Link to="/schedule">{m.nav_schedule()}</Link>
                 </CtButton>
                 <CtButton asChild variant="secondary" size="sm">
                   <Link to="/appointments/expertise">{m.nav_expertise()}</Link>
+                </CtButton>
+                <CtButton asChild variant="secondary" size="sm">
+                  <Link to="/chats">{m.nav_chats()}</Link>
                 </CtButton>
               </div>
             </div>
@@ -174,7 +181,7 @@ export default function MentorHomePage() {
                     {filteredMeetings.map((meeting) => (
                       <CtAppointmentCardShell key={meeting.id}>
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                          <div className="min-w-0 space-y-1">
+                          <div className="min-w-0 flex-1 space-y-2">
                             <div className="flex flex-wrap items-center gap-2">
                               <p className="text-sm font-semibold text-foreground">
                                 {meeting.area_of_expertise?.name ?? '—'}
@@ -187,20 +194,40 @@ export default function MentorHomePage() {
                             <p className="text-xs text-muted-foreground">
                               {meeting.date} · {meeting.start_time} – {meeting.end_time}
                             </p>
-                            <p className="text-xs text-muted-foreground">
-                              {m.appointment_client_label({
-                                name: meeting.client?.name ?? '—',
-                              })}
-                            </p>
+                            <div className="rounded-xl border border-border/70 bg-muted/30 px-3 py-2">
+                              <p className="text-xs font-medium text-foreground">
+                                {m.appointment_client_label({
+                                  name: meeting.client?.name ?? '—',
+                                })}
+                              </p>
+                              {meeting.client?.mobile ? (
+                                <p className="mt-0.5 text-xs text-muted-foreground" dir="ltr">
+                                  {meeting.client.mobile}
+                                </p>
+                              ) : null}
+                            </div>
+                            {meeting.notes ? (
+                              <p className="whitespace-pre-wrap text-xs leading-relaxed text-muted-foreground">
+                                <span className="font-semibold text-foreground">
+                                  {m.appointment_notes_label()}:{' '}
+                                </span>
+                                {meeting.notes}
+                              </p>
+                            ) : null}
                             {meeting.rating ? (
                               <p className="text-xs font-medium text-muted-foreground">
                                 {meeting.rating.score}/5
                               </p>
                             ) : null}
                           </div>
-                          {meeting.status === 'confirmed' && !meeting.is_completed ? (
-                            <CtAppointmentJoinMeeting appointment={meeting} />
-                          ) : null}
+                          <div className="flex flex-col gap-2 sm:items-end">
+                            {meeting.status === 'confirmed' && !meeting.is_completed ? (
+                              <CtAppointmentJoinMeeting appointment={meeting} />
+                            ) : null}
+                            {meeting.client?.id ? (
+                              <CtAppointmentChatButton userId={meeting.client.id} />
+                            ) : null}
+                          </div>
                         </div>
                       </CtAppointmentCardShell>
                     ))}

@@ -19,6 +19,14 @@ const config = defineConfig({
     },
     tsconfigPaths: true,
   },
+  optimizeDeps: {
+    include: [
+      'use-sync-external-store',
+      'use-sync-external-store/shim',
+      'use-sync-external-store/shim/with-selector',
+      'use-sync-external-store/shim/with-selector.js',
+    ],
+  },
   plugins: [
     devtools(),
     paraglideVitePlugin({

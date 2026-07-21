@@ -10,6 +10,8 @@ Route::prefix('auth')->group(function () {
 
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/me', [AuthController::class, 'me']);
+        Route::put('/me', [AuthController::class, 'updateProfile']);
+        Route::post('/me/avatar', [AuthController::class, 'updateAvatar']);
         Route::post('/logout', [AuthController::class, 'logout']);
 
         Route::get('/mentors/{user}/availability', [AvailabilityController::class, 'showMentor']);

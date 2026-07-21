@@ -34,12 +34,18 @@ export type AppointmentRating = {
   comment: string | null
 }
 
+export type AppointmentStatusValue =
+  | 'confirmed'
+  | 'cancelled'
+  | 'user_absent'
+  | 'mentor_absent'
+
 export type Appointment = {
   id: number
   date: string
   start_time: string
   end_time: string
-  status: string
+  status: AppointmentStatusValue | string
   notes: string | null
   is_completed?: boolean
   can_rate?: boolean
@@ -104,6 +110,8 @@ export type MentorProfile = {
     name: string
     mobile: string | null
     email: string | null
+    bio?: string | null
+    avatar_url?: string | null
   }
   stats: {
     meetings_done: number
@@ -136,11 +144,12 @@ export type MentorProfile = {
     start_time: string
     end_time: string
     status: string
+    notes?: string | null
     is_completed: boolean
     is_in_session?: boolean
     can_join_meeting?: boolean
     meeting_url?: string | null
-    client: { id: number; name: string } | null
+    client: { id: number; name: string; mobile?: string | null } | null
     area_of_expertise: {
       id: number
       name: string

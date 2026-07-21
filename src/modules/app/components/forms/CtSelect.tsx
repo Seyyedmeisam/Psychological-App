@@ -1,4 +1,3 @@
-import type { ComponentProps } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import type { FieldPath, FieldValues, RegisterOptions } from 'react-hook-form'
 import { CtLabel } from '@/modules/app/components/CtLabel'

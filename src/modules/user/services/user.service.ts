@@ -2,7 +2,7 @@ import { requestHandler } from '@/core/api/requestHandler'
 import { userService } from '@/modules/user/services/userService'
 import type { User, UserFormValues, UsersListParams } from '@/modules/user/types/user.types'
 
-const toUserPayload = (values: UserFormValues, isUpdate = false) => {
+const toUserPayload = (values: UserFormValues) => {
   const payload: Record<string, string> = {
     name: values.name,
     mobile: values.mobile,
@@ -49,7 +49,7 @@ export const createUser = async (values: UserFormValues) => {
 export const updateUser = async (id: number, values: UserFormValues) => {
   const response = await requestHandler.put<User | { data: User }>(
     userService.updateUser(id),
-    toUserPayload(values, true),
+    toUserPayload(values),
   )
   return response.data
 }

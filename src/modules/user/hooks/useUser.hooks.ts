@@ -58,7 +58,7 @@ export const useInfiniteUsers = (
       normalizeUsers(
         await getUsers({
           ...params,
-          page: pageParam,
+          page: pageParam as number,
           per_page: params?.per_page ?? pagination.defaultPerPage,
         }),
       ),

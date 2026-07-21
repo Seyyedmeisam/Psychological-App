@@ -52,6 +52,30 @@ function DialogContent({
   )
 }
 
+function DialogTitle({
+  className,
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Title>) {
+  return (
+    <DialogPrimitive.Title
+      className={cn('text-lg font-semibold tracking-tight text-foreground', className)}
+      {...props}
+    />
+  )
+}
+
+function DialogDescription({
+  className,
+  ...props
+}: React.ComponentProps<typeof DialogPrimitive.Description>) {
+  return (
+    <DialogPrimitive.Description
+      className={cn('text-sm text-muted-foreground', className)}
+      {...props}
+    />
+  )
+}
+
 export {
   Dialog,
   DialogTrigger,
@@ -59,5 +83,6 @@ export {
   DialogClose,
   DialogOverlay,
   DialogContent,
+  DialogTitle,
+  DialogDescription,
 }
-

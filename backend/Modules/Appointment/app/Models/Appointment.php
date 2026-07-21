@@ -2,6 +2,7 @@
 
 namespace Modules\Appointment\Models;
 
+use App\Enums\AppointmentStatus;
 use Modules\User\Models\User;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -81,9 +82,20 @@ class Appointment extends Model
         return $endsAt->isPast();
     }
 
+    public function statusEnum(): AppointmentStatus
+    {
+        return AppointmentStatus::tryFrom((string) $this->status)
+            ?? AppointmentStatus::Confirmed;
+    }
+
+    public function occupiesSlot(): bool
+    {
+        return $this->statusEnum()->occupiesSlot();
+    }
+
     public function isCompleted(): bool
     {
-        return $this->status === 'confirmed' && $this->isPast();
+        return $this->statusEnum() === AppointmentStatus::Confirmed && $this->isPast();
     }
 
     public function sessionStartsAt(): \Carbon\Carbon
@@ -106,7 +118,7 @@ class Appointment extends Model
 
     public function isInSessionWindow(): bool
     {
-        if ($this->status !== 'confirmed') {
+        if ($this->statusEnum() !== AppointmentStatus::Confirmed) {
             return false;
         }
 

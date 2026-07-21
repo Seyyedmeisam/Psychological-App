@@ -26,6 +26,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/appointments', [AppointmentController::class, 'store']);
     Route::post('/appointments/{appointment}/meeting/join', [AppointmentController::class, 'joinMeeting']);
     Route::post('/appointments/{appointment}/rating', [AppointmentController::class, 'rate']);
+    Route::patch('/appointments/{appointment}/status', [AppointmentController::class, 'updateStatus']);
     Route::delete('/appointments/{appointment}', [AppointmentController::class, 'destroy']);
 });
 

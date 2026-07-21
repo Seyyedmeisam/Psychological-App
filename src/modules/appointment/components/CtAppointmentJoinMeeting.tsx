@@ -28,7 +28,10 @@ export function CtAppointmentJoinMeeting({
   }, [])
 
   const canJoin = canJoinAppointmentMeeting(appointment, now)
-  const cancelled = appointment.status === 'cancelled'
+  const cancelled =
+    appointment.status === 'cancelled' ||
+    appointment.status === 'user_absent' ||
+    appointment.status === 'mentor_absent'
 
   if (cancelled) {
     return null

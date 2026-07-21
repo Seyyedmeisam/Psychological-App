@@ -6,6 +6,8 @@ export type AuthUser = {
   mobile: string
   email?: string | null
   role: UserRole
+  avatar_url?: string | null
+  bio?: string | null
   created_at?: string
 }
 
@@ -20,6 +22,12 @@ export type RegisterFormValues = {
   password: string
   password_confirmation: string
   role: 'user' | 'mentor'
+}
+
+export type UpdateProfileFormValues = {
+  name: string
+  mobile: string
+  bio?: string | null
 }
 
 export type AuthResponse = {

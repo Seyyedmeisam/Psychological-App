@@ -10,5 +10,6 @@ export {
   getMyExpertise,
   joinAppointmentMeeting,
   rateAppointment,
+  updateAppointmentStatus,
   updateMyExpertise,
 } from '@/modules/appointment/services/appointment.service'

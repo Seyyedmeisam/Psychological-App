@@ -11,5 +11,6 @@ export const routes = rootRoute('__root.tsx', [
     physical('/profile', '../modules/auth/routes/profile'),
     physical('/schedule', '../modules/schedule/routes'),
     physical('/appointments', '../modules/appointment/routes'),
+    physical('/chats', '../modules/chat/routes'),
   ]),
 ])

@@ -10,6 +10,7 @@ use App\Support\SessionSlots;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class MentorProfileController extends Controller
 {
@@ -100,6 +101,10 @@ class MentorProfileController extends Controller
                 'name' => $mentor->name,
                 'mobile' => $mentor->mobile,
                 'email' => $mentor->email,
+                'bio' => $mentor->bio,
+                'avatar_url' => $mentor->avatar
+                    ? Storage::disk('public')->url($mentor->avatar)
+                    : null,
             ],
             'stats' => [
                 'meetings_done' => $completed->count(),
@@ -135,6 +140,7 @@ class MentorProfileController extends Controller
             'start_time' => $appointment->start_time,
             'end_time' => $appointment->end_time,
             'status' => $appointment->status,
+            'notes' => $appointment->notes,
             'is_completed' => $appointment->isCompleted(),
             'is_in_session' => $appointment->isInSessionWindow(),
             'can_join_meeting' => $appointment->canJoinMeeting(),
@@ -143,6 +149,7 @@ class MentorProfileController extends Controller
                 ? [
                     'id' => $appointment->client->id,
                     'name' => $appointment->client->name,
+                    'mobile' => $appointment->client->mobile,
                 ]
                 : null,
             'area_of_expertise' => $appointment->areaOfExpertise
