@@ -12,5 +12,5 @@ export const Route = createFileRoute('/_public/privacy')({
       keywords: m.seo_keywords_privacy(),
       type: 'article',
     }),
-  component: lazy(() => import('@/modules/app/pages/PrivacyPage')),
+  component: lazy(() => import('@/modules/app/pages/PrivacyPolicyPage')),
 })
