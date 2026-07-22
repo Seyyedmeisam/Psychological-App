@@ -1,3 +1,21 @@
-# https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+Allow: /about
+Allow: /contact
+Allow: /faq
+Allow: /privacy
+Allow: /terms
+Allow: /login
+Allow: /register
+
+Disallow: /home
+Disallow: /mentor
+Disallow: /dashboard
+Disallow: /appointments
+Disallow: /schedule
+Disallow: /chats
+Disallow: /profile
+Disallow: /users
+Disallow: /mentor-verifications
+
+Sitemap: https://ahmad-site.ir/sitemap.xml

@@ -41,7 +41,8 @@ export type PageHead = {
 function absoluteUrl(path?: string): string | undefined {
   if (!env.siteUrl) return undefined
   if (!path || path === '/') return env.siteUrl
-  return `${env.siteUrl}${path.startsWith('/') ? path : `/${path}`}`
+  const normalized = path.startsWith('/') ? path : `/${path}`
+  return `${env.siteUrl}${normalized}`
 }
 
 function defaultOgImage(): string | undefined {
