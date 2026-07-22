@@ -1,36 +1,27 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, type ComponentType } from 'react'
 
-const LazyDevtools = lazy(async () => {
-  const [{ TanStackDevtools }, { TanStackRouterDevtoolsPanel }] =
-    await Promise.all([
-      import('@tanstack/react-devtools'),
-      import('@tanstack/react-router-devtools'),
-    ])
+function DisabledDevtools() {
+  return null
+}
 
-  return {
-    default: function CtTanStackDevtoolsHost() {
-      return (
-        <TanStackDevtools
-          config={{ position: 'bottom-right' }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
-      )
-    },
-  }
-})
+// `import.meta.env.DEV` is replaced with `false` in production so Rollup
+// drops the dynamic import and keeps @tanstack/devtools out of the SSR bundle.
+const EnabledDevtools: ComponentType = import.meta.env.DEV
+  ? lazy(() =>
+      import('./CtTanStackDevtoolsHost').then((mod) => ({
+        default: mod.CtTanStackDevtoolsHost,
+      })),
+    )
+  : DisabledDevtools
 
-/** Opt-in only: `VITE_TANSTACK_DEVTOOLS=1 bun run dev` */
+/** Opt-in only: `VITE_TANSTACK_DEVTOOLS=1 bun run dev` (dev builds only). */
 export function CtTanStackDevtools() {
+  if (!import.meta.env.DEV) return null
   if (import.meta.env.VITE_TANSTACK_DEVTOOLS !== '1') return null
 
   return (
     <Suspense fallback={null}>
-      <LazyDevtools />
+      <EnabledDevtools />
     </Suspense>
   )
 }
